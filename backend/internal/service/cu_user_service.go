@@ -5,7 +5,6 @@ import (
 	"errors"
 	"time"
 
-	"license-manager/internal/config"
 	"license-manager/internal/models"
 	"license-manager/internal/repository"
 	pkgcontext "license-manager/pkg/context"
@@ -155,7 +154,7 @@ func (s *cuUserService) Login(ctx context.Context, req *models.CuUserLoginReques
 	}
 
 	// 检查账号状态
-	if user.Status != "active" {
+	if user.Status != "active" && user.Status != "locked" {
 		return nil, "", i18n.NewI18nError("500003", lang) // 账号已被禁用
 	}
 
@@ -183,11 +182,6 @@ func (s *cuUserService) Login(ctx context.Context, req *models.CuUserLoginReques
 		}
 	} else {
 		// 密码登录（默认行为）
-		// 检查是否被锁定
-		if user.IsAccountLocked() {
-			return nil, "", i18n.NewI18nError("500018", lang) // 账号已被锁定
-		}
-
 		// 验证密码
 		if req.Password == "" {
 			return nil, "", i18n.NewI18nError("900001", lang) // 密码不能为空
@@ -198,21 +192,6 @@ func (s *cuUserService) Login(ctx context.Context, req *models.CuUserLoginReques
 		}
 
 		if !utils.CheckPassword(req.Password, *user.Password, *user.Salt) {
-			// 增加登录失败次数
-			if err := s.repo.IncrementLoginAttempts(user.ID); err != nil {
-				// 记录错误但不影响登录流程
-			}
-
-			// 检查是否需要锁定账号
-			cfg := config.GetConfig()
-			if cfg != nil && user.LoginAttempts+1 >= cfg.Auth.Security.MaxLoginAttempts {
-				lockUntil := time.Now().Add(time.Duration(cfg.Auth.Security.LockoutDurationMinutes) * time.Minute)
-				if err := s.repo.LockAccount(user.ID, lockUntil); err != nil {
-					// 记录错误但不影响登录流程
-				}
-				return nil, "", i18n.NewI18nError("500018", lang) // 账号已被锁定
-			}
-
 			return nil, "", i18n.NewI18nError("500003", lang) // 手机号或密码错误
 		}
 	}

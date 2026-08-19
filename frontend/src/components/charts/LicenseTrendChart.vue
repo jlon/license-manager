@@ -1,713 +1,79 @@
 <template>
-  <div class="license-trend-chart">
-    <!-- 卡片头部 -->
-    <div class="chart-header">
-      <h3 class="chart-title">{{ t('chart.licenseTrend.title') }}</h3>
-      
-      <!-- 时间选择器 -->
-      <div class="time-selector">
-        <!-- 桌面端：横向布局 -->
-        <template v-if="!isMobile">
-          <!-- 快捷选择按钮 -->
-          <div class="quick-selector">
-            <el-button 
-              v-for="option in quickOptions" 
-              :key="option.value"
-              :type="selectedQuick === option.value ? 'primary' : 'default'"
-              size="small"
-              @click="handleQuickSelect(option.value)"
-            >
-              {{ option.label }}
-            </el-button>
-          </div>
-          
-          <!-- 日期范围选择器 - 条件渲染模式 -->
-          <!-- 显示模式：当有快捷选择时，显示只读的文本输入框 -->
-          <div v-if="selectedQuick" class="date-display-wrapper">
-            <div class="date-display" @click="switchToEditMode">
-              {{ formatDateRange(dateRange) }}
-              <el-icon class="date-icon"><Calendar /></el-icon>
-            </div>
-          </div>
-          
-          <!-- 编辑模式：实际的日期选择器 -->
-          <el-date-picker
-            v-else
-            ref="datePickerRef"
-            v-model="dateRange"
-            type="daterange"
-            :range-separator="t('chart.licenseTrend.datePicker.rangeSeparator')"
-            :start-placeholder="t('chart.licenseTrend.datePicker.startPlaceholder')"
-            :end-placeholder="t('chart.licenseTrend.datePicker.endPlaceholder')"
-            size="small"
-            format="MM-DD"
-            value-format="YYYY-MM-DD"
-            :clearable="false"
-            :editable="false"
-            @change="handleDateChange"
-            style="width: 200px;"
-          />
-        </template>
-        
-        <!-- 移动端：上下布局 -->
-        <template v-else>
-          <!-- 快捷选择按钮 -->
-          <div class="quick-selector mobile-quick">
-            <el-button 
-              v-for="option in quickOptions" 
-              :key="option.value"
-              :type="selectedQuick === option.value ? 'primary' : 'default'"
-              size="small"
-              @click="handleQuickSelect(option.value)"
-            >
-              {{ option.label }}
-            </el-button>
-          </div>
-          
-          <!-- 日期范围选择器 -->
-          <MobileDateRange
-            v-model="dateRange"
-            :show-quick-buttons="false"
-            @change="handleDateChange"
-          />
-        </template>
-      </div>
-    </div>
-
-    <!-- 图表容器 -->
-    <div class="chart-container">
-      <v-chart
-        class="trend-chart"
-        :option="chartOption"
-        :autoresize="true"
-        :loading="chartLoading"
-        ref="chartRef"
-      />
-    </div>
+  <div class="chart-container">
+    <VChart v-if="data.length" class="trend-chart" :option="chartOption" autoresize />
+    <el-empty v-else :description="emptyText" :image-size="64" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { use } from 'echarts/core'
-import { useDevice } from '@/utils/useDevice'
-import { useAppStore } from '@/store/modules/app'
-import MobileDateRange from '@/components/common/MobileDateRange.vue'
-import { Calendar } from '@element-plus/icons-vue'
-import { getAuthorizationTrend, type TrendDataItem } from '@/api/dashboard'
-import { ElMessage } from 'element-plus'
 import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart } from 'echarts/charts'
-import {
-  GridComponent,
-  TooltipComponent,
-  LegendComponent
-} from 'echarts/components'
+import { GridComponent, TooltipComponent } from 'echarts/components'
 import VChart from 'vue-echarts'
+import { useAppStore } from '@/store/modules/app'
+import type { TrendDataItem } from '@/api/dashboard'
 
-// 注册必要的组件
-use([
-  CanvasRenderer,
-  LineChart,
-  GridComponent,
-  TooltipComponent,
-  LegendComponent
-])
+use([CanvasRenderer, LineChart, GridComponent, TooltipComponent])
 
-// 使用国际化和store
+const props = defineProps<{ data: TrendDataItem[]; emptyText: string }>()
 const { t } = useI18n()
 const appStore = useAppStore()
 
-// 快捷选择选项
-const quickOptions = computed(() => [
-  { label: t('chart.licenseTrend.quickOptions.week'), value: 'week' },
-  { label: t('chart.licenseTrend.quickOptions.month'), value: 'month' }
-])
-
-// 响应式数据
-const { isMobile } = useDevice()
-const selectedQuick = ref('month')
-
-const getCurrentMonthRange = (): [string, string] => {
-  const today = new Date()
-  const startDate = new Date(today.getFullYear(), today.getMonth(), 1)
-  const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0)
-  return [
-    startDate.toISOString().split('T')[0],
-    endDate.toISOString().split('T')[0]
-  ]
-}
-
-const dateRange = ref<[string, string]>(getCurrentMonthRange())
-const chartRef = ref()
-const datePickerRef = ref()
-
-// 授权趋势数据
-const trendData = ref<{ date: string; value: number }[]>([])
-const chartLoading = ref(false)
-
-// 图表配置
 const chartOption = computed(() => {
-  const dates = trendData.value.map(item => item.date.substring(5)) // 只显示月-日
-  const values = trendData.value.map(item => item.value)
-  const rawMax = values.length ? Math.max(...values) : 0
-  const baseMax = Math.max(rawMax, 20)
-  const minTickCount = 4 // 至少展示4个区间
-  const niceInterval = Math.max(5, Math.ceil(baseMax / minTickCount / 5) * 5)
-  const niceMax = Math.ceil(baseMax / niceInterval) * niceInterval
-  
+  const values = props.data.map(item => item.total_authorizations)
   return {
-    grid: {
-      left: '3%',   // percentage so margins scale with container width
-      right: '3%',
-      top: 30,
-      bottom: 30,   // reduced: containLabel handles room for axis labels
-      containLabel: true // axis labels are always contained within the grid boundary
-    },
+    animationDuration: 350,
+    grid: { left: '3%', right: '3%', top: 24, bottom: 12, containLabel: true },
     xAxis: {
       type: 'category',
-      data: dates,
-      axisLine: {
-        show: false
-      },
-      axisTick: {
-        show: false
-      },
-      axisLabel: {
-        color: appStore.isDark ? 'rgba(255, 255, 255, 1)' : '#303133',
-        fontSize: 12,
-        fontFamily: 'Inter',
-        margin: 12
-      }
+      boundaryGap: false,
+      data: props.data.map(item => item.date.substring(5)),
+      axisLine: { lineStyle: { color: appStore.isDark ? '#606266' : '#dcdfe6' } },
+      axisTick: { show: false },
+      axisLabel: { color: appStore.isDark ? '#cfd3dc' : '#606266', fontSize: 12, hideOverlap: true }
     },
     yAxis: {
       type: 'value',
       min: 0,
-      max: niceMax,
-      interval: niceInterval,
-      axisLine: {
-        show: false
-      },
-      axisTick: {
-        show: false
-      },
-      axisLabel: {
-        color: appStore.isDark ? 'rgba(255, 255, 255, 1)' : '#303133',
-        fontSize: 12,
-        fontFamily: 'Inter',
-        align: 'right'
-      },
-      splitLine: {
-        lineStyle: {
-          color: appStore.isDark ? 'rgba(255, 255, 255, 0.12)' : '#E4E7ED',
-          width: 1
-        }
-      }
+      minInterval: 1,
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: { color: appStore.isDark ? '#cfd3dc' : '#606266', fontSize: 12 },
+      splitLine: { lineStyle: { color: appStore.isDark ? '#414243' : '#ebeef5' } }
     },
     tooltip: {
       trigger: 'axis',
-      backgroundColor: appStore.isDark ? 'rgba(31, 41, 53, 1)' : '#FFFFFF',
-      borderColor: appStore.isDark ? 'rgba(255, 255, 255, 0.12)' : '#E4E7ED',
-      borderWidth: 0.5,
-      borderRadius: 4,
-      textStyle: {
-        color: appStore.isDark ? 'rgba(255, 255, 255, 1)' : '#303133',
-        fontSize: 12
-      },
-      extraCssText: 'box-shadow: 0px 4px 12px 0px rgba(59, 210, 180, 0.2); backdrop-filter: blur(4px);',
-      appendToBody: true, // mount tooltip DOM on <body> to escape overflow:hidden on card
-      formatter: (params: any) => {
-        const data = params[0]
-        return `${t('chart.licenseTrend.tooltip.licenseCount')}: ${data.value}`
+      appendToBody: true,
+      confine: true,
+      backgroundColor: appStore.isDark ? '#2d2d2d' : '#ffffff',
+      borderColor: appStore.isDark ? '#414243' : '#e4e7ed',
+      textStyle: { color: appStore.isDark ? '#ffffff' : '#303133' },
+      formatter: (params: Array<{ axisValue: string; value: number }>) => {
+        const point = params[0]
+        return `${point.axisValue}<br/>${t('chart.licenseTrend.tooltip.licenseCount')}: ${point.value}`
       }
     },
-    series: [
-      {
-        type: 'line',
-        data: values,
-        smooth: true,
-        lineStyle: {
-          color: '#00C27C',
-          width: 2
-        },
-        itemStyle: {
-          color: '#00C27C',
-          borderColor: '#00C27C',
-          borderWidth: 3
-        },
-        symbol: 'circle',
-        symbolSize: 8,
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 12,
-            shadowColor: 'rgba(59, 210, 180, 1)'
-          }
-        },
-        areaStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [
-              {
-                offset: 0,
-                color: 'rgba(90, 216, 166, 0.6)'
-              },
-              {
-                offset: 1,
-                color: 'rgba(90, 216, 166, 0.08)'
-              }
-            ]
-          }
-        }
-      }
-    ]
+    series: [{
+      type: 'line',
+      data: values,
+      smooth: true,
+      showSymbol: values.length <= 31,
+      symbolSize: 6,
+      lineStyle: { color: '#019c7c', width: 3 },
+      itemStyle: { color: '#019c7c' },
+      areaStyle: { color: 'rgba(1, 156, 124, 0.10)' },
+      emphasis: { focus: 'series' }
+    }]
   }
-})
-
-// 快捷选择处理 - 简化版，不处理弹出层冲突
-const handleQuickSelect = (value: string) => {
-  selectedQuick.value = value
-  
-  const today = new Date()
-  let startDate: Date
-  let endDate: Date
-  
-  switch (value) {
-    case 'week':
-      // 最近7天：今天往前6天
-      startDate = new Date(today)
-      startDate.setDate(today.getDate() - 6)
-      endDate = new Date(today)
-      break
-    case 'month':
-      // 最近30天：今天往前29天
-      startDate = new Date(today)
-      startDate.setDate(today.getDate() - 29)
-      endDate = new Date(today)
-      break
-    default:
-      return
-  }
-  
-  // 设置日期值
-  dateRange.value = [
-    startDate.toISOString().split('T')[0],
-    endDate.toISOString().split('T')[0]
-  ]
-  
-  // 更新图表数据
-  updateChartData()
-}
-
-// 日期范围改变处理 - 只有通过日期选择器手动选择时才触发
-const handleDateChange = (dates: [string, string] | null) => {
-  if (dates) {
-    // 清空快捷选择状态，表示用户手动选择了日期
-    selectedQuick.value = ''
-    dateRange.value = dates
-    updateChartData()
-  }
-}
-
-// 切换到编辑模式（显示真正的日期选择器）
-const switchToEditMode = () => {
-  selectedQuick.value = ''
-}
-
-// 格式化日期范围用于显示
-const formatDateRange = (range: [string, string]) => {
-  if (!range || !range[0] || !range[1]) {
-    return t('chart.licenseTrend.datePicker.selectDateRange')
-  }
-  
-  const startDate = new Date(range[0])
-  const endDate = new Date(range[1])
-  
-  const formatDateRange = (date: Date) => {
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${month}-${day}`
-  }
-  
-  return `${formatDateRange(startDate)} ${t('chart.licenseTrend.datePicker.rangeSeparator')} ${formatDateRange(endDate)}`
-}
-
-// 获取授权趋势数据
-const fetchAuthorizationTrend = async (startDate: string, endDate: string) => {
-  console.log('开始请求授权趋势数据:', { startDate, endDate })
-  try {
-    chartLoading.value = true
-    const response = await getAuthorizationTrend({
-      type: "custom",
-      start_date:startDate,
-      end_date:endDate
-    })
-
-    console.log('授权趋势API响应:', response)
-
-    // 将API返回的trend-data转换为图表需要的格式
-    const apiTrendData = response.data.trend_data as TrendDataItem[]
-    console.log('趋势数据:', apiTrendData)
-
-    trendData.value = apiTrendData.map(item => ({
-      date: item.date,
-      value: item.total_authorizations
-    }))
-
-    console.log('转换后的图表数据:', trendData.value)
-  } catch (error: any) {
-    console.error('获取授权趋势数据失败:', error)
-    ElMessage.error(error?.backendMessage || '获取授权趋势数据失败')
-  } finally {
-    chartLoading.value = false
-  }
-}
-
-// 更新图表数据
-const updateChartData = () => {
-  console.log('updateChartData 被调用，日期范围:', dateRange.value)
-  fetchAuthorizationTrend(dateRange.value[0], dateRange.value[1])
-}
-
-
-onMounted(() => {
-  console.log('LicenseTrendChart 组件已挂载，开始初始化')
-  // 初始化时直接调用快捷选择，设置为本月
-  handleQuickSelect('month')
-  console.log('已调用 handleQuickSelect(month)')
 })
 </script>
 
-<style lang="scss" scoped>
-.license-trend-chart {
-  background: var(--app-content-bg);
-  border-radius: 0.42vw; /* 8px/1920 = 0.42vw */
-  box-shadow: var(--app-shadow);
-  overflow: hidden;
-  /* Height is driven by the chart canvas below; card grows to fit content */
-  display: flex;
-  flex-direction: column;
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.25vw 1.25vw 0; /* 24px/1920 = 1.25vw */
-  flex-shrink: 0; /* 头部不收缩 */
-  
-  .chart-title {
-    font-family: 'OPPOSans', sans-serif;
-    font-size: 1.04vw; /* 20px/1920 = 1.04vw */
-    font-weight: 400;
-    color: var(--app-text-primary);
-    margin: 0;
-    line-height: 1.3;
-  }
-}
-
-.time-selector {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  
-  .quick-selector {
-    display: flex;
-    gap: 4px;
-  }
-  
-  :deep(.el-button--small) {
-    height: 32px;
-    padding: 0 12px;
-    font-size: 14px;
-    border-radius: 4px;
-  }
-  
-  :deep(.el-button--default) {
-    background: var(--app-bg-color);
-    border-color: var(--app-border-light);
-    color: var(--app-text-secondary);
-    
-    &:hover {
-      background: var(--app-border-color);
-      border-color: var(--app-border-color);
-    }
-  }
-  
-  :deep(.el-button--primary) {
-    background: #00C27C;
-    border-color: #00C27C;
-    
-    &:hover {
-      background: #019C7C;
-      border-color: #019C7C;
-    }
-  }
-  
-  :deep(.el-date-editor) {
-    height: 32px;
-    
-    .el-input__wrapper {
-      border-radius: 4px;
-    }
-  }
-  
-  // 日期显示组件样式
-  .date-display-wrapper {
-    display: inline-block;
-    
-    .date-display {
-      height: 32px;
-      width: 200px;
-      padding: 0 12px;
-      border: 1px solid var(--app-border-color);
-      border-radius: 4px;
-      background: var(--app-content-bg);
-      font-size: 14px;
-      color: var(--app-text-regular);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      
-      &:hover {
-        border-color: var(--app-border-color);
-      }
-      
-      &:focus {
-        border-color: #019C7C;
-        outline: none;
-      }
-      
-      .date-icon {
-        color: var(--app-text-secondary);
-        font-size: 14px;
-        transition: color 0.2s ease;
-      }
-      
-      &:hover .date-icon {
-        color: var(--app-text-secondary);
-      }
-    }
-  }
-}
-
-.chart-container {
-  padding: 1.35vw 1.25vw 1.25vw; /* 26px 24px 24px → vw */
-  flex-shrink: 0; /* chart canvas height drives card size — never compress */
-  display: flex;
-  position: relative; /* establish stacking context for chart canvas */
-  
-  .trend-chart {
-    width: 100%;
-    height: 18vw;      /* ~346px at 1920px reference width */
-    max-height: 248px; /* keeps total card height ≤ 352px (248 + ~50px padding + ~54px header) */
-    min-height: 200px; /* absolute floor so chart is always readable */
-  }
-}
-
-// 响应式设计 - 移动端和平板使用固定像素单位
-@media (max-width: 1024px) {
-  .license-trend-chart {
-    border-radius: 8px; /* 移动端使用固定像素 */
-    box-shadow: var(--app-shadow);
-  }
-  
-  .chart-header {
-    padding: 16px 16px 0; /* 移动端固定像素 */
-    
-    .chart-title {
-      font-size: 18px; /* 移动端固定字体 */
-    }
-  }
-  
-  .chart-container {
-    padding: 16px; /* 移动端固定间距 */
-    
-    .trend-chart {
-      height: 200px; /* 移动端固定高度 */
-      min-height: unset; /* 清除vw最小高度 */
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .chart-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
-    padding: 16px 16px 0;
-  }
-  
-  .chart-title {
-    margin-bottom: 16px;
-    font-size: 18px;
-  }
-  
-  .time-selector {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    
-    // 移动端快捷按钮样式
-    .mobile-quick {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      
-      :deep(.el-button--small) {
-        flex: 1;
-        font-size: 12px;
-        height: 32px;
-        padding: 0 8px;
-        border-radius: 4px;
-        min-width: 0;
-        
-        // 确保文字不被截断
-        span {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
-      
-      // 主要按钮样式
-      :deep(.el-button--primary) {
-        background: #019C7C;
-        border-color: #019C7C;
-        color: #fff;
-      }
-      
-      // 默认按钮样式
-      :deep(.el-button--default) {
-        background: var(--app-bg-color);
-        border-color: var(--app-border-light);
-        color: var(--app-text-secondary);
-
-        &:hover {
-          background: var(--app-border-color);
-          border-color: var(--app-border-color);
-        }
-      }
-    }
-  }
-  
-  .chart-container {
-    padding: 16px;
-    
-    .trend-chart {
-      height: 200px;
-    }
-  }
-}
-
-// 超小屏幕优化 (手机竖屏)
-@media (max-width: 480px) {
-  .chart-header {
-    padding: 12px 12px 0;
-  }
-  
-  .chart-title {
-    font-size: 16px;
-    margin-bottom: 12px;
-  }
-  
-  .time-selector {
-    gap: 12px;
-    
-    .mobile-quick {
-      gap: 4px;
-      
-      :deep(.el-button--small) {
-        font-size: 11px;
-        height: 28px;
-        padding: 0 6px;
-      }
-    }
-  }
-  
-  .chart-container {
-    padding: 12px;
-    
-    .trend-chart {
-      height: 180px;
-    }
-  }
-}
-</style>
-
-<style lang="scss">
-/* 图表组件暗模式样式 - 完美还原设计图 */
-
-/* 图表卡片背景 */
-[data-theme="dark"] .license-trend-chart {
-  background: rgba(31, 41, 53, 1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-}
-
-/* 图表标题 */
-[data-theme="dark"] .chart-title {
-  color: #f9fafb !important;
-}
-
-/* 时间选择器按钮暗模式 */
-[data-theme="dark"] .time-selector :deep(.el-button--default) {
-  background: #4b5563 !important;
-  border-color: #6b7280 !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .time-selector :deep(.el-button--default:hover) {
-  background: #6b7280 !important;
-  border-color: #6b7280 !important;
-  color: #f9fafb !important;
-}
-
-[data-theme="dark"] .time-selector :deep(.el-button--primary) {
-  background: #10b981 !important;
-  border-color: #10b981 !important;
-  color: #ffffff !important;
-}
-
-[data-theme="dark"] .time-selector :deep(.el-button--primary:hover) {
-  background: #059669 !important;
-  border-color: #059669 !important;
-}
-
-/* 日期显示器暗模式 */
-[data-theme="dark"] .date-display {
-  background: #4b5563 !important;
-  border-color: #6b7280 !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .date-display:hover {
-  border-color: #6b7280 !important;
-}
-
-[data-theme="dark"] .date-display:focus {
-  border-color: #10b981 !important;
-}
-
-[data-theme="dark"] .date-display .date-icon {
-  color: #9ca3af !important;
-}
-
-/* 日期选择器暗模式 */
-[data-theme="dark"] .time-selector :deep(.el-date-editor .el-input__wrapper) {
-  background: #4b5563 !important;
-  border-color: #6b7280 !important;
-}
-
-[data-theme="dark"] .time-selector :deep(.el-date-editor .el-input__inner) {
-  color: #e5e7eb !important;
-}
+<style scoped>
+.chart-container { width: 100%; min-height: 220px; display: flex; align-items: center; justify-content: center; }
+.trend-chart { width: 100%; height: 280px; }
+@media (max-width: 1023px) { .trend-chart { height: 240px; } }
+@media (max-width: 767px) { .chart-container { min-height: 200px; } .trend-chart { height: 220px; } }
 </style>

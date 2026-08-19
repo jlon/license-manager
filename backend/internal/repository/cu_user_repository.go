@@ -111,7 +111,11 @@ func (r *cuUserRepository) IncrementLoginAttempts(id string) error {
 }
 
 func (r *cuUserRepository) ResetLoginAttempts(id string) error {
-	return r.db.Model(&models.CuUser{}).Where("id = ?", id).Update("login_attempts", 0).Error
+	return r.db.Model(&models.CuUser{}).Where("id = ?", id).Updates(map[string]interface{}{
+		"login_attempts": 0,
+		"locked_until":   nil,
+		"status":         "active",
+	}).Error
 }
 
 func (r *cuUserRepository) LockAccount(id string, until interface{}) error {

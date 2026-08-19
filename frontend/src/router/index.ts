@@ -38,14 +38,20 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "",
         name: "licenses-search",
-        component: () => import("@/views/Licenses/LicenseSearch.vue"),
-        meta: { title: "授权搜索", requiresAuth: true }
+        redirect: { name: "licenses-list" },
+        meta: { title: "授权列表", requiresAuth: true }
       },
       {
         path: "list",
         name: "licenses-list",
         component: () => import("@/views/Licenses/LinenseList.vue"),
         meta: { title: "授权列表", requiresAuth: true }
+      },
+      {
+        path: "search",
+        name: "licenses-customer-search",
+        component: () => import("@/views/Licenses/LicenseSearch.vue"),
+        meta: { title: "授权搜索", requiresAuth: true }
       },
       {
         path: "create",
@@ -94,8 +100,10 @@ const routes: Array<RouteRecordRaw> = [
   },
 ];
 
+const routerBase = import.meta.env.BASE_URL === './' ? '/' : import.meta.env.BASE_URL
+
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(routerBase),
   routes,
 });
 

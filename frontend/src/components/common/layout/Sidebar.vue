@@ -1,487 +1,126 @@
-<!--
-/**
- * 侧边栏组件
- * 提供应用导航菜单，支持折叠/展开功能和响应式设计
- * 包含Logo区域、导航菜单和底部区域
- */
--->
 <template>
-  <!-- 侧边栏容器 -->
-  <aside class="sidebar" :class="{
-    'sidebar--collapsed': isCollapsed,
-    'sidebar--mobile-open': appStore.isMobile && !isCollapsed
-  }">
-    <!-- Logo区域 -->
-    <div class="sidebar__header">
-      <div class="sidebar__logo">
-        <div class="logo-container">
-          <div class="logo-icon">
-            <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M26.3125 11.4814L22.25 19.5947V22.7148L27.1191 13.0576L29.7393 18.1777L18.7988 40H0L13.5938 22.8037H14L13.8125 23.1201L7.46875 33.541H17.8438V16.9111L7.1875 25.6475L18.0312 10.1406L11.625 14.4463V14.2588L20.4375 0L26.3125 11.4814Z" fill="#019C7C"/>
-              <path d="M34.5498 39.9996H28.75L24.5938 32.8864L27.125 27.6246L34.5498 39.9996ZM41 39.9996H36.2705L27.9346 25.941L30.7188 20.1559L41 39.9996Z" fill="#146B59"/>
-            </svg>
-          </div>
-          <span class="logo-text" v-show="!isCollapsed">Cedar-V</span>
-        </div>
-      </div>
+  <aside class="sidebar" :class="{ 'sidebar--collapsed': isCollapsed, 'sidebar--mobile-open': isMobileOpen }">
+    <div class="sidebar__brand" aria-label="Cedar-V">
+      <svg class="brand-logo" viewBox="0 0 41 40" fill="none" aria-hidden="true">
+        <path d="M26.3125 11.4814L22.25 19.5947V22.7148L27.1191 13.0576L29.7393 18.1777L18.7988 40H0L13.5938 22.8037H14L13.8125 23.1201L7.46875 33.541H17.8438V16.9111L7.1875 25.6475L18.0312 10.1406L11.625 14.4463V14.2588L20.4375 0L26.3125 11.4814Z" fill="#019C7C"/>
+        <path d="M34.5498 39.9996H28.75L24.5938 32.8864L27.125 27.6246L34.5498 39.9996ZM41 39.9996H36.2705L27.9346 25.941L30.7188 20.1559L41 39.9996Z" fill="#146B59"/>
+      </svg>
+      <span v-if="!isCollapsed || appStore.isMobile" class="brand-name">Cedar-V</span>
     </div>
-
-    <!-- 导航菜单 -->
-    <nav class="sidebar__nav">
-      <div class="nav-section">
-        <slot name="nav-items">
-          <div class="nav-item" v-for="item in navItems" :key="item.id">
-            <a :href="item.href" class="nav-link" :class="{ 'nav-link--active': item.active }"
-              @click="handleNavClick(item, $event)">
-              <div class="nav-icon-wrapper">
-                <SidebarIcon v-if="item.icon" :name="item.icon" :active="item.active" />
-              </div>
-              <span v-show="!isCollapsed" class="nav-text">{{ item.label }}</span>
-            </a>
-
-            <!-- 子菜单 -->
-            <div v-if="item.children && !isCollapsed" class="nav-submenu">
-              <a v-for="child in item.children" :key="child.id" :href="child.href" class="nav-sublink"
-                :class="{ 'nav-sublink--active': child.active }" @click="handleNavClick(child, $event)">
-                <span class="nav-subtext">{{ child.label }}</span>
-              </a>
-            </div>
-          </div>
-        </slot>
-      </div>
+    <nav class="sidebar__nav" :aria-label="t('navigation.mainNavigation')">
+      <el-tooltip
+        v-for="item in navItems"
+        :key="item.id"
+        :content="item.label"
+        placement="right"
+        :disabled="!isCollapsed || appStore.isMobile"
+      >
+        <button
+          type="button"
+          class="nav-item"
+          :class="{ 'nav-item--active': item.active }"
+          :aria-current="item.active ? 'page' : undefined"
+          @click="$emit('navClick', item, $event)"
+        >
+          <span class="nav-icon"><SidebarIcon v-if="item.icon" :name="item.icon" :active="item.active" /></span>
+          <span v-if="!isCollapsed || appStore.isMobile" class="nav-label">{{ item.label }}</span>
+        </button>
+      </el-tooltip>
     </nav>
   </aside>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/store/modules/app'
 import SidebarIcon from '@/components/common/icons/SidebarIcon.vue'
 
-// 导航项接口定义
 interface NavItem {
-  id: string // 导航项唯一标识
-  label: string // 显示文本
-  href: string // 链接地址
-  icon?: string // 图标类名（可选）
-  active?: boolean // 是否为当前活跃项（可选）
-  children?: NavItem[] // 子菜单项（可选）
+  id: string
+  label: string
+  href: string
+  icon?: string
+  active?: boolean
 }
 
-// 组件属性接口定义
-interface Props {
-  appName?: string // 应用名称，显示在Logo区域
-  navItems?: NavItem[] // 导航菜单项列表
-  collapsible?: boolean // 是否允许折叠侧边栏
-  defaultCollapsed?: boolean // 默认是否为折叠状态
-}
-
-// 定义组件属性和默认值  
-withDefaults(defineProps<Props>(), {
-  appName: 'Cedar',
-  navItems: () => [],
-  collapsible: true,
-  defaultCollapsed: false
-})
-
-// 定义组件事件
-const emit = defineEmits<{
-  navClick: [item: NavItem, event: Event]
-  toggle: [collapsed: boolean]
-}>()
-
-// 使用全局状态管理
+defineProps<{ navItems: NavItem[] }>()
+defineEmits<{ navClick: [item: NavItem, event: Event] }>()
+const { t } = useI18n()
 const appStore = useAppStore()
-
-// 从 store 获取折叠状态
 const isCollapsed = computed(() => appStore.sidebarCollapsed)
-
-// 处理导航项点击事件
-const handleNavClick = (item: NavItem, event: Event) => {
-  emit('navClick', item, event)
-}
+const isMobileOpen = computed(() => appStore.isMobile && !appStore.sidebarCollapsed)
 </script>
 
 <style lang="scss" scoped>
-// Variables and mixins are auto-injected via Vite configuration
-@use 'sass:color';
-
-/* 侧边栏 */
 .sidebar {
   position: fixed;
-  left: 0;
-  top: 0;
-  width: 280px;
-  height: 100vh;
-  background: var(--app-sidebar-bg);
-  border-right: 1px solid var(--app-border-light);
+  inset: 0 auto 0 0;
+  z-index: 2000;
+  width: var(--layout-sidebar-width);
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
-  z-index: 2000;
-  
-  @include mobile {
-    transform: translateX(-100%);
-    width: 100vw;
-    max-width: 320px;
-    
-    &--mobile-open {
-      transform: translateX(0);
-    }
-  }
+  overflow: hidden;
+  background: var(--app-sidebar-bg);
+  border-right: 1px solid var(--app-border-light);
+  transition: width 0.2s ease, transform 0.2s ease;
 }
-
-.sidebar--collapsed {
-  width: 64px;
-  
-  @include mobile {
-    width: 100vw;
-    max-width: 320px;
-  }
-}
-
-/* Header 区域 */
-.sidebar__header {
-  height: 80px;
-  @include flex-between;
-  border-bottom: none;
-}
-
-.sidebar__logo {
-  @include flex-center-vertical;
-  flex: 1;
+.sidebar--collapsed { width: var(--layout-sidebar-collapsed-width); }
+.sidebar__brand {
+  height: var(--layout-header-height);
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
   justify-content: center;
-}
-
-.logo-container {
-  @include flex-center-vertical;
-  gap: $spacing-base;
-}
-
-.logo-icon {
-  width: 41px;
-  height: 40px;
+  gap: 12px;
   flex-shrink: 0;
+  border-bottom: 1px solid var(--app-border-light);
 }
-
-.logo-text {
-  font-family: 'Swis721 BlkCn BT', sans-serif;
-  font-size: 30px;
-  font-style: normal;
-  font-weight: 400;
-  color: #333;
-  @include text-ellipsis;
-  line-height: normal;
-
-  @include mobile {
-    font-size: 24px;
-  }
-}
-
-.sidebar__toggle {
-  // 所有CSS声明放在@include之前
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  min-height: 36px;
-  padding: 0;
-  background: var(--app-content-bg);
-  border: 1px solid var(--app-border-light);
-  border-radius: 8px;
-  color: var(--app-text-secondary);
-
-  box-shadow: var(--app-shadow);
-  
-  @include button-base;
-  
-  @include non-touch-device {
-    &:hover {
-      background: var(--app-bg-color);
-      color: var(--el-color-primary);
-      border-color: var(--el-color-primary-light-8);
-      transform: scale(1.02);
-    }
-  }
-  
-  &--collapsed {
-    background: var(--el-color-primary);
-    color: white;
-    border-color: var(--el-color-primary);
-    box-shadow: 0 2px 8px var(--el-color-primary-light-7);
-
-    @include non-touch-device {
-      &:hover {
-        background: var(--el-color-primary-dark-2);
-        box-shadow: 0 4px 12px var(--el-color-primary-light-5);
-      }
-    }
-  }
-}
-
-.toggle-icon {
-  width: 16px;
-  height: 16px;
-  font-size: $font-size-base;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@include non-touch-device {
-  .sidebar__toggle:hover .toggle-icon {
-    transform: translateX(1px);
-  }
-  
-  .sidebar__toggle--collapsed:hover .toggle-icon {
-    transform: translateX(-1px);
-  }
-}
-
-/* 导航区域 */
+.brand-logo { width: 34px; height: 34px; flex-shrink: 0; }
+.brand-name { font-family: 'Swis721 BlkCn BT', sans-serif; font-size: 26px; color: var(--app-text-primary); white-space: nowrap; }
 .sidebar__nav {
   flex: 1;
-  padding: 8px 0;
   overflow-y: auto;
-  @include smooth-scroll;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
-
-.nav-section {
-  padding: 8px 16px;
-}
-
 .nav-item {
-  margin-bottom: 16px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--app-text-regular);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, color 0.15s ease;
 }
-
-.nav-link {
-  @include flex-center-vertical;
-  gap: 16px;
-  padding: 16px 24px;
-  color: var(--app-text-primary);
-  text-decoration: none;
-  border-radius: 24px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1;
-  
-  @include mobile {
-    min-height: 44px; // 触摸目标大小
-    padding: 16px;
+.nav-item:hover { background: var(--el-color-primary-light-9); color: var(--el-color-primary); }
+.nav-item--active { background: var(--el-color-primary-light-9); color: var(--el-color-primary); font-weight: 600; }
+.nav-icon { width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.nav-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sidebar--collapsed .nav-item { justify-content: center; padding: 0; }
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar { width: var(--layout-sidebar-collapsed-width); }
+  .sidebar__brand { padding: 0; }
+  .brand-name, .nav-label { display: none; }
+  .nav-item { justify-content: center; padding: 0; }
+}
+@media (max-width: 767px) {
+  .sidebar {
+    width: min(82vw, 300px);
+    transform: translateX(-100%);
+    box-shadow: 12px 0 30px rgba(15, 23, 42, 0.16);
   }
-
-  @include non-touch-device {
-    &:hover {
-      background: var(--el-color-primary-light-9);
-      color: var(--el-color-primary);
-
-      .nav-icon {
-        color: var(--el-color-primary);
-      }
-    }
-  }
-
-  &--active {
-    background: var(--el-color-primary-light-8);
-    color: var(--el-color-primary);
-    font-weight: 500;
-
-    .nav-text {
-      color: var(--el-color-primary);
-    }
-
-    .nav-icon {
-      color: var(--el-color-primary);
-    }
-  }
-}
-
-.nav-icon-wrapper {
-  width: 20px;
-  height: 20px;
-  @include flex-center;
-  border-radius: 4px;
-  flex-shrink: 0;
-}
-
-.nav-icon {
-  width: 20px;
-  height: 20px;
-  font-size: 14px;
-  color: var(--app-text-secondary);
-}
-
-.nav-text {
-  @include text-ellipsis;
-}
-
-/* 子菜单 */
-.nav-submenu {
-  margin-left: 32px;
-  margin-top: 4px;
-}
-
-.nav-sublink {
-  display: block;
-  padding: 8px 16px;
-  color: var(--app-text-secondary);
-  text-decoration: none;
-  border-radius: 4px;
-  font-size: 12px;
-  transition: all 0.2s;
-  margin-bottom: 4px;
-  
-  @include mobile {
-    min-height: 40px;
-  }
-  
-  @include non-touch-device {
-    &:hover {
-      background: var(--el-color-primary-light-9);
-      color: var(--el-color-primary);
-    }
-  }
-
-  &--active {
-    background: var(--el-color-primary-light-9);
-    color: var(--el-color-primary);
-    font-weight: 500;
-  }
-}
-
-.nav-subtext {
-  @include text-ellipsis;
-}
-
-/* 底部区域 */
-.sidebar__footer {
-  padding: 16px;
-  border-top: 1px solid var(--app-border-light);
-}
-
-/* 收起状态下的样式调整 */
-.sidebar--collapsed {
-  .sidebar__logo {
-    @include flex-center;
-  }
-  
-  .logo-container {
-    @include flex-center;
-  }
-  
-  .logo-text {
-    display: none;
-  }
-  
-  .nav-link {
-    @include flex-center;
-    padding: 4px 16px;
-  }
-  
-  .nav-text {
-    display: none;
-  }
-  
-  .nav-submenu {
-    display: none;
-  }
-}
-
-/* 滚动条样式 */
-.sidebar__nav {
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 2px;
-    
-    @include non-touch-device {
-      &:hover {
-        background: rgba(0, 0, 0, 0.2);
-      }
-    }
-  }
-}
-</style>
-
-<style lang="scss">
-/* 侧边栏暗模式样式 - 完美还原设计图 */
-
-/* 侧边栏背景和边框 */
-[data-theme="dark"] .sidebar {
-  background: rgba(31, 41, 53, 1) !important;
-  border-right-color: rgba(255, 255, 255, 0.12) !important;
-}
-
-/* 侧边栏头部分割线 */
-[data-theme="dark"] .sidebar__header {
-  border-bottom: none !important;
-}
-
-/* Logo文字颜色 */
-[data-theme="dark"] .logo-text {
-  color: #f9fafb !important;
-}
-
-/* 导航链接暗模式 */
-[data-theme="dark"] .nav-link {
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .nav-link:hover {
-  background: rgba(16, 185, 129, 0.15) !important;
-  color: #10b981 !important;
-}
-
-[data-theme="dark"] .nav-link--active {
-  background: rgba(16, 185, 129, 0.2) !important;
-  color: #10b981 !important;
-}
-
-[data-theme="dark"] .nav-link--active .nav-text {
-  color: #10b981 !important;
-}
-
-/* 导航图标暗模式 */
-[data-theme="dark"] .nav-icon {
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] .nav-link:hover .nav-icon,
-[data-theme="dark"] .nav-link--active .nav-icon {
-  color: #10b981 !important;
-}
-
-/* 子菜单暗模式 */
-[data-theme="dark"] .nav-sublink {
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] .nav-sublink:hover {
-  background: rgba(16, 185, 129, 0.15) !important;
-  color: #10b981 !important;
-}
-
-[data-theme="dark"] .nav-sublink--active {
-  background: rgba(16, 185, 129, 0.15) !important;
-  color: #10b981 !important;
-}
-
-/* 底部区域暗模式 */
-[data-theme="dark"] .sidebar__footer {
-  border-top-color: rgba(255, 255, 255, 0.12) !important;
-}
-
-/* 滚动条暗模式 */
-[data-theme="dark"] .sidebar__nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2) !important;
-}
-
-[data-theme="dark"] .sidebar__nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3) !important;
+  .sidebar--collapsed { width: min(82vw, 300px); }
+  .sidebar--mobile-open { transform: translateX(0); }
+  .sidebar__brand { justify-content: flex-start; }
+  .sidebar--collapsed .nav-item { justify-content: flex-start; padding: 0 14px; }
 }
 </style>

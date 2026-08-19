@@ -59,6 +59,7 @@ func (r *userRepository) ResetLoginAttempts(ctx context.Context, id string) erro
 			"login_attempts": 0,
 			"last_login_at":  &now,
 			"locked_until":   nil,
+			"status":         "active",
 		}).Error
 }
 

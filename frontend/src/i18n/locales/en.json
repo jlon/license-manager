@@ -4,7 +4,7 @@
     "subtitle": "Sign in to your account",
     "usernamePlaceholder": "Please enter Username",
     "passwordPlaceholder": "Enter password",
-    "remember": "Remember password",
+    "remember": "Remember username",
     "forgotPassword": "Forgot password?",
     "forgotPasswordAlert": "Password recovery feature is not implemented yet",
     "submit": "Get Started",
@@ -20,7 +20,7 @@
     },
     "heroTitleLine1": "Secure License",
     "heroTitleLine2": "Management",
-    "heroSubtitle": "Streamline your software licensing workflow with our enterprise-grade platform.",
+    "heroSubtitle": "Manage software licenses with an open and practical community edition.",
     "stats": {
       "totalAuthCodes": "Total Auth Codes",
       "totalAuthCodesSubLabel": "2.4K new this month",
@@ -33,7 +33,9 @@
     },
     "welcomeTitle": "Welcome back",
     "welcomeSubtitle": "Sign in to your account to continue",
-    "copyright": "© 2025 Cedar-V. All rights reserved."
+    "communityEdition": "Open Source Community Edition",
+    "brandNote": "Open and reliable software licensing essentials.",
+    "copyright": "© {year} Cedar-V. All rights reserved."
   },
   "sidebar": {
     "expand": "Expand Sidebar",
@@ -41,6 +43,25 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "eyebrow": "Community Overview",
+    "heading": "License Operations Overview",
+    "description": "Monitor the community edition's existing license volume, trends, and recent records.",
+    "updatedAt": "Updated at {time}",
+    "refresh": "Refresh",
+    "overviewTitle": "License statistics",
+    "noData": "Data unavailable",
+    "trendTitle": "Authorization Trend",
+    "trendDescription": "View authorization volume by week, month, or a custom range.",
+    "customRange": "Custom",
+    "to": "to",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "retry": "Retry",
+    "loadFailed": "Failed to load data",
+    "noTrendData": "No trend data for this period",
+    "recentDescription": "Recently created authorization records.",
+    "viewAll": "View all",
+    "noRecentData": "No recent authorizations",
     "stats": {
       "totalAuthCodes": "Total Auth Codes",
       "activeLicenses": "Active Licenses",
@@ -53,7 +74,9 @@
         "vsLastMonth": "{rate}% vs. last month",
         "yesterday": "{n} yesterday",
         "urgent": "Urgent Follow-up",
-        "heartbeatTimeout": "Heartbeat Timeout"
+        "heartbeatTimeout": "Heartbeat Timeout",
+        "noRisk": "No urgent expirations",
+        "expiryReminder": "Review upcoming expirations"
       }
     },
     "recentLicenses": {
@@ -84,6 +107,8 @@
       "users": "System Users"
     },
     "toggleSidebar": "Toggle Sidebar",
+    "mainNavigation": "Main navigation",
+    "breadcrumbLabel": "Breadcrumb",
     "tooltip": {
       "user": "User Settings",
       "search": "Search",

@@ -12,12 +12,19 @@ import Axios from './https/index'
 
 // API响应类型
 export interface RecentAuthorizationItem {
-  id: number
+  id: string
+  code: string
+  customer_id: string
   customer_name: string
   description: string
-  status: number // 1代表有效，0代表失效
+  status: 'normal' | 'locked' | 'expired'
+  status_display: string
+  start_date: string
   end_date: string
+  max_activations: number
+  current_activations: number
   created_at: string
+  updated_at: string
 }
 
 // 请求格式
@@ -34,8 +41,8 @@ export interface RecentAuthorizationResponse {
 }
 
 // 获取最近授权列表 
-export const getRecentAuthorizations = (): Promise<ApiResponse<RecentAuthorizationResponse>> => {
-  return Axios.get('api/v1/dashboard/recent-authorizations')
+export const getRecentAuthorizations = (params?: { limit?: number }): Promise<ApiResponse<RecentAuthorizationResponse>> => {
+  return Axios.get('api/v1/dashboard/recent-authorizations', { params })
 }
 
 // 授权趋势数据类型定义

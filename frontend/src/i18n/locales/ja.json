@@ -4,7 +4,7 @@
     "subtitle": "アカウントにログイン",
     "usernamePlaceholder": "ユーザー名を入力してください",
     "passwordPlaceholder": "パスワードを入力してください",
-    "remember": "パスワードを記憶する",
+    "remember": "ユーザー名を記憶する",
     "forgotPassword": "パスワードをお忘れですか？",
     "forgotPasswordAlert": "パスワード回復機能はまだ実装されていません",
     "submit": "利用開始",
@@ -20,7 +20,7 @@
     },
     "heroTitleLine1": "セキュアな",
     "heroTitleLine2": "ライセンス管理",
-    "heroSubtitle": "エンタープライズグレードのプラットフォームで、ソフトウェアライセンス管理を効率化。",
+    "heroSubtitle": "オープンで実用的なコミュニティ版で、ソフトウェアライセンスを管理します。",
     "stats": {
       "totalAuthCodes": "認可コード総数",
       "totalAuthCodesSubLabel": "今月 2.4K 件追加",
@@ -33,7 +33,9 @@
     },
     "welcomeTitle": "おかえりなさい",
     "welcomeSubtitle": "アカウントにサインインして続けてください",
-    "copyright": "© 2025 Cedar-V. All rights reserved."
+    "communityEdition": "オープンソース・コミュニティ版",
+    "brandNote": "オープンで信頼できるソフトウェアライセンス基盤。",
+    "copyright": "© {year} Cedar-V. All rights reserved."
   },
   "sidebar": {
     "expand": "サイドバーを展開",
@@ -41,6 +43,25 @@
   },
   "dashboard": {
     "title": "ダッシュボード",
+    "eyebrow": "コミュニティ版概要",
+    "heading": "ライセンス運用概要",
+    "description": "コミュニティ版の既存ライセンス数、傾向、最近の記録を確認します。",
+    "updatedAt": "{time} に更新",
+    "refresh": "更新",
+    "overviewTitle": "ライセンス統計",
+    "noData": "データを利用できません",
+    "trendTitle": "認可の推移",
+    "trendDescription": "週、月、または期間指定で認可数の変化を確認します。",
+    "customRange": "期間指定",
+    "to": "から",
+    "startDate": "開始日",
+    "endDate": "終了日",
+    "retry": "再試行",
+    "loadFailed": "データの読み込みに失敗しました",
+    "noTrendData": "この期間の推移データはありません",
+    "recentDescription": "最近作成された認可記録です。",
+    "viewAll": "すべて表示",
+    "noRecentData": "最近の認可はありません",
     "stats": {
       "totalAuthCodes": "認可コード総数",
       "activeLicenses": "アクティブライセンス",
@@ -53,7 +74,9 @@
         "vsLastMonth": "先月比 {rate}%",
         "yesterday": "昨日 {n} 件",
         "urgent": "緊急対応が必要",
-        "heartbeatTimeout": "ハートビートタイムアウト"
+        "heartbeatTimeout": "ハートビートタイムアウト",
+        "noRisk": "緊急の期限切れはありません",
+        "expiryReminder": "期限切れ予定を確認"
       }
     },
     "recentLicenses": {
@@ -84,6 +107,8 @@
       "users": "システムユーザー"
     },
     "toggleSidebar": "サイドバー切り替え",
+    "mainNavigation": "メインナビゲーション",
+    "breadcrumbLabel": "パンくずリスト",
     "tooltip": {
       "user": "ユーザー設定",
       "search": "検索",

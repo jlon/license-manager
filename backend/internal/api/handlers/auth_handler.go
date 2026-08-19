@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
@@ -53,13 +54,17 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	data, err := h.authService.Login(c.Request.Context(), &req, clientIP)
 	if err != nil {
-		errorCode := "100003" // 登录失败
-		if err.Error() == "配置未初始化" {
-			errorCode = "900004" // 服务器内部错误
+		lang := middleware.GetLanguage(c)
+		errorCode := "900004"
+		message := i18n.GetErrorMessage(errorCode, lang)
+
+		var i18nErr *i18n.I18nError
+		if errors.As(err, &i18nErr) {
+			errorCode = i18nErr.Code
+			message = i18nErr.Message
 		}
 
-		lang := middleware.GetLanguage(c)
-		status, errCode, message := i18n.NewI18nErrorResponse(errorCode, lang, err.Error())
+		status, errCode, _ := i18n.NewI18nErrorResponse(errorCode, lang)
 		c.JSON(status, models.ErrorResponse{
 			Code:      errCode,
 			Message:   message,

@@ -4,7 +4,7 @@
     "subtitle": "登录您的账户",
     "usernamePlaceholder": "请输入用户名",
     "passwordPlaceholder": "请输入密码",
-    "remember": "记住密码",
+    "remember": "记住用户名",
     "forgotPassword": "忘记密码？",
     "forgotPasswordAlert": "忘记密码功能暂未实现",
     "submit": "开始使用",
@@ -33,7 +33,9 @@
     },
     "welcomeTitle": "授权管理平台",
     "welcomeSubtitle": "登录您的账户",
-    "copyright": "© 2025 Cedar-V. 保留所有权利。"
+    "communityEdition": "开源社区版",
+    "brandNote": "开放、可靠的软件授权基础能力。",
+    "copyright": "© {year} Cedar-V. 保留所有权利。"
   },
   "sidebar": {
     "expand": "展开侧边栏",
@@ -41,6 +43,25 @@
   },
   "dashboard": {
     "title": "仪表盘",
+    "eyebrow": "社区版概览",
+    "heading": "授权运营概览",
+    "description": "集中查看社区版现有授权规模、趋势和近期记录。",
+    "updatedAt": "更新于 {time}",
+    "refresh": "刷新",
+    "overviewTitle": "授权统计",
+    "noData": "数据暂不可用",
+    "trendTitle": "授权趋势",
+    "trendDescription": "按周、月或自定义时间查看授权数量变化。",
+    "customRange": "自定义",
+    "to": "至",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "retry": "重试",
+    "loadFailed": "数据加载失败",
+    "noTrendData": "当前时间范围暂无趋势数据",
+    "recentDescription": "最近创建的授权记录。",
+    "viewAll": "查看全部",
+    "noRecentData": "暂无近期授权",
     "stats": {
       "totalAuthCodes": "授权码总量",
       "activeLicenses": "活跃许可证",
@@ -53,7 +74,9 @@
         "vsLastMonth": "较上月 {rate}%",
         "yesterday": "昨日 {n} 个",
         "urgent": "紧急跟进",
-        "heartbeatTimeout": "心跳超时"
+        "heartbeatTimeout": "心跳超时",
+        "noRisk": "当前无紧急到期",
+        "expiryReminder": "提前关注到期授权"
       }
     },
     "recentLicenses": {
@@ -84,6 +107,8 @@
       "users": "系统用户"
     },
     "toggleSidebar": "切换侧边栏",
+    "mainNavigation": "主导航",
+    "breadcrumbLabel": "面包屑导航",
     "tooltip": {
       "user": "用户设置",
       "search": "搜索",

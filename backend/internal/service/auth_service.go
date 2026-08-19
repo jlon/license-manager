@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"license-manager/internal/config"
 	"license-manager/internal/models"
@@ -53,34 +52,14 @@ func (s *authService) Login(ctx context.Context, req *models.LoginRequest, clien
 		return nil, i18n.NewI18nError("100005", lang) // 权限不足/账号已被禁用
 	}
 
-	// 检查账号是否被锁定
-	if user.IsAccountLocked() {
-		return nil, i18n.NewI18nError("100001", lang) // 认证已过期/账号已被锁定
-	}
-
 	// 验证密码
 	if !utils.CheckPasswordHash(req.Password, user.PasswordHash) {
-		// 增加登录失败次数
-		s.userRepo.IncrementLoginAttempts(ctx, user.ID)
-
-		// 检查是否需要锁定账号
-		if user.LoginAttempts >= 4 { // 第5次失败时锁定
-			s.userRepo.LockUser(ctx, user.ID, 30)         // 锁定30分钟
-			return nil, i18n.NewI18nError("100001", lang) // 密码错误次数过多，账号已被锁定
-		}
-
 		return nil, i18n.NewI18nError("100003", lang) // 用户名或密码错误
 	}
 
 	// 登录成功，重置登录失败次数并更新登录信息
 	user.LastLoginIP = &clientIP
 	s.userRepo.ResetLoginAttempts(ctx, user.ID)
-
-	// 如果账号状态是locked但锁定时间已过期，更新状态为active
-	if user.Status == "locked" && (user.LockedUntil == nil || time.Now().After(*user.LockedUntil)) {
-		user.Status = "active"
-		s.userRepo.UpdateUser(ctx, user)
-	}
 
 	// 生成JWT Token
 	token, err := utils.GenerateToken(user.ID, user.Username, user.Role)

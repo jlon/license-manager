@@ -1,277 +1,112 @@
 <template>
-  <div class="app-layout" :class="layoutClasses">
-    <!-- 移动端遮罩层 -->
-    <div 
-      v-if="appStore.isMobile && !appStore.sidebarCollapsed" 
+  <div class="app-layout" :class="{ 'app-layout--collapsed': appStore.sidebarCollapsed }">
+    <div
+      v-if="appStore.isMobile && !appStore.sidebarCollapsed"
       class="layout-overlay"
-      @click="handleMobileOverlay"
-    ></div>
-    
-    <!-- 侧边栏 -->
-    <Sidebar 
-      :app-name="props.appName"
-      :nav-items="navItems"
-      @nav-click="handleNavClick"
+      aria-hidden="true"
+      @click="closeMobileSidebar"
     />
-    
-    <!-- 主内容区域 -->
-    <div class="layout-main" :class="mainClasses">
-      <!-- 顶部导航 -->
+    <Sidebar :nav-items="navItems" @nav-click="handleNavClick" />
+    <div class="layout-main">
       <NavContent />
-      
-      <!-- 页面内容 -->
-      <div class="layout-content">
-        <slot />
-      </div>
+      <main class="layout-content"><slot /></main>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/store/modules/app'
 import Sidebar from './Sidebar.vue'
 import NavContent from './NavContent.vue'
 
-// 导航项和面包屑项接口定义
 interface NavItem {
   id: string
   label: string
   href: string
   icon?: string
   active?: boolean
-  children?: NavItem[]
 }
 
+defineProps<{ appName?: string; pageTitle?: string }>()
 
-// 组件 Props
-interface Props {
-  appName?: string
-  pageTitle?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  appName: 'Cedar-V',
-  pageTitle: ''
-})
-
-// 使用国际化
 const { t } = useI18n()
-
-// 默认导航配置
-const defaultNavItems = computed(() => [
-  { id: "dashboard", label: t('navigation.menu.dashboard'), href: "/dashboard", icon: "dashboard" },
-  { id: "customers", label: t('navigation.menu.customers'), href: "/customers", icon: "customers" },
-  { id: "enterprise-leads", label: t('navigation.menu.enterpriseLeads'), href: "/enterprise-leads", icon: "enterprise-leads" },
-  { id: "licenses", label: t('navigation.menu.licenses'), href: "/licenses", icon: "licenses" },
-  { id: "invoices", label: t('navigation.menu.invoices'), href: "/invoices", icon: "invoices" },
-  { id: "packages", label: t('navigation.menu.packages'), href: "/packages", icon: "packages" }
-  // 暂时隐藏角色和系统用户菜单，后续版本再开启
-  // { id: "roles", label: t('navigation.menu.roles'), href: "/roles", icon: "roles" },
-  // { id: "users", label: t('navigation.menu.users'), href: "/users", icon: "users" }
-])
-
-// 使用 store 和路由
-const appStore = useAppStore()
 const route = useRoute()
 const router = useRouter()
+const appStore = useAppStore()
 
-// 计算当前激活的导航项
-const navItems = computed(() => {
-  return defaultNavItems.value.map(item => ({
-    ...item,
-    // 对于有子路由的项目，匹配路径前缀
-    active: route.path === item.href || route.path.startsWith(item.href + '/')
-  }))
-})
+const defaultNavItems = computed<NavItem[]>(() => [
+  { id: 'dashboard', label: t('navigation.menu.dashboard'), href: '/dashboard', icon: 'dashboard' },
+  { id: 'customers', label: t('navigation.menu.customers'), href: '/customers', icon: 'customers' },
+  { id: 'enterprise-leads', label: t('navigation.menu.enterpriseLeads'), href: '/enterprise-leads', icon: 'enterprise-leads' },
+  { id: 'licenses', label: t('navigation.menu.licenses'), href: '/licenses', icon: 'licenses' },
+  { id: 'invoices', label: t('navigation.menu.invoices'), href: '/invoices', icon: 'invoices' },
+  { id: 'packages', label: t('navigation.menu.packages'), href: '/packages', icon: 'packages' }
+])
 
-// 定义组件事件
-const emit = defineEmits<{
-  navClick: [item: NavItem, event: Event]
-}>()
+const navItems = computed(() => defaultNavItems.value.map(item => ({
+  ...item,
+  active: route.path === item.href || route.path.startsWith(`${item.href}/`)
+})))
 
-
-// 处理导航点击
-const handleNavClick = (item: NavItem, event: Event) => {
-  router.push(item.href)
-  emit('navClick', item, event)
+const closeMobileSidebar = () => appStore.setSidebarCollapsed(true)
+const handleNavClick = async (item: NavItem) => {
+  if (route.path !== item.href) await router.push(item.href)
+  if (appStore.isMobile) closeMobileSidebar()
 }
 
-// 计算类名
-const layoutClasses = computed(() => ({
-  'app-layout--mobile': appStore.isMobile,
-  'app-layout--sidebar-collapsed': appStore.sidebarCollapsed
-}))
-
-const mainClasses = computed(() => ({
-  'layout-main--mobile': appStore.isMobile,
-  'layout-main--sidebar-collapsed': appStore.sidebarCollapsed
-}))
-
-// 移动端自动关闭侧边栏
-const handleMobileOverlay = () => {
-  if (appStore.isMobile) {
-    appStore.setSidebarCollapsed(true)
-  }
-}
+watch(
+  () => appStore.isMobile && !appStore.sidebarCollapsed,
+  isOpen => document.body.classList.toggle('sidebar-drawer-open', isOpen),
+  { immediate: true }
+)
+onUnmounted(() => document.body.classList.remove('sidebar-drawer-open'))
 </script>
 
 <style lang="scss" scoped>
-// Variables and mixins are auto-injected via Vite configuration
-
 .app-layout {
-  position: relative;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
-  background: $background-color-base;
   overflow: hidden;
-  display: flex;
+  background: var(--app-bg-color);
 }
-
-// 遮罩层
-.layout-overlay {
-  @include full-overlay;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1998;
-  backdrop-filter: blur(2px);
-}
-
-// 主内容区域
 .layout-main {
-  margin-left: 280px;
   height: 100vh;
+  margin-left: var(--layout-sidebar-width);
   display: flex;
   flex-direction: column;
-  transition: margin-left 0.3s ease;
-  flex: 1;
-  min-width: 0; // 防止 flex 溢出
-  
-  &--sidebar-collapsed {
-    margin-left: 64px;
-  }
-  
-  &--mobile {
-    margin-left: 0;
-  }
-  
-  // 桌面端响应式
-  @include desktop-up {
-    margin-left: 280px;
-    
-    &--sidebar-collapsed {
-      margin-left: 64px;
-    }
-  }
-  
-  // 平板端
-  @include tablet {
-    margin-left: 64px;
-  }
-  
-  // 移动端
-  @include mobile {
-    margin-left: 0;
-  }
+  min-width: 0;
+  transition: margin-left 0.2s ease;
 }
-
-// 页面内容
+.app-layout--collapsed .layout-main { margin-left: var(--layout-sidebar-collapsed-width); }
 .layout-content {
   flex: 1;
-  padding-top: 80px; // 为固定导航栏预留空间
-  overflow: auto; 
-  position: relative;
-  min-height: 0; // 防止 flex 溢出
-  display: flex; // 添加flex布局传递给子组件
-  flex-direction: column;
-  
-  // 移动端优化
-  @include mobile {
-    padding: $spacing-medium;
-    padding-top: calc($spacing-medium + 80px); // 移动端也要为导航栏预留空间
-  }
-  
-  
-  // 滚动条样式
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: $background-color-base;
-    border-radius: 3px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
-    
-    @include non-touch-device {
-      &:hover {
-        background: rgba(0, 0, 0, 0.3);
-      }
-    }
-  }
+  min-height: 0;
+  padding-top: var(--layout-header-height);
+  overflow: auto;
+  background: var(--app-bg-color);
 }
-
-// 响应式布局类
-.app-layout {
-  &--mobile {
-    .layout-main {
-      margin-left: 0;
-    }
-  }
-  
-  &--sidebar-collapsed {
-    .layout-main {
-      margin-left: 64px;
-      
-      @include mobile {
-        margin-left: 0;
-      }
-    }
-  }
-}
-
-// 动画效果
-.layout-main,
 .layout-overlay {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: fixed;
+  inset: 0;
+  z-index: 1998;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
 }
-
-// 打印样式
+@media (min-width: 768px) and (max-width: 1023px) {
+  .layout-main, .app-layout--collapsed .layout-main { margin-left: var(--layout-sidebar-collapsed-width); }
+}
+@media (max-width: 767px) {
+  .layout-main, .app-layout--collapsed .layout-main { margin-left: 0; }
+}
 @media print {
-  .app-layout {
-    background: white;
-  }
-  
-  .layout-main {
-    margin-left: 0 !important;
-  }
-  
-  .layout-content {
-    padding: 0;
-    overflow: visible;
-  }
+  .layout-main { margin-left: 0 !important; }
+  .layout-content { padding-top: 0; overflow: visible; }
 }
+</style>
 
-// 无障碍访问
-@media (prefers-contrast: high) {
-  .app-layout {
-    background: white;
-  }
-  
-  .layout-overlay {
-    background: rgba(0, 0, 0, 0.8);
-  }
-}
-
-// 减少动画模式
-@media (prefers-reduced-motion: reduce) {
-  .layout-main,
-  .layout-overlay {
-    transition: none !important;
-  }
-}
+<style>
+body.sidebar-drawer-open { overflow: hidden; }
 </style>
