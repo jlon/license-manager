@@ -733,89 +733,65 @@ func (s *licenseService) GetStatsOverview(ctx context.Context) (*models.StatsOve
 	monthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
 	expire7d := now.AddDate(0, 0, 7)
 	expire30d := now.AddDate(0, 0, 30)
-	lastMonth := now.AddDate(0, -1, 0)
 
-	var stats models.StatsOverviewResponse
+	type authorizationStats struct {
+		TotalAuthCodes     int64 `gorm:"column:total_auth_codes"`
+		MonthNewAuthCodes  int64 `gorm:"column:month_new_auth_codes"`
+		ExpiringIn7Days    int64 `gorm:"column:expiring_in_7days"`
+		ExpiringIn30Days   int64 `gorm:"column:expiring_in_30days"`
+		PreviousTotalCodes int64 `gorm:"column:previous_total_codes"`
+	}
+	type licenseStats struct {
+		ActiveLicenses         int64 `gorm:"column:active_licenses"`
+		TodayNewLicenses       int64 `gorm:"column:today_new_licenses"`
+		YesterdayNewLicenses   int64 `gorm:"column:yesterday_new_licenses"`
+		AbnormalAlerts         int64 `gorm:"column:abnormal_alerts"`
+		PreviousActiveLicenses int64 `gorm:"column:previous_active_licenses"`
+	}
 
-	err := s.db.Transaction(func(tx *gorm.DB) error {
-		// 1. Total auth codes (stock)
-		if err := tx.Model(&models.AuthorizationCode{}).Count(&stats.TotalAuthCodes).Error; err != nil {
-			return err
-		}
-
-		// 2. Active licenses (stock)
-		if err := tx.Model(&models.License{}).Where("status = ?", "active").Count(&stats.ActiveLicenses).Error; err != nil {
-			return err
-		}
-
-		// 3. Licenses created today (flow)
-		if err := tx.Model(&models.License{}).Where("created_at >= ?", todayStart).Count(&stats.TodayNewLicenses).Error; err != nil {
-			return err
-		}
-
-		// 4. Licenses created yesterday (flow, for comparison)
-		if err := tx.Model(&models.License{}).Where("created_at >= ? AND created_at < ?", yesterdayStart, todayStart).Count(&stats.YesterdayNewLicenses).Error; err != nil {
-			return err
-		}
-
-		// 5. Auth codes created this calendar month (flow)
-		if err := tx.Model(&models.AuthorizationCode{}).Where("created_at >= ?", monthStart).Count(&stats.MonthNewAuthCodes).Error; err != nil {
-			return err
-		}
-
-		// 6. Expiring within 7 days (risk, not locked)
-		if err := tx.Model(&models.AuthorizationCode{}).
-			Where("end_date <= ? AND end_date > ? AND is_locked = false", expire7d, now).
-			Count(&stats.ExpiringIn7Days).Error; err != nil {
-			return err
-		}
-
-		// 7. Expiring within 30 days (risk, not locked)
-		if err := tx.Model(&models.AuthorizationCode{}).
-			Where("end_date <= ? AND end_date > ? AND is_locked = false", expire30d, now).
-			Count(&stats.ExpiringIn30Days).Error; err != nil {
-			return err
-		}
-
-		// 8. Abnormal alerts: active licenses with heartbeat timeout
-		if err := tx.Model(&models.License{}).
-			Where("status = 'active' AND (last_heartbeat < ? OR last_heartbeat IS NULL)", onlineThreshold).
-			Count(&stats.AbnormalAlerts).Error; err != nil {
-			return err
-		}
-
-		// 9. MoM growth rates (sub-text only, not standalone cards)
-		var lastMonthAuthCodes, lastMonthActiveLicenses int64
-
-		if err := tx.Model(&models.AuthorizationCode{}).
-			Where("created_at <= ?", lastMonth).
-			Count(&lastMonthAuthCodes).Error; err != nil {
-			return err
-		}
-
-		if err := tx.Model(&models.License{}).
-			Where("status = ? AND created_at <= ?", "active", lastMonth).
-			Count(&lastMonthActiveLicenses).Error; err != nil {
-			return err
-		}
-
-		if lastMonthAuthCodes > 0 {
-			stats.GrowthRate.AuthCodesMoM = float64(stats.TotalAuthCodes-lastMonthAuthCodes) / float64(lastMonthAuthCodes) * 100
-		} else if stats.TotalAuthCodes > 0 {
-			stats.GrowthRate.AuthCodesMoM = 100.0
-		}
-
-		if lastMonthActiveLicenses > 0 {
-			stats.GrowthRate.LicensesMoM = float64(stats.ActiveLicenses-lastMonthActiveLicenses) / float64(lastMonthActiveLicenses) * 100
-		} else if stats.ActiveLicenses > 0 {
-			stats.GrowthRate.LicensesMoM = 100.0
-		}
-
-		return nil
-	})
-
-	if err != nil {
+	var authorizationData authorizationStats
+	if err := s.db.WithContext(ctx).Model(&models.AuthorizationCode{}).Select(`
+		COUNT(*) AS total_auth_codes,
+		COALESCE(SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END), 0) AS month_new_auth_codes,
+		COALESCE(SUM(CASE WHEN end_date > ? AND end_date <= ? AND is_locked = false THEN 1 ELSE 0 END), 0) AS expiring_in_7days,
+		COALESCE(SUM(CASE WHEN end_date > ? AND end_date <= ? AND is_locked = false THEN 1 ELSE 0 END), 0) AS expiring_in_30days,
+		COALESCE(SUM(CASE WHEN created_at < ? THEN 1 ELSE 0 END), 0) AS previous_total_codes`,
+		monthStart, now, expire7d, now, expire30d, monthStart).
+		Scan(&authorizationData).Error; err != nil {
 		return nil, i18n.NewI18nError("900004", lang, err.Error())
+	}
+
+	var licenseData licenseStats
+	if err := s.db.WithContext(ctx).Model(&models.License{}).Select(`
+		COALESCE(SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END), 0) AS active_licenses,
+		COALESCE(SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END), 0) AS today_new_licenses,
+		COALESCE(SUM(CASE WHEN created_at >= ? AND created_at < ? THEN 1 ELSE 0 END), 0) AS yesterday_new_licenses,
+		COALESCE(SUM(CASE WHEN status = 'active' AND ((last_heartbeat IS NOT NULL AND last_heartbeat < ?) OR (last_heartbeat IS NULL AND created_at < ?)) THEN 1 ELSE 0 END), 0) AS abnormal_alerts,
+		COALESCE(SUM(CASE WHEN status = 'active' AND created_at < ? THEN 1 ELSE 0 END), 0) AS previous_active_licenses`,
+		todayStart, yesterdayStart, todayStart, onlineThreshold, onlineThreshold, monthStart).
+		Scan(&licenseData).Error; err != nil {
+		return nil, i18n.NewI18nError("900004", lang, err.Error())
+	}
+
+	stats := models.StatsOverviewResponse{
+		TotalAuthCodes:       authorizationData.TotalAuthCodes,
+		ActiveLicenses:       licenseData.ActiveLicenses,
+		TodayNewLicenses:     licenseData.TodayNewLicenses,
+		YesterdayNewLicenses: licenseData.YesterdayNewLicenses,
+		MonthNewAuthCodes:    authorizationData.MonthNewAuthCodes,
+		ExpiringIn7Days:      authorizationData.ExpiringIn7Days,
+		ExpiringIn30Days:     authorizationData.ExpiringIn30Days,
+		AbnormalAlerts:       licenseData.AbnormalAlerts,
+	}
+	if authorizationData.PreviousTotalCodes > 0 {
+		stats.GrowthRate.AuthCodesMoM = float64(stats.TotalAuthCodes-authorizationData.PreviousTotalCodes) / float64(authorizationData.PreviousTotalCodes) * 100
+	} else if stats.TotalAuthCodes > 0 {
+		stats.GrowthRate.AuthCodesMoM = 100
+	}
+	if licenseData.PreviousActiveLicenses > 0 {
+		stats.GrowthRate.LicensesMoM = float64(stats.ActiveLicenses-licenseData.PreviousActiveLicenses) / float64(licenseData.PreviousActiveLicenses) * 100
+	} else if stats.ActiveLicenses > 0 {
+		stats.GrowthRate.LicensesMoM = 100
 	}
 
 	return &stats, nil

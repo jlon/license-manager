@@ -1,117 +1,133 @@
 <template>
-  <Layout :page-title="t('enterpriseLeads.title')">
-    <div class="enterprise-leads">
-      <div class="stats-grid">
-        <div v-for="stat in stats" :key="stat.key" class="stat-card">
-          <div class="stat-info">
-            <p class="stat-label">{{ t(`enterpriseLeads.stats.${stat.key}`) }}</p>
-            <p class="stat-value">{{ stat.value.toLocaleString() }}</p>
-          </div>
-          <div class="stat-icon" :class="stat.key">
+  <Layout app-name="Cedar-V" :page-title="t('enterpriseLeads.title')">
+    <div class="lead-page">
+      <header class="page-header">
+        <div>
+          <h1>{{ t('enterpriseLeads.title') }}</h1>
+          <p>{{ t('enterpriseLeads.description') }}</p>
+        </div>
+        <el-button type="primary" :icon="Refresh" :loading="loading || summaryLoading" @click="handleRefresh">
+          {{ t('enterpriseLeads.actions.refresh') }}
+        </el-button>
+      </header>
+
+      <section class="metrics-grid" v-loading="summaryLoading">
+        <article v-for="stat in stats" :key="stat.key" class="metric-card" :class="`metric-card--${stat.tone}`">
+          <div class="metric-icon">
             <el-icon><component :is="stat.icon" /></el-icon>
           </div>
-        </div>
-      </div>
+          <div class="metric-content">
+            <span class="metric-label">{{ t(`enterpriseLeads.stats.${stat.key}`) }}</span>
+            <strong class="metric-value">{{ stat.value.toLocaleString() }}</strong>
+          </div>
+        </article>
+      </section>
 
-      <div class="filter-card">
-        <div class="filter-row">
-          <div class="search-group">
-            <el-input
-              v-model="filters.keyword"
-              :placeholder="t('enterpriseLeads.filter.searchPlaceholder')"
-              class="search-input"
-              clearable
-              @keyup.enter="handleFilter"
-            >
-              <template #append>
-                <el-button class="search-btn" @click="handleFilter">
-                  <el-icon><Search /></el-icon>
-                </el-button>
+      <section class="filter-card">
+        <div class="filter-grid">
+          <el-input
+            v-model="filters.keyword"
+            :placeholder="t('enterpriseLeads.filter.searchPlaceholder')"
+            clearable
+            @keyup.enter="handleFilter"
+          />
+          <el-select v-model="filters.status" :placeholder="t('enterpriseLeads.filter.statusPlaceholder')" clearable>
+            <el-option :label="t('enterpriseLeads.filter.allStatus')" value="" />
+            <el-option :label="t('enterpriseLeads.status.pending')" value="pending" />
+            <el-option :label="t('enterpriseLeads.status.contacting')" value="contacting" />
+            <el-option :label="t('enterpriseLeads.status.completed')" value="completed" />
+            <el-option :label="t('enterpriseLeads.status.rejected')" value="rejected" />
+          </el-select>
+          <div class="filter-actions">
+            <el-button type="primary" :icon="Search" @click="handleFilter">{{ t('enterpriseLeads.actions.query') }}</el-button>
+            <el-button @click="handleReset">{{ t('enterpriseLeads.actions.reset') }}</el-button>
+          </div>
+        </div>
+      </section>
+
+      <section class="table-card">
+        <div class="table-heading">
+          <div>
+            <h2>{{ t('enterpriseLeads.table.title') }}</h2>
+            <span>{{ total.toLocaleString() }} {{ t('enterpriseLeads.table.unit') }}</span>
+          </div>
+        </div>
+
+        <el-alert v-if="listError" :title="listError" type="error" show-icon :closable="false" class="list-alert">
+          <template #default>
+            <el-button link type="primary" @click="fetchData">{{ t('enterpriseLeads.actions.retry') }}</el-button>
+          </template>
+        </el-alert>
+
+        <div class="table-scroll">
+          <el-table v-loading="loading" :data="tableData" stripe row-key="id">
+            <el-table-column prop="id" :label="t('enterpriseLeads.table.id')" min-width="150" show-overflow-tooltip />
+            <el-table-column prop="company_name" :label="t('enterpriseLeads.table.company')" min-width="180" show-overflow-tooltip />
+            <el-table-column prop="contact_name" :label="t('enterpriseLeads.table.contact')" min-width="110" />
+            <el-table-column prop="contact_phone" :label="t('enterpriseLeads.table.phone')" min-width="140" />
+            <el-table-column prop="created_at" :label="t('enterpriseLeads.table.submittedAt')" min-width="170" />
+            <el-table-column :label="t('enterpriseLeads.table.status')" width="110" align="center">
+              <template #default="{ row }">
+                <el-tag :type="statusTagType(row.status)" effect="light">
+                  {{ t(`enterpriseLeads.status.${row.status}`) }}
+                </el-tag>
               </template>
-            </el-input>
-          </div>
-          <div class="status-group">
-            <el-select v-model="filters.status" class="status-select" :placeholder="t('enterpriseLeads.filter.statusPlaceholder')" clearable @change="handleFilter">
-              <el-option :label="t('enterpriseLeads.filter.allStatus')" value="" />
-              <el-option :label="t('enterpriseLeads.status.pending')" value="pending" />
-              <el-option :label="t('enterpriseLeads.status.contacting')" value="contacting" />
-              <el-option :label="t('enterpriseLeads.status.completed')" value="completed" />
-              <el-option :label="t('enterpriseLeads.status.rejected')" value="rejected" />
-            </el-select>
-          </div>
-        </div>
-      </div>
-
-      <div class="list-card" v-loading="loading">
-        <div class="list-header">
-          <div class="list-title">
-            <span class="title-bar"></span>
-            <span>{{ t('enterpriseLeads.table.title') }}</span>
-          </div>
-          <el-button class="refresh-btn" :icon="Refresh" text @click="handleRefresh">
-            {{ t('enterpriseLeads.actions.refresh') }}
-          </el-button>
-        </div>
-
-        <el-table
-          :data="tableData"
-          stripe
-          class="leads-table"
-          :header-cell-style="{
-            backgroundColor: '#E6F7F3',
-            color: '#4F4F4F',
-            fontWeight: '600'
-          }"
-        >
-          <el-table-column prop="id" :label="t('enterpriseLeads.table.id')" />
-          <el-table-column prop="company_name" :label="t('enterpriseLeads.table.company')" />
-          <el-table-column prop="contact_name" :label="t('enterpriseLeads.table.contact')" width="100" />
-          <el-table-column prop="contact_phone" :label="t('enterpriseLeads.table.phone')" />
-          <el-table-column prop="created_at" :label="t('enterpriseLeads.table.submittedAt')" />
-          <el-table-column :label="t('enterpriseLeads.table.status')" width="80">
-            <template #default="{ row }">
-              <span class="status-tag" :class="row.status">{{ t(`enterpriseLeads.status.${row.status}`) }}</span>
+            </el-table-column>
+            <el-table-column :label="t('enterpriseLeads.table.actions')" width="210" fixed="right" align="center" class-name="operation-column">
+              <template #default="{ row }">
+                <div class="desktop-actions">
+                  <el-button link type="primary" @click="handleView(row)">{{ t('enterpriseLeads.actions.view') }}</el-button>
+                  <el-button link type="primary" @click="handleEdit(row)">{{ t('enterpriseLeads.actions.edit') }}</el-button>
+                  <el-button link type="danger" @click="handleDelete(row)">{{ t('enterpriseLeads.actions.delete') }}</el-button>
+                </div>
+                <el-dropdown class="compact-actions" trigger="click" @command="handleRowCommand($event, row)">
+                  <el-button link type="primary">{{ t('enterpriseLeads.actions.more') }}</el-button>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item command="view">{{ t('enterpriseLeads.actions.view') }}</el-dropdown-item>
+                      <el-dropdown-item command="edit">{{ t('enterpriseLeads.actions.edit') }}</el-dropdown-item>
+                      <el-dropdown-item command="delete" divided>{{ t('enterpriseLeads.actions.delete') }}</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </template>
+            </el-table-column>
+            <template #empty>
+              <el-empty :description="t('enterpriseLeads.table.empty')" :image-size="72" />
             </template>
-          </el-table-column>
-          <el-table-column :label="t('enterpriseLeads.table.actions')" width="200" fixed="right">
-            <template #default="{ row }">
-              <div class="action-buttons">
-                <el-button size="small" class="btn-view" @click="handleView(row)">{{ t('enterpriseLeads.actions.view') }}</el-button>
-                <el-button size="small" class="btn-edit" @click="handleEdit(row)">{{ t('enterpriseLeads.actions.edit') }}</el-button>
-                <el-button size="small" class="btn-delete" @click="handleDelete(row)">{{ t('enterpriseLeads.actions.delete') }}</el-button>
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
+          </el-table>
+        </div>
 
-        <div class="pagination-container">
+        <div class="pagination-row">
           <el-pagination
             v-model:current-page="page"
             v-model:page-size="pageSize"
             :page-sizes="[10, 20, 50, 100]"
-            layout="prev, pager, next, jumper, sizes, total"
+            layout="total, sizes, prev, pager, next, jumper"
+            :pager-count="5"
             :total="total"
-            background
+            @current-change="fetchData"
+            @size-change="handleSizeChange"
           />
         </div>
-      </div>
+      </section>
     </div>
 
     <LeadDetailDialog
       v-model="detailVisible"
-      :id="selectedLead?.id"
+      :id="selectedLead?.id ?? null"
     />
 
     <LeadEditDialog
       v-model="editVisible"
-      :id="selectedLead?.id"
+      :id="selectedLead?.id ?? null"
       @save="handleUpdate"
     />
   </Layout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Layout from '@/components/common/layout/Layout.vue'
 import { Phone, CircleCheck, Refresh, User, OfficeBuilding, Search } from '@element-plus/icons-vue'
@@ -124,10 +140,10 @@ import { formatDateTime } from '@/utils/date'
 const { t } = useI18n()
 
 const stats = ref([
-  { key: 'total', value: 0, icon: OfficeBuilding, field: 'total_count' },
-  { key: 'pending', value: 0, icon: Phone, field: 'pending_count' },
-  { key: 'contacting', value: 0, icon: CircleCheck, field: 'contacted_count' },
-  { key: 'completed', value: 0, icon: User, field: 'converted_count' }
+  { key: 'total', value: 0, icon: OfficeBuilding, field: 'total_count', tone: 'brand' },
+  { key: 'pending', value: 0, icon: Phone, field: 'pending_count', tone: 'warning' },
+  { key: 'contacting', value: 0, icon: CircleCheck, field: 'contacted_count', tone: 'info' },
+  { key: 'completed', value: 0, icon: User, field: 'converted_count', tone: 'success' }
 ])
 
 const filters = ref({
@@ -137,15 +153,18 @@ const filters = ref({
 
 const tableData = ref<Lead[]>([])
 const loading = ref(false)
+const summaryLoading = ref(false)
+const listError = ref('')
 const page = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 
 const detailVisible = ref(false)
 const editVisible = ref(false)
-const selectedLead = ref<any>(null)
+const selectedLead = ref<Lead | null>(null)
 
 const fetchSummary = async () => {
+  summaryLoading.value = true
   try {
     const res = await getLeadSummary()
     if (res.code === '000000' && res.data) {
@@ -157,11 +176,14 @@ const fetchSummary = async () => {
     }
   } catch (error) {
     console.error('Fetch lead summary error:', error)
+  } finally {
+    summaryLoading.value = false
   }
 }
 
 const fetchData = async () => {
   loading.value = true
+  listError.value = ''
   try {
     const params = {
       page: page.value,
@@ -179,7 +201,7 @@ const fetchData = async () => {
     }
   } catch (error: any) {
     console.error('Fetch leads error:', error)
-    ElMessage.error(error.backendMessage || t('enterpriseLeads.messages.fetchError'))
+    listError.value = error.backendMessage || t('enterpriseLeads.messages.fetchError')
   } finally {
     loading.value = false
   }
@@ -190,13 +212,20 @@ onMounted(() => {
   fetchSummary()
 })
 
-watch([page, pageSize], () => {
-  fetchData()
-})
-
 const handleFilter = () => {
-  page.value = 1
-  fetchData()
+  if (page.value === 1) fetchData()
+  else page.value = 1
+}
+
+const handleReset = () => {
+  filters.value.keyword = ''
+  filters.value.status = ''
+  handleFilter()
+}
+
+const handleSizeChange = () => {
+  if (page.value === 1) fetchData()
+  else page.value = 1
 }
 
 const handleRefresh = () => {
@@ -204,17 +233,30 @@ const handleRefresh = () => {
   fetchSummary()
 }
 
-const handleView = (row: any) => {
+const handleView = (row: Lead) => {
   selectedLead.value = row
   detailVisible.value = true
 }
 
-const handleEdit = (row: any) => {
+const handleEdit = (row: Lead) => {
   selectedLead.value = row
   editVisible.value = true
 }
 
-const handleDelete = (row: any) => {
+const handleRowCommand = (command: string, row: Lead) => {
+  if (command === 'view') handleView(row)
+  else if (command === 'edit') handleEdit(row)
+  else if (command === 'delete') handleDelete(row)
+}
+
+const statusTagType = (status: string): 'primary' | 'success' | 'warning' | 'info' => {
+  if (status === 'completed') return 'success'
+  if (status === 'pending') return 'warning'
+  if (status === 'rejected') return 'info'
+  return 'primary'
+}
+
+const handleDelete = (row: Lead) => {
   ElMessageBox.confirm(
     t('enterpriseLeads.messages.deleteConfirm'),
     t('common.confirm'),
@@ -260,236 +302,229 @@ const handleUpdate = async (updatedData: any) => {
 }
 </script>
 
-<style lang="scss" scoped>
-.enterprise-leads {
-  padding: 24px;
-  background-color: #f0f2f5;
-  min-height: calc(100vh - 80px);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.stat-card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 20px 24px;
+<style scoped>
+.lead-page {
   display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  padding: var(--layout-content-padding);
+  box-sizing: border-box;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
   justify-content: space-between;
+  gap: 20px;
+}
+
+.page-header h1,
+.table-heading h2 {
+  margin: 0;
+  color: var(--app-text-primary);
+}
+
+.page-header h1 {
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+.page-header p {
+  margin: 4px 0 0;
+  color: var(--app-text-secondary);
+  font-size: 13px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  min-height: 96px;
+}
+
+.metric-card {
+  --metric-color: var(--el-color-primary);
+  display: flex;
+  min-width: 0;
   align-items: center;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
-  border: none;
-  height: 100px;
+  gap: 14px;
+  padding: 16px;
+  background: var(--app-content-bg);
+  border: 1px solid var(--app-border-color);
+  border-left: 4px solid var(--metric-color);
+  border-radius: var(--app-card-radius);
+  box-shadow: var(--app-card-shadow);
 }
 
-.stat-label {
-  font-size: 14px;
-  color: #999;
-  margin-bottom: 8px;
+.metric-card--warning { --metric-color: var(--el-color-warning); }
+.metric-card--info { --metric-color: var(--el-color-info); }
+.metric-card--success { --metric-color: var(--el-color-success); }
+
+.metric-icon {
+  display: flex;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--metric-color) 12%, transparent);
+  color: var(--metric-color);
+  font-size: 22px;
 }
 
-.stat-value {
-  font-size: 28px;
-  font-weight: bold;
-  color: #00a870;
+.metric-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.metric-label {
+  overflow: hidden;
+  color: var(--app-text-secondary);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric-value {
+  color: var(--app-text-primary);
+  font-size: 26px;
   line-height: 1.2;
 }
 
-.stat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-}
-
-.stat-icon.total {
-  background: #f0f4ff;
-  color: #409eff;
-}
-
-.stat-icon.pending {
-  background: #fff8e6;
-  color: #e6a23c;
-}
-
-.stat-icon.contacting {
-  background: #e6f7f3;
-  color: #00a870;
-}
-
-.stat-icon.completed {
-  background: #f5f0ff;
-  color: #7c5cfc;
+.filter-card,
+.table-card {
+  background: var(--app-content-bg);
+  border: 1px solid var(--app-border-color);
+  border-radius: var(--app-card-radius);
+  box-shadow: var(--app-card-shadow);
 }
 
 .filter-card {
-  background: #fff;
-  padding: 24px;
-  border-radius: 8px;
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
-  border: none;
+  padding: 16px;
 }
 
-.filter-row {
-  width: 100%;
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-.search-group {
-  width: 320px;
-}
-
-.search-input :deep(.el-input__wrapper) {
-  border-radius: 4px 0 0 4px;
-  box-shadow: 1px 0 0 0 var(--el-input-border-color) inset, 0 1px 0 0 var(--el-input-border-color) inset, 0 -1px 0 0 var(--el-input-border-color) inset !important;
-}
-
-.search-btn {
-  background: #00a870 !important;
-  border-color: #00a870 !important;
-  color: #fff !important;
-  border-radius: 0 4px 4px 0;
-  width: 44px;
-  height: 32px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.status-select {
-  width: 160px;
-}
-
-.status-select :deep(.el-input__wrapper) {
-  border-radius: 4px;
-}
-
-.list-card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
-  padding: 24px;
-  border: none;
-}
-
-.list-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.list-title {
-  display: flex;
-  align-items: center;
+.filter-grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(160px, 220px) auto;
   gap: 12px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
+  align-items: center;
 }
 
-.title-bar {
-  width: 4px;
-  height: 18px;
-  background: #00a870;
-  border-radius: 2px;
-}
-
-.refresh-btn {
-  color: #666;
-  font-size: 14px;
-}
-
-.leads-table :deep(.el-table__header th) {
-  font-weight: 600;
-  height: 50px;
-}
-
-.status-tag {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.status-tag.contacting {
-  color: #409eff;
-}
-
-.status-tag.pending {
-  color: #e6a23c;
-}
-
-.status-tag.completed {
-  color: #333;
-}
-
-.status-tag.rejected {
-  color: #999;
-}
-
-.action-buttons {
+.filter-actions {
   display: flex;
+  justify-content: flex-end;
   gap: 8px;
 }
 
-.btn-view, .btn-edit, .btn-delete {
-  border: none;
-  padding: 4px 12px;
-  height: 28px;
+.table-card {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.table-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--app-border-color);
+}
+
+.table-heading > div {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.table-heading h2 {
+  font-size: 16px;
+}
+
+.table-heading span {
+  color: var(--app-text-secondary);
   font-size: 12px;
-  border-radius: 4px;
 }
 
-.btn-view, .btn-edit {
-  background: #e6f7f3 !important;
-  color: #00a870 !important;
+.list-alert {
+  margin: 16px 16px 0;
 }
 
-.btn-delete {
-  background: #fff1f0 !important;
-  color: #f5222d !important;
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
 }
 
-.pagination-container {
+.desktop-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.compact-actions {
+  display: none;
+}
+
+.pagination-row {
   display: flex;
   justify-content: flex-end;
-  margin-top: 24px;
+  padding: 16px;
+  border-top: 1px solid var(--app-border-color);
+  overflow-x: auto;
 }
 
-.pagination-container :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #00a870;
-}
+@media (max-width: 1200px) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
-@media (max-width: 1400px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+  :deep(.operation-column) {
+    width: 100px !important;
+  }
+
+  .desktop-actions {
+    display: none;
+  }
+
+  .compact-actions {
+    display: inline-flex;
   }
 }
 
 @media (max-width: 768px) {
-  .enterprise-leads {
-    padding: 16px;
+  .lead-page {
+    padding: 12px;
   }
 
-  .filter-row {
-    flex-direction: column;
+  .page-header {
     align-items: stretch;
+    flex-direction: column;
   }
 
-  .status-select {
+  .page-header .el-button {
     width: 100%;
+  }
+
+  .metrics-grid,
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-actions .el-button {
+    flex: 1;
+  }
+
+  .pagination-row {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

@@ -2025,7 +2025,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "根据时间类型（本周/本月/自定义）获取授权趋势统计数据",
+                "description": "根据时间类型（最近7天/最近30天/自定义）获取授权趋势统计数据",
                 "consumes": [
                     "application/json"
                 ],

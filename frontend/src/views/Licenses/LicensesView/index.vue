@@ -417,6 +417,8 @@ onMounted(loadLicense)
   flex-direction: column;
   gap: 16px;
   min-width: 0;
+  padding: var(--layout-content-padding);
+  box-sizing: border-box;
 }
 
 .page-header {
@@ -485,6 +487,10 @@ onMounted(loadLicense)
 }
 
 @media (max-width: 900px) {
+  .detail-page {
+    padding: 12px;
+  }
+
   .page-header {
     align-items: stretch;
     flex-direction: column;

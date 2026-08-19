@@ -60,8 +60,8 @@ common:
 # 列挙値多言語
 enums:
   dashboard_period:
-    week: "今週"
-    month: "今月"
+    week: "直近7日間"
+    month: "直近30日間"
   customer_type:
     "individual": "個人顧客"
     "enterprise": "企業顧客"

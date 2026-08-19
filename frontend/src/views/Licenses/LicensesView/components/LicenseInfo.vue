@@ -520,7 +520,7 @@ const submitAddLicense = async () => {
     
     font-size: 18px;
     font-weight: 600;
-    color: #1d1d1d;
+    color: var(--app-text-primary);
   }
 
   :deep(.el-dialog__body) {
@@ -534,7 +534,7 @@ const submitAddLicense = async () => {
 
 .dialog-description {
   font-size: 14px;
-  color: #666;
+  color: var(--app-text-secondary);
   line-height: 22px;
   margin-bottom: 16px;
 }
@@ -542,7 +542,7 @@ const submitAddLicense = async () => {
 .license-form-dialog {
   :deep(.el-form-item__label) {
     font-weight: 500;
-    color: #1d1d1d;
+    color: var(--app-text-primary);
   }
 }
 
@@ -586,8 +586,8 @@ const submitAddLicense = async () => {
 }
 
 .device-card {
-  background: #FFFFFF;
-  border: 1px solid #E2E2E2;
+  background: var(--app-content-bg);
+  border: 1px solid var(--app-border-color);
   border-radius: 4px;
   padding: 16px 20px;
 }
@@ -606,7 +606,7 @@ const submitAddLicense = async () => {
       font-size: 16px;
       font-weight: 700;
       line-height: 18px;
-      color: #1D1D1D;
+      color: var(--app-text-primary);
     }
 
     :deep(.el-tag) {
@@ -641,7 +641,7 @@ const submitAddLicense = async () => {
       font-size: 14px;
       font-weight: 400;
       line-height: 22px;
-      color: #1D1D1D;
+      color: var(--app-text-primary);
     }
   }
 }
@@ -668,7 +668,7 @@ const submitAddLicense = async () => {
       font-size: 16px;
       font-weight: 700;
       line-height: 18px;
-      color: #1D1D1D;
+      color: var(--app-text-primary);
     }
 
     .section-subtitle {
@@ -676,7 +676,7 @@ const submitAddLicense = async () => {
       font-size: 14px;
       font-weight: 400;
       line-height: 18px;
-      color: #666666;
+      color: var(--app-text-secondary);
     }
   }
 }
@@ -697,7 +697,7 @@ const submitAddLicense = async () => {
         font-size: 14px;
         font-weight: 400;
         line-height: 22px;
-        color: #1D1D1D;
+        color: var(--app-text-primary);
         white-space: nowrap;
         min-width: 100px;
       }
@@ -708,7 +708,7 @@ const submitAddLicense = async () => {
         font-size: 14px;
         font-weight: 400;
         line-height: 22px;
-        color: #1D1D1D;
+        color: var(--app-text-primary);
         padding: 8px 12px;
         background: rgba(136, 165, 209, 0.2);
         border-radius: 8px;
@@ -734,7 +734,7 @@ const submitAddLicense = async () => {
         font-size: 14px;
         font-weight: 400;
         line-height: 22px;
-        color: #1D1D1D;
+        color: var(--app-text-primary);
         white-space: nowrap;
         min-width: 100px;
       }
@@ -745,7 +745,7 @@ const submitAddLicense = async () => {
         font-size: 14px;
         font-weight: 400;
         line-height: 22px;
-        color: #1D1D1D;
+        color: var(--app-text-primary);
         padding: 8px 12px;
         background: rgba(136, 165, 209, 0.2);
         border-radius: 8px;
@@ -764,7 +764,7 @@ const submitAddLicense = async () => {
     min-width: 148px;
     background: #00C27C;
     border: none;
-    color: #FFFFFF;
+    color: var(--app-content-bg);
     
     font-size: 14px;
     font-weight: 500;

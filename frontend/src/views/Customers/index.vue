@@ -334,7 +334,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.customer-page { display:flex; flex-direction:column; gap:16px; }
+.customer-page { display:flex; flex-direction:column; gap:16px; min-width:0; padding:var(--layout-content-padding); box-sizing:border-box; }
 .page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
 .page-header h1 { margin:0; color:var(--app-text-primary); font-size:24px; line-height:1.35; }
 .page-header p { margin:4px 0 0; color:var(--app-text-secondary); font-size:13px; }
@@ -358,6 +358,7 @@ onMounted(() => {
 }
 
 @media (max-width:768px) {
+  .customer-page { padding:12px; }
   .page-header { align-items:stretch; flex-direction:column; }
   .page-header .el-button { width:100%; }
   .filter-grid { grid-template-columns:1fr; }

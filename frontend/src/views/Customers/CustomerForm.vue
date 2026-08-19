@@ -244,6 +244,7 @@ onMounted(() => { loadEnums(); loadCustomer() })
 
 <style scoped>
 .customer-form-page,.form-sections { display:flex; flex-direction:column; gap:16px; }
+.customer-form-page { min-width:0; padding:var(--layout-content-padding); box-sizing:border-box; }
 .subpage-header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
 .breadcrumb { margin:0 0 4px; color:var(--app-text-secondary); font-size:13px; }
 .subpage-header h1 { margin:0; color:var(--app-text-primary); font-size:24px; line-height:1.35; }
@@ -255,6 +256,7 @@ onMounted(() => { loadEnums(); loadCustomer() })
 :deep(.el-select) { width:100%; }
 
 @media (max-width:768px) {
+  .customer-form-page { padding:12px; }
   .subpage-header { align-items:stretch; flex-direction:column; }
   .header-actions .el-button { flex:1; }
   .form-grid { grid-template-columns:1fr; }

@@ -3,9 +3,10 @@
      <el-dialog
     v-model="visible"
      :title="t('enterpriseLeads.edit.title', { company: detailData?.company_name })"
-     width="800px"
+     width="min(800px, calc(100vw - 32px))"
      class="lead-edit-dialog"
      destroy-on-close
+     :close-on-click-modal="false"
      v-loading="loading"
    >
      <el-form
@@ -194,72 +195,63 @@ const handleSave = async () => {
 }
 </script>
 
-<style lang="scss" scoped>
-:deep(.el-dialog__headerbtn) {
-    top: 10px !important;
-}
+<style scoped>
 :deep(.el-dialog) {
-  border-radius: 8px;
   overflow: hidden;
   padding: 0;
-
-  .el-dialog__header {
-    margin-right: 0;
-    padding: 20px 24px;
-    background: linear-gradient(90deg, #00928A 0%, #00D19E 100%) !important;
-    border-bottom: none;
-    display: flex;
-    align-items: center;
-    
-    .el-dialog__title {
-      color: #fff !important;
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .el-dialog__headerbtn {
-      top: 20px;
-      .el-dialog__close {
-        color: #fff !important;
-        font-size: 20px;
-      }
-      &:hover .el-dialog__close {
-        color: rgba(255, 255, 255, 0.8) !important;
-      }
-    }
-  }
-
-  .el-dialog__body {
-    padding: 24px;
-  }
-
-  .el-dialog__footer {
-    padding: 0 24px 24px;
-    border-top: none;
-  }
+  background: var(--app-content-bg);
+  border: 1px solid var(--app-border-color);
+  border-radius: var(--app-card-radius);
 }
 
-.edit-form {
-  .form-row {
-    display: flex;
-    gap: 24px;
-    margin-bottom: 8px;
-  }
-  
-  .flex-1 {
-    flex: 1;
-  }
+:deep(.el-dialog__header) {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 18px 24px;
+  background: linear-gradient(120deg, var(--el-color-primary-dark-2), var(--el-color-primary));
+}
 
-  :deep(.el-form-item__label) {
-    font-weight: 500;
-    color: #333;
-    padding-bottom: 8px;
-  }
+:deep(.el-dialog__title),
+:deep(.el-dialog__close) {
+  color: var(--el-color-white);
+}
 
-  :deep(.el-input__wrapper), :deep(.el-textarea__inner) {
-    background-color: #fff;
-    border-radius: 4px;
-  }
+:deep(.el-dialog__title) {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+:deep(.el-dialog__headerbtn) {
+  top: 14px;
+  right: 14px;
+}
+
+:deep(.el-dialog__body) {
+  max-height: min(70vh, 680px);
+  padding: 24px;
+  overflow-y: auto;
+}
+
+:deep(.el-dialog__footer) {
+  padding: 16px 24px;
+  background: var(--app-action-btn-bg);
+  border-top: 1px solid var(--app-border-color);
+}
+
+.edit-form .form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.edit-form .flex-1 {
+  min-width: 0;
+  flex: 1;
+}
+
+.edit-form :deep(.el-form-item__label) {
+  color: var(--app-text-regular);
+  font-weight: 500;
 }
 
 .w-full {
@@ -268,24 +260,25 @@ const handleSave = async () => {
 
 .dialog-footer {
   display: flex;
-  justify-content: center;
-  gap: 16px;
+  justify-content: flex-end;
+  gap: 8px;
+}
 
-  .el-button {
-    padding: 10px 32px;
-    height: 40px;
-    font-size: 14px;
-    border-radius: 4px;
+@media (max-width: 640px) {
+  :deep(.el-dialog__header),
+  :deep(.el-dialog__body),
+  :deep(.el-dialog__footer) {
+    padding-right: 16px;
+    padding-left: 16px;
   }
 
-  .btn-save {
-    background-color: #00a870 !important;
-    border-color: #00a870 !important;
-    color: #fff !important;
-    &:hover {
-      background-color: #008f5d !important;
-      border-color: #008f5d !important;
-    }
+  .edit-form .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .dialog-footer .el-button {
+    flex: 1;
   }
 }
 </style>

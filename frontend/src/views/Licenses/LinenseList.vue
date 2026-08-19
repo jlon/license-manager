@@ -376,6 +376,8 @@ onMounted(async () => {
   flex-direction: column;
   gap: 16px;
   min-width: 0;
+  padding: var(--layout-content-padding);
+  box-sizing: border-box;
 }
 
 .page-header {
@@ -479,6 +481,10 @@ onMounted(async () => {
 }
 
 @media (max-width: 768px) {
+  .license-page {
+    padding: 12px;
+  }
+
   .page-header {
     align-items: stretch;
     flex-direction: column;

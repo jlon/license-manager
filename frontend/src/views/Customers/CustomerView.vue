@@ -137,6 +137,7 @@ onMounted(loadCustomer)
 
 <style scoped>
 .customer-view-page,.detail-sections { display:flex; flex-direction:column; gap:16px; }
+.customer-view-page { min-width:0; padding:var(--layout-content-padding); box-sizing:border-box; }
 .subpage-header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
 .breadcrumb { margin:0 0 4px; color:var(--app-text-secondary); font-size:13px; }
 .subpage-header h1 { margin:0; color:var(--app-text-primary); font-size:24px; line-height:1.35; }
@@ -156,6 +157,7 @@ onMounted(loadCustomer)
 
 @media (max-width:1024px) { .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media (max-width:768px) {
+  .customer-view-page { padding:12px; }
   .subpage-header { align-items:stretch; flex-direction:column; }
   .info-grid,.stats-grid { grid-template-columns:1fr; }
   .info-item.full-width { grid-column:auto; }

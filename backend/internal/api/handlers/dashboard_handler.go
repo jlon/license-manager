@@ -25,7 +25,7 @@ func NewDashboardHandler(dashboardService service.DashboardService) *DashboardHa
 
 // GetAuthorizationTrend 获取授权趋势数据
 // @Summary 获取授权趋势数据
-// @Description 根据时间类型（本周/本月/自定义）获取授权趋势统计数据
+// @Description 根据时间类型（最近7天/最近30天/自定义）获取授权趋势统计数据
 // @Tags 仪表盘
 // @Accept json
 // @Produce json

@@ -21,8 +21,17 @@
           {{ t(`navigation.external.${link.key}`) }}
         </button>
       </div>
+      <button
+        type="button"
+        class="icon-button"
+        :title="t('navigation.tooltip.theme')"
+        :aria-label="t('navigation.tooltip.theme')"
+        @click="toggleTheme"
+      >
+        <NavIcon name="dark-mode" />
+      </button>
       <el-dropdown trigger="click" @command="handleLanguageChange">
-        <button type="button" class="language-button">
+        <button type="button" class="language-button" :title="t('navigation.tooltip.language')" :aria-label="t('navigation.tooltip.language')">
           <NavIcon name="language" />
           <span>{{ currentLanguageLabel }}</span>
         </button>
@@ -35,7 +44,7 @@
         </template>
       </el-dropdown>
       <el-dropdown trigger="click" placement="bottom-end" @command="handleUserCommand">
-        <button type="button" class="user-button" :title="userInfo?.username || ''">
+        <button type="button" class="user-button" :title="userInfo?.username || t('navigation.tooltip.user')" :aria-label="t('navigation.tooltip.user')">
           <span class="avatar">{{ userInitial }}</span>
           <span class="user-name">{{ userInfo?.username || '--' }}</span>
         </button>
@@ -85,6 +94,7 @@ const currentLanguageLabel = computed(() => languageOptions.find(option => optio
 watch(locale, value => { currentLanguage.value = value as SupportedLocale })
 
 const openExternal = (url: string) => window.open(url, '_blank', 'noopener,noreferrer')
+const toggleTheme = () => appStore.setTheme(appStore.isDark ? 'light' : 'dark')
 const handleLanguageChange = (lang: SupportedLocale) => {
   if (lang === currentLanguage.value) return
   changeLanguage(lang)

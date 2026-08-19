@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onUnmounted, watch } from 'vue'
+import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/store/modules/app'
@@ -50,6 +50,11 @@ const navItems = computed(() => defaultNavItems.value.map(item => ({
 })))
 
 const closeMobileSidebar = () => appStore.setSidebarCollapsed(true)
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && appStore.isMobile && !appStore.sidebarCollapsed) {
+    closeMobileSidebar()
+  }
+}
 const handleNavClick = async (item: NavItem) => {
   if (route.path !== item.href) await router.push(item.href)
   if (appStore.isMobile) closeMobileSidebar()
@@ -60,7 +65,11 @@ watch(
   isOpen => document.body.classList.toggle('sidebar-drawer-open', isOpen),
   { immediate: true }
 )
-onUnmounted(() => document.body.classList.remove('sidebar-drawer-open'))
+onMounted(() => window.addEventListener('keydown', handleKeydown))
+onUnmounted(() => {
+  document.body.classList.remove('sidebar-drawer-open')
+  window.removeEventListener('keydown', handleKeydown)
+})
 </script>
 
 <style lang="scss" scoped>

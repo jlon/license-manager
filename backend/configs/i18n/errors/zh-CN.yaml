@@ -60,8 +60,8 @@ common:
 # 枚举值多语言
 enums:
   dashboard_period:
-    week: "本周"
-    month: "本月"
+    week: "最近7天"
+    month: "最近30天"
   customer_type:
     "individual": "个人客户"
     "enterprise": "企业客户"

@@ -23,57 +23,60 @@ func NewDashboardRepository(db *gorm.DB) DashboardRepository {
 }
 
 // GetAuthorizationTrendData 获取授权趋势数据
+// 使用固定次数的范围查询，避免按日期循环访问数据库。
 func (r *dashboardRepository) GetAuthorizationTrendData(ctx context.Context, startDate, endDate time.Time) ([]models.TrendData, error) {
 	lang := pkgcontext.GetLanguageFromContext(ctx)
-	var trendData []models.TrendData
+	rangeStart := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 0, 0, 0, 0, startDate.Location())
+	rangeEndExclusive := time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 0, 0, 0, 0, endDate.Location()).AddDate(0, 0, 1)
 
-	// 生成日期范围
-	dates := make([]time.Time, 0)
-	for d := startDate; !d.After(endDate); d = d.AddDate(0, 0, 1) {
-		dates = append(dates, d)
+	var initialCount int64
+	if err := r.db.WithContext(ctx).Model(&models.AuthorizationCode{}).
+		Where("created_at < ?", rangeStart).
+		Count(&initialCount).Error; err != nil {
+		return nil, i18n.NewI18nError("900004", lang, err.Error())
 	}
 
-	// 查询每日数据
-	for _, date := range dates {
-		dayStart := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
-		dayEnd := dayStart.Add(24*time.Hour - time.Nanosecond)
+	var createdTimes []time.Time
+	if err := r.db.WithContext(ctx).Model(&models.AuthorizationCode{}).
+		Where("created_at >= ? AND created_at < ?", rangeStart, rangeEndExclusive).
+		Pluck("created_at", &createdTimes).Error; err != nil {
+		return nil, i18n.NewI18nError("900004", lang, err.Error())
+	}
 
-		// 统计当日的授权数据
-		var totalCount, newCount, expiredCount int64
+	var expiredTimes []time.Time
+	if err := r.db.WithContext(ctx).Model(&models.AuthorizationCode{}).
+		Where("end_date >= ? AND end_date < ?", rangeStart, rangeEndExclusive).
+		Pluck("end_date", &expiredTimes).Error; err != nil {
+		return nil, i18n.NewI18nError("900004", lang, err.Error())
+	}
 
-		// 当日总授权数（截至当日24:00的累计有效授权数）
-		err := r.db.WithContext(ctx).Model(&models.AuthorizationCode{}).
-			Where("created_at <= ?", dayEnd).
-			Count(&totalCount).Error
-		if err != nil {
-			return nil, i18n.NewI18nError("900004", lang, err.Error())
-		}
+	return buildAuthorizationTrendData(rangeStart, rangeEndExclusive, initialCount, createdTimes, expiredTimes), nil
+}
 
-		// 当日新增授权数
-		err = r.db.WithContext(ctx).Model(&models.AuthorizationCode{}).
-			Where("created_at >= ? AND created_at <= ?", dayStart, dayEnd).
-			Count(&newCount).Error
-		if err != nil {
-			return nil, i18n.NewI18nError("900004", lang, err.Error())
-		}
+func buildAuthorizationTrendData(startDate, endDateExclusive time.Time, initialCount int64, createdTimes, expiredTimes []time.Time) []models.TrendData {
+	newByDate := make(map[string]int64)
+	expiredByDate := make(map[string]int64)
+	loc := startDate.Location()
+	for _, createdAt := range createdTimes {
+		newByDate[createdAt.In(loc).Format("2006-01-02")]++
+	}
+	for _, expiredAt := range expiredTimes {
+		expiredByDate[expiredAt.In(loc).Format("2006-01-02")]++
+	}
 
-		// 当日过期授权数
-		err = r.db.WithContext(ctx).Model(&models.AuthorizationCode{}).
-			Where("end_date >= ? AND end_date < ?", dayStart, dayEnd).
-			Count(&expiredCount).Error
-		if err != nil {
-			return nil, i18n.NewI18nError("900004", lang, err.Error())
-		}
-
+	trendData := make([]models.TrendData, 0)
+	totalCount := initialCount
+	for date := startDate; date.Before(endDateExclusive); date = date.AddDate(0, 0, 1) {
+		key := date.Format("2006-01-02")
+		totalCount += newByDate[key]
 		trendData = append(trendData, models.TrendData{
-			Date:                  date.Format("2006-01-02"),
+			Date:                  key,
 			TotalAuthorizations:   totalCount,
-			NewAuthorizations:     newCount,
-			ExpiredAuthorizations: expiredCount,
+			NewAuthorizations:     newByDate[key],
+			ExpiredAuthorizations: expiredByDate[key],
 		})
 	}
-
-	return trendData, nil
+	return trendData
 }
 
 // GetRecentAuthorizations 获取最近授权列表
@@ -91,8 +94,8 @@ func (r *dashboardRepository) GetRecentAuthorizations(ctx context.Context, req *
 
 	// 构建查询
 	query := r.db.WithContext(ctx).Table("authorization_codes ac").
-		Select(`ac.id, ac.code, ac.customer_id, c.customer_name as customer_name, 
-		        ac.description, ac.start_date, ac.end_date, ac.max_activations,
+		Select(`ac.id, ac.code, ac.customer_id, COALESCE(c.customer_name, '') as customer_name,
+		        COALESCE(ac.description, '') as description, ac.start_date, ac.end_date, ac.max_activations,
 		        COALESCE(l.active_count, 0) as current_activations, 
 		        ac.created_at, ac.updated_at, ac.is_locked`).
 		Joins("LEFT JOIN customers c ON ac.customer_id = c.id").
@@ -124,12 +127,12 @@ func (r *dashboardRepository) GetRecentAuthorizations(ctx context.Context, req *
 	// 查询总数 - 使用简化查询避免JOIN复杂性
 	var total int64
 	countQuery := r.db.WithContext(ctx).Model(&models.AuthorizationCode{}).Where("1=1")
-	
+
 	// 添加相同的筛选条件
 	if req.CustomerID != "" {
 		countQuery = countQuery.Where("customer_id = ?", req.CustomerID)
 	}
-	
+
 	// 状态筛选
 	switch req.Status {
 	case "normal":
@@ -139,7 +142,7 @@ func (r *dashboardRepository) GetRecentAuthorizations(ctx context.Context, req *
 	case "expired":
 		countQuery = countQuery.Where("end_date <= ?", now)
 	}
-	
+
 	err := countQuery.Count(&total).Error
 	if err != nil {
 		return nil, i18n.NewI18nError("900004", lang, err.Error())

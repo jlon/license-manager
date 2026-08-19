@@ -59,8 +59,8 @@ common:
 # Enum translations
 enums:
   dashboard_period:
-    week: "This Week"
-    month: "This Month"
+    week: "Last 7 Days"
+    month: "Last 30 Days"
   customer_type:
     "individual": "Individual"
     "enterprise": "Enterprise"

@@ -18,8 +18,6 @@ import DashboardIcon from './svg/DashboardIcon.vue'
 import CustomersIcon from './svg/CustomersIcon.vue'
 import LicensesIcon from './svg/LicensesIcon.vue'
 import EnterpriseLeadsIcon from './svg/EnterpriseLeadsIcon.vue'
-import RolesIcon from './svg/RolesIcon.vue'
-import UsersIcon from './svg/UsersIcon.vue'
 
 interface Props {
   name: string
@@ -34,9 +32,7 @@ const iconMap = {
   'dashboard': DashboardIcon,
   'customers': CustomersIcon,
   'licenses': LicensesIcon,
-  'enterprise-leads': EnterpriseLeadsIcon,
-  'roles': RolesIcon,
-  'users': UsersIcon
+  'enterprise-leads': EnterpriseLeadsIcon
 }
 
 const iconComponent = computed(() => {

@@ -356,6 +356,8 @@ onMounted(async () => {
   flex-direction: column;
   gap: 16px;
   min-width: 0;
+  padding: var(--layout-content-padding);
+  box-sizing: border-box;
 }
 
 .page-header {
@@ -442,6 +444,10 @@ onMounted(async () => {
 }
 
 @media (max-width: 900px) {
+  .form-page {
+    padding: 12px;
+  }
+
   .three-columns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

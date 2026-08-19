@@ -71,17 +71,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/enterprise-leads",
     component: () => import("@/views/EnterpriseLeads/index.vue"),
     meta: { title: "企业线索", requiresAuth: true }
-  },
-  {
-    path: "/roles",
-    component: () => import("@/views/Roles.vue"),
-    meta: { title: "角色管理", requiresAuth: true }
-  },
-  {
-    path: "/users",
-    component: () => import("@/views/Users.vue"),
-    meta: { title: "用户管理", requiresAuth: true }
-  },
+  }
 ];
 
 const routerBase = import.meta.env.BASE_URL === './' ? '/' : import.meta.env.BASE_URL

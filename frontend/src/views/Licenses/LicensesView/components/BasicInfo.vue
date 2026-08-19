@@ -129,7 +129,7 @@ const formatRemainingTime = (endDate?: string) => {
       font-size: 14px;
       font-weight: 400;
       line-height: 2.2857142857142856em;
-      color: rgba(29, 29, 29, 0.87);
+      color: var(--app-text-secondary);
       text-align: right;
       flex-shrink: 0;
     }
@@ -140,7 +140,7 @@ const formatRemainingTime = (endDate?: string) => {
       font-size: 14px;
       font-weight: 500;
       line-height: 1.5em;
-      color: rgba(29, 29, 29, 0.87);
+      color: var(--app-text-primary);
     }
   }
 }

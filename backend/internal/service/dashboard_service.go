@@ -33,7 +33,7 @@ func (s *dashboardService) GetAuthorizationTrend(ctx context.Context, req *model
 
 	var startDate, endDate time.Time
 	var descriptionDisplay string
-	
+
 	// 获取时区，默认使用本地时区
 	loc := time.Local
 	if req.Timezone != "" {
@@ -44,28 +44,22 @@ func (s *dashboardService) GetAuthorizationTrend(ctx context.Context, req *model
 			loc = time.Local
 		}
 	}
-	
+
 	now := time.Now().In(loc)
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc)
 
 	// 根据类型计算时间范围
 	switch req.Type {
 	case "week":
-		// 本周：从周一到周日
-		weekday := int(now.Weekday())
-		if weekday == 0 { // Sunday
-			weekday = 7
-		}
-		startDate = now.AddDate(0, 0, -(weekday-1))
-		startDate = time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 0, 0, 0, 0, loc)
-		endDate = startDate.AddDate(0, 0, 6)
-		endDate = time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 23, 59, 59, 999999999, loc)
+		// 最近7天（含今天），与看板筛选文案保持一致。
+		startDate = today.AddDate(0, 0, -6)
+		endDate = today.AddDate(0, 0, 1).Add(-time.Nanosecond)
 		descriptionDisplay = i18n.GetEnumMessage("dashboard_period", "week", lang)
 
 	case "month":
-		// 本月：从1号到月末
-		startDate = time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, loc)
-		endDate = startDate.AddDate(0, 1, -1)
-		endDate = time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 23, 59, 59, 999999999, loc)
+		// 最近30天（含今天），与看板筛选文案保持一致。
+		startDate = today.AddDate(0, 0, -29)
+		endDate = today.AddDate(0, 0, 1).Add(-time.Nanosecond)
 		descriptionDisplay = i18n.GetEnumMessage("dashboard_period", "month", lang)
 
 	case "custom":

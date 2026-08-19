@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -8,6 +9,8 @@ import (
 	"license-manager/internal/config"
 	"license-manager/internal/models"
 	"license-manager/pkg/utils"
+
+	"gorm.io/gorm"
 )
 
 // AutoMigrate 执行自动数据库迁移
@@ -53,16 +56,33 @@ func initCustomerCodeSequence() error {
 	var sequence models.CustomerCodeSequence
 	result := DB.Where("year = ?", currentYear).First(&sequence)
 
-	if result.Error != nil {
-		// 记录不存在，创建新记录
-		sequence = models.CustomerCodeSequence{
-			Year:           currentYear,
-			SequenceNumber: 0,
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		values := map[string]interface{}{
+			"year":            currentYear,
+			"sequence_number": 0,
 		}
-		if err := DB.Create(&sequence).Error; err != nil {
+
+		// 兼容历史测试库保留的 tenant_id 必填列；社区版新库不会新增该列。
+		if DB.Migrator().HasColumn(&models.CustomerCodeSequence{}, "tenant_id") {
+			var existing struct {
+				TenantID string `gorm:"column:tenant_id"`
+			}
+			if err := DB.Table(models.CustomerCodeSequence{}.TableName()).
+				Select("tenant_id").
+				Where("tenant_id IS NOT NULL").
+				Limit(1).
+				Scan(&existing).Error; err != nil {
+				return fmt.Errorf("failed to read legacy tenant id: %w", err)
+			}
+			values["tenant_id"] = existing.TenantID
+		}
+
+		if err := DB.Table(models.CustomerCodeSequence{}.TableName()).Create(values).Error; err != nil {
 			return fmt.Errorf("failed to create customer code sequence: %w", err)
 		}
 		log.Printf("Initialized customer code sequence for year %d", currentYear)
+	} else if result.Error != nil {
+		return fmt.Errorf("failed to query customer code sequence: %w", result.Error)
 	}
 
 	return nil

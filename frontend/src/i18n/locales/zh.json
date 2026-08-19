@@ -51,7 +51,13 @@
     "overviewTitle": "授权统计",
     "noData": "数据暂不可用",
     "trendTitle": "授权趋势",
-    "trendDescription": "按周、月或自定义时间查看授权数量变化。",
+    "trendDescription": "查看最近7天、最近30天或自定义范围内的授权变化。",
+    "trendSummary": {
+      "total": "期末授权总量",
+      "new": "期间新增",
+      "expired": "期间到期",
+      "growth": "期间增长率"
+    },
     "customRange": "自定义",
     "to": "至",
     "startDate": "开始日期",
@@ -100,9 +106,7 @@
       "dashboard": "仪表盘",
       "customers": "客户管理",
       "enterpriseLeads": "企业线索",
-      "licenses": "授权管理",
-      "roles": "角色权限",
-      "users": "系统用户"
+      "licenses": "授权管理"
     },
     "toggleSidebar": "切换侧边栏",
     "mainNavigation": "主导航",
@@ -128,8 +132,6 @@
       "licenseList": "授权列表",
       "createLicense": "创建授权",
       "viewLicense": "查看授权",
-      "roles": "角色权限",
-      "users": "系统用户",
       "login": "登录",
       "settings": "设置",
       "profile": "个人资料",
@@ -140,6 +142,7 @@
 
   "enterpriseLeads": {
     "title": "企业线索",
+    "description": "集中查看并跟进企业咨询线索，让销售转化过程清晰可追踪。",
     "stats": {
       "total": "线索总数",
       "pending": "待联系",
@@ -161,7 +164,9 @@
       "phone": "联系电话",
       "submittedAt": "提交时间",
       "status": "状态",
-      "actions": "操作"
+      "actions": "操作",
+      "empty": "暂无线索数据",
+      "unit": "条线索"
     },
     "status": {
       "pending": "待联系",
@@ -173,7 +178,11 @@
       "view": "查看",
       "edit": "编辑",
       "delete": "删除",
-      "refresh": "刷新"
+      "refresh": "刷新",
+      "query": "查询",
+      "reset": "重置",
+      "retry": "重新加载",
+      "more": "更多"
     },
     "detail": {
       "title": "企业线索详情 - {company}",
@@ -231,6 +240,11 @@
       },
       "tooltip": {
         "licenseCount": "授权数量"
+      },
+      "series": {
+        "total": "授权总量",
+        "new": "新增授权",
+        "expired": "到期授权"
       }
     },
     "mobileDateRange": {
@@ -244,14 +258,6 @@
     }
   },
   "pages": {
-    "users": {
-      "title": "系统用户",
-      "welcome": "欢迎你来到系统用户页面"
-    },
-    "roles": {
-      "title": "角色权限",
-      "welcome": "欢迎你来到角色权限页面"
-    },
     "licenses": {
       "title": "授权管理",
       "welcome": "欢迎你来到授权管理页面",
@@ -331,9 +337,20 @@
       },
       "search": {
         "placeholder": "搜索授权码、客户名称、描述",
-        "selectCustomer": "下拉选择客户",
-        "allCustomers": "全部客户",
-        "dateRange": "选择日期范围",
+      "selectCustomer": "下拉选择客户",
+      "allCustomers": "全部客户",
+      "title": "按客户查找授权",
+      "description": "选择客户后查看已有授权，或者进入创建流程。",
+      "customerLabel": "客户",
+      "customerHint": "仅显示当前启用的客户。",
+      "selectedCustomer": "当前选择：",
+      "queryTitle": "查看已有授权",
+      "queryDescription": "检查所选客户的授权状态、激活用量和有效期。",
+      "createTitle": "创建新授权",
+      "createDescription": "进入授权创建页，可继续调整客户和授权配置。",
+      "loadError": "加载客户列表失败",
+      "retry": "重新加载",
+      "dateRange": "选择日期范围",
         "startDate": "开始日期",
         "endDate": "结束日期"
       },

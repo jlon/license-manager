@@ -42,24 +42,43 @@ export interface RecentAuthorizationResponse {
 
 // 获取最近授权列表 
 export const getRecentAuthorizations = (params?: { limit?: number }): Promise<ApiResponse<RecentAuthorizationResponse>> => {
-  return Axios.get('api/v1/dashboard/recent-authorizations', { params })
+  return Axios.get('/api/v1/dashboard/recent-authorizations', { params })
 }
 
 // 授权趋势数据类型定义
 export interface TrendDataItem {
   date: string
   total_authorizations: number
+  new_authorizations: number
+  expired_authorizations: number
+}
+
+export interface TrendPeriod {
+  type: 'week' | 'month' | 'custom'
+  start_date: string
+  end_date: string
+  description_display: string
+}
+
+export interface TrendSummary {
+  total_count: number
+  new_count: number
+  expired_count: number
+  growth_rate: number
 }
 
 export interface AuthorizationTrendResponse {
-  'trend_data': TrendDataItem[]
+  period: TrendPeriod
+  trend_data: TrendDataItem[]
+  summary: TrendSummary
 }
 
 // 获取授权趋势数据
 export const getAuthorizationTrend = (params: {
-  type:string,
-  start_date: string
-  end_date: string
+  type: 'week' | 'month' | 'custom'
+  start_date?: string
+  end_date?: string
+  timezone?: string
 }): Promise<ApiResponse<AuthorizationTrendResponse>> => {
   return Axios.get('/api/v1/dashboard/authorization-trend', { params })
 }

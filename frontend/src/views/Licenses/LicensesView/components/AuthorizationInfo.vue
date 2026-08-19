@@ -221,8 +221,8 @@ const formatDateRange = () => {
 }
 
 .info-card {
-  background: #FFFFFF;
-  border: 1px solid #E2E2E2;
+  background: var(--app-content-bg);
+  border: 1px solid var(--app-border-color);
   border-radius: 4px;
   padding: 16px 20px;
 
@@ -231,7 +231,7 @@ const formatDateRange = () => {
     font-size: 16px;
     font-weight: 700;
     line-height: 18px;
-    color: #1D1D1D;
+    color: var(--app-text-primary);
     margin-bottom: 16px;
   }
 
@@ -250,7 +250,7 @@ const formatDateRange = () => {
       font-size: 14px;
       font-weight: 400;
       line-height: 18px;
-      color: #666666;
+      color: var(--app-text-secondary);
     }
   }
 
@@ -278,7 +278,7 @@ const formatDateRange = () => {
       font-size: 14px;
       font-weight: 400;
       line-height: 22px;
-      color: #1D1D1D;
+      color: var(--app-text-primary);
       white-space: nowrap;
     }
 
@@ -287,7 +287,7 @@ const formatDateRange = () => {
       font-size: 14px;
       font-weight: 400;
       line-height: 22px;
-      color: #1D1D1D;
+      color: var(--app-text-primary);
       flex: 1;
 
       &.code-value {
@@ -317,7 +317,7 @@ const formatDateRange = () => {
   }
 
   .key-value-table {
-    border: 1px solid #eef0f2;
+    border: 1px solid var(--app-border-color);
     border-radius: 4px;
     overflow: hidden;
 
@@ -330,23 +330,23 @@ const formatDateRange = () => {
     }
 
     .key-value-header {
-      background: #f5f6f8;
+      background: var(--app-action-btn-bg);
       font-weight: 600;
       font-size: 13px;
-      color: #1d1d1d;
+      color: var(--app-text-primary);
     }
 
     .key-value-row {
       font-size: 13px;
-      color: #1d1d1d;
-      border-top: 1px solid #eef0f2;
+      color: var(--app-text-primary);
+      border-top: 1px solid var(--app-border-color);
 
       .key-cell {
         font-weight: 600;
       }
 
       .type-cell {
-        color: #606266;
+        color: var(--app-text-secondary);
         font-weight: 500;
       }
 
@@ -360,7 +360,7 @@ const formatDateRange = () => {
     border: 1px dashed #d7dbe2;
     border-radius: 4px;
     padding: 12px 16px;
-    color: #909399;
+    color: var(--app-text-secondary);
     font-size: 13px;
   }
 }

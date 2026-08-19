@@ -51,7 +51,13 @@
     "overviewTitle": "ライセンス統計",
     "noData": "データを利用できません",
     "trendTitle": "認可の推移",
-    "trendDescription": "週、月、または期間指定で認可数の変化を確認します。",
+    "trendDescription": "直近7日間、30日間、または指定期間の認可数の変化を確認します。",
+    "trendSummary": {
+      "total": "期間末の認可総数",
+      "new": "期間内の新規",
+      "expired": "期間内の期限切れ",
+      "growth": "期間成長率"
+    },
     "customRange": "期間指定",
     "to": "から",
     "startDate": "開始日",
@@ -100,9 +106,7 @@
       "dashboard": "ダッシュボード",
       "customers": "顧客管理",
       "enterpriseLeads": "企業リード",
-      "licenses": "ライセンス管理",
-      "roles": "ロールと権限",
-      "users": "システムユーザー"
+      "licenses": "ライセンス管理"
     },
     "toggleSidebar": "サイドバー切り替え",
     "mainNavigation": "メインナビゲーション",
@@ -128,8 +132,6 @@
       "licenseList": "ライセンス一覧",
       "createLicense": "ライセンス作成",
       "viewLicense": "ライセンス表示",
-      "roles": "ロールと権限",
-      "users": "システムユーザー",
       "login": "ログイン",
       "settings": "設定",
       "profile": "プロフィール",
@@ -140,6 +142,7 @@
 
   "enterpriseLeads": {
     "title": "企業リード",
+    "description": "企業からの問い合わせとフォローアップを一元管理し、商談化の流れを明確に追跡します。",
     "stats": {
       "total": "リード総数",
       "pending": "未連絡",
@@ -161,7 +164,9 @@
       "phone": "連絡先電話",
       "submittedAt": "提出時間",
       "status": "ステータス",
-      "actions": "操作"
+      "actions": "操作",
+      "empty": "リードデータがありません",
+      "unit": "件"
     },
     "status": {
       "pending": "未連絡",
@@ -173,7 +178,44 @@
       "view": "表示",
       "edit": "編集",
       "delete": "削除",
-      "refresh": "更新"
+      "refresh": "更新",
+      "query": "検索",
+      "reset": "リセット",
+      "retry": "再読み込み",
+      "more": "その他"
+    },
+    "detail": {
+      "title": "企業リード詳細 - {company}",
+      "basicInfo": "企業基本情報",
+      "requirementInfo": "要件情報",
+      "followUpInfo": "フォローアップ情報",
+      "email": "メールアドレス",
+      "description": "要件の詳細",
+      "otherInfo": "補足情報",
+      "followUpDate": "フォローアップ日",
+      "followUpRecord": "フォローアップ記録",
+      "internalRemark": "社内メモ"
+    },
+    "edit": {
+      "title": "企業リード編集 - {company}",
+      "save": "変更を保存",
+      "datePlaceholder": "日付を選択",
+      "recordPlaceholder": "連絡内容、フィードバック、次の対応を記録...",
+      "remarkPlaceholder": "顧客には表示されない社内メモ",
+      "statusRequired": "ステータスを選択してください"
+    },
+    "validation": {
+      "nameRequired": "企業名を入力してください",
+      "contactRequired": "担当者名を入力してください"
+    },
+    "messages": {
+      "fetchError": "リード一覧の取得に失敗しました",
+      "fetchDetailError": "リード詳細の取得に失敗しました",
+      "updateSuccess": "更新しました",
+      "updateError": "更新に失敗しました",
+      "deleteSuccess": "削除しました",
+      "deleteError": "削除に失敗しました",
+      "deleteConfirm": "このリードを削除しますか？この操作は取り消せません。"
     }
   },
 
@@ -186,8 +228,8 @@
     "licenseTrend": {
       "title": "ライセンストレンド",
       "quickOptions": {
-        "week": "直7日間",
-        "month": "直30日間"
+        "week": "直近7日間",
+        "month": "直近30日間"
       },
       "datePicker": {
         "rangeSeparator": "から",
@@ -197,6 +239,11 @@
       },
       "tooltip": {
         "licenseCount": "ライセンス数"
+      },
+      "series": {
+        "total": "認可総数",
+        "new": "新規認可",
+        "expired": "期限切れ認可"
       }
     },
     "mobileDateRange": {
@@ -204,20 +251,12 @@
       "endDate": "終了日付",
       "separator": "から",
       "quickOptions": {
-        "week": "直7日間",
-        "month": "直30日間"
+        "week": "直近7日間",
+        "month": "直近30日間"
       }
     }
   },
   "pages": {
-    "users": {
-      "title": "システムユーザー",
-      "welcome": "システムユーザーページへようこそ"
-    },
-    "roles": {
-      "title": "ロールと権限",
-      "welcome": "ロールと権限ページへようこそ"
-    },
     "licenses": {
       "title": "ライセンス管理",
       "welcome": "ライセンス管理ページへようこそ",
@@ -297,9 +336,20 @@
       },
       "search": {
         "placeholder": "ライセンスコード、顧客名、説明で検索",
-        "selectCustomer": "顧客選択",
-        "allCustomers": "全顧客",
-        "dateRange": "日付範囲選択",
+      "selectCustomer": "顧客選択",
+      "allCustomers": "全顧客",
+      "title": "顧客別ライセンス検索",
+      "description": "顧客を選択して既存ライセンスを確認するか、新規作成を開始します。",
+      "customerLabel": "顧客",
+      "customerHint": "有効な顧客のみ表示されます。",
+      "selectedCustomer": "選択中：",
+      "queryTitle": "既存ライセンスを確認",
+      "queryDescription": "選択した顧客の状態、アクティベーション使用量、有効期限を確認します。",
+      "createTitle": "ライセンスを作成",
+      "createDescription": "作成ページで顧客とライセンス設定を続けて編集できます。",
+      "loadError": "顧客一覧の読み込みに失敗しました",
+      "retry": "再読み込み",
+      "dateRange": "日付範囲選択",
         "startDate": "開始日",
         "endDate": "終了日"
       },

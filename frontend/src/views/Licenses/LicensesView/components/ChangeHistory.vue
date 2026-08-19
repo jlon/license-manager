@@ -236,7 +236,7 @@ const getStatusType = (changeType: string) => {
       font-size: 14px;
       font-weight: 500;
       line-height: 22px;
-      color: #1D1D1D;
+      color: var(--app-text-primary);
       white-space: nowrap;
     }
 
@@ -246,7 +246,7 @@ const getStatusType = (changeType: string) => {
 
       :deep(.el-input__wrapper) {
         padding: 2px 4px 2px 12px;
-        border: 1px solid #DCDEE2;
+        border: 1px solid var(--app-border-color);
         border-radius: 4px;
       }
 
@@ -255,7 +255,7 @@ const getStatusType = (changeType: string) => {
         font-size: 12px;
         font-weight: 500;
         line-height: 24px;
-        color: #B2B8C2;
+        color: var(--app-text-secondary);
       }
     }
 
@@ -265,13 +265,13 @@ const getStatusType = (changeType: string) => {
       :deep(.el-range-separator) {
         
         font-size: 12px;
-        color: #666666;
+        color: var(--app-text-secondary);
       }
 
       :deep(.el-range-input) {
         
         font-size: 12px;
-        color: #1D1D1D;
+        color: var(--app-text-primary);
       }
 
       :deep(.el-range__icon) {
@@ -282,8 +282,8 @@ const getStatusType = (changeType: string) => {
 }
 
 .history-container {
-  background: #FFFFFF;
-  border: 1px solid #E2E2E2;
+  background: var(--app-content-bg);
+  border: 1px solid var(--app-border-color);
   border-radius: 4px;
   padding: 20px;
   min-height: 400px;
@@ -300,7 +300,7 @@ const getStatusType = (changeType: string) => {
     top: 0;
     bottom: 0;
     width: 1px;
-    background: #DCDFE6;
+    background: var(--app-border-color);
   }
 }
 
@@ -323,7 +323,7 @@ const getStatusType = (changeType: string) => {
     width: 11px;
     height: 11px;
     background: #4876FF;
-    border: 2px solid #FFFFFF;
+    border: 2px solid var(--app-content-bg);
     border-radius: 50%;
     z-index: 1;
   }
@@ -340,7 +340,7 @@ const getStatusType = (changeType: string) => {
     bottom: 0;
     right: 0;
     height: 1px;
-    background: #DCDFE6;
+    background: var(--app-border-color);
   }
 
   .history-header {
@@ -362,7 +362,7 @@ const getStatusType = (changeType: string) => {
           font-size: 14px;
           font-weight: 500;
           line-height: 22px;
-          color: #202332;
+          color: var(--app-text-primary);
         }
 
       }
@@ -408,7 +408,7 @@ const getStatusType = (changeType: string) => {
       font-size: 14px;
       font-weight: 400;
       line-height: 18px;
-      color: #8186A5;
+      color: var(--app-text-secondary);
     }
   }
 
@@ -422,7 +422,7 @@ const getStatusType = (changeType: string) => {
       font-size: 14px;
       font-weight: 400;
       line-height: 22px;
-      color: #666666;
+      color: var(--app-text-secondary);
       padding: 8px 12px;
       background: rgba(136, 165, 209, 0.1);
       border-radius: 4px;

@@ -56,7 +56,15 @@
             <span>{{ trendError }}</span>
             <el-button link type="primary" @click="loadTrend">{{ t('dashboard.retry') }}</el-button>
           </div>
-          <LicenseTrendChart v-else :data="trendData" :empty-text="t('dashboard.noTrendData')" />
+          <template v-else>
+            <div v-if="trendSummary" class="trend-summary">
+              <div v-for="item in trendSummaryItems" :key="item.key" class="trend-summary__item">
+                <span>{{ item.label }}</span>
+                <strong>{{ item.value }}</strong>
+              </div>
+            </div>
+            <LicenseTrendChart :data="trendData" :empty-text="t('dashboard.noTrendData')" />
+          </template>
         </div>
       </section>
 
@@ -113,7 +121,8 @@ import {
   getRecentAuthorizations,
   type RecentAuthorizationItem,
   type StatsOverviewData,
-  type TrendDataItem
+  type TrendDataItem,
+  type TrendSummary
 } from '@/api/dashboard'
 import { formatDate } from '@/utils/date'
 
@@ -122,6 +131,7 @@ const router = useRouter()
 const stats = ref<StatsOverviewData | null>(null)
 const recentData = ref<RecentAuthorizationItem[]>([])
 const trendData = ref<TrendDataItem[]>([])
+const trendSummary = ref<TrendSummary | null>(null)
 const statsLoading = ref(false)
 const recentLoading = ref(false)
 const trendLoading = ref(false)
@@ -132,6 +142,7 @@ const trendError = ref('')
 const lastUpdatedAt = ref('')
 const trendType = ref<'week' | 'month' | 'custom'>('month')
 const customRange = ref<[string, string] | null>(null)
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 const statCards = computed(() => {
   const data = stats.value
@@ -144,27 +155,19 @@ const statCards = computed(() => {
     { key: 'alerts', label: t('dashboard.stats.abnormalAlerts'), value: data?.abnormal_alerts ?? 0, help: t('dashboard.stats.subText.heartbeatTimeout'), tone: 'danger', icon: markRaw(Bell) }
   ]
 })
+const trendSummaryItems = computed(() => {
+  const data = trendSummary.value
+  return [
+    { key: 'total', label: t('dashboard.trendSummary.total'), value: data?.total_count ?? 0 },
+    { key: 'new', label: t('dashboard.trendSummary.new'), value: data?.new_count ?? 0 },
+    { key: 'expired', label: t('dashboard.trendSummary.expired'), value: data?.expired_count ?? 0 },
+    { key: 'growth', label: t('dashboard.trendSummary.growth'), value: `${formatRate(data?.growth_rate)}%` }
+  ]
+})
 
 const formatRate = (value?: number) => {
   const rate = value ?? 0
   return `${rate >= 0 ? '+' : ''}${rate.toFixed(2)}`
-}
-const localDate = (date: Date) => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-const trendRange = () => {
-  if (trendType.value === 'custom' && customRange.value) return customRange.value
-  const today = new Date()
-  if (trendType.value === 'week') {
-    const weekday = today.getDay() || 7
-    const start = new Date(today)
-    start.setDate(today.getDate() - weekday + 1)
-    return [localDate(start), localDate(today)] as [string, string]
-  }
-  return [localDate(new Date(today.getFullYear(), today.getMonth(), 1)), localDate(today)] as [string, string]
 }
 const errorText = (error: any) => error?.backendMessage || error?.response?.data?.message || t('dashboard.loadFailed')
 
@@ -182,9 +185,15 @@ const loadTrend = async () => {
   if (trendType.value === 'custom' && !customRange.value) return
   trendLoading.value = true
   trendError.value = ''
-  const [start_date, end_date] = trendRange()
   try {
-    trendData.value = (await getAuthorizationTrend({ type: trendType.value, start_date, end_date })).data.trend_data
+    const params: Parameters<typeof getAuthorizationTrend>[0] = { type: trendType.value, timezone }
+    if (trendType.value === 'custom' && customRange.value) {
+      const [start_date, end_date] = customRange.value
+      Object.assign(params, { start_date, end_date })
+    }
+    const response = (await getAuthorizationTrend(params)).data
+    trendData.value = response.trend_data
+    trendSummary.value = response.summary
   } catch (error) { trendError.value = errorText(error) } finally { trendLoading.value = false }
 }
 const refreshAll = async () => {
@@ -223,6 +232,10 @@ onMounted(refreshAll)
 .trend-controls { display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; }
 .panel-body { min-height:120px; padding:12px 18px 18px; }
 .chart-body { min-height:280px; }
+.trend-summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; padding:4px 0 10px; }
+.trend-summary__item { min-width:0; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--app-bg-color); border:1px solid var(--app-border-light); border-radius:8px; }
+.trend-summary__item span { overflow:hidden; color:var(--app-text-secondary); font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
+.trend-summary__item strong { color:var(--app-text-primary); font-size:16px; }
 .state-block { min-height:220px; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--app-text-secondary); }
 .table-wrap { overflow-x:auto; }
 .table-wrap :deep(.el-table__row) { cursor:pointer; }
@@ -231,6 +244,7 @@ onMounted(refreshAll)
 .status-tag--locked { color:#a56605; background:#fff5df; }
 .status-tag--expired { color:#b83d3d; background:#ffeded; }
 @media (max-width:1199px) { .overview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width:1023px) { .trend-summary { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media (max-width:767px) {
   .dashboard-page { padding:12px; }
   .page-header { align-items:flex-start; flex-direction:column; }
@@ -242,5 +256,7 @@ onMounted(refreshAll)
   .trend-controls :deep(.el-date-editor) { width:100%; }
   .panel-header { padding:13px 14px; }
   .panel-body { padding:10px 14px 14px; }
+  .trend-summary { grid-template-columns:1fr 1fr; gap:8px; }
+  .trend-summary__item { padding:9px 10px; align-items:flex-start; flex-direction:column; gap:2px; }
 }
 </style>

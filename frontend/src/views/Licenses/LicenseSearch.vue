@@ -1,58 +1,73 @@
 <template>
-  <div class="license-search-container">
-    <div class="background-section">
-      <div class="center-title">
-        <h1 class="platform-title">{{ t('pages.licenses.platform') }}</h1>
+  <div class="license-search-page">
+    <header class="page-header">
+      <div>
+        <h1>{{ t('pages.licenses.search.title') }}</h1>
+        <p>{{ t('pages.licenses.search.description') }}</p>
       </div>
+      <el-button :icon="Back" @click="handleBack">{{ t('pages.licenses.actions.back') }}</el-button>
+    </header>
 
-      <div class="action-section">
-        <div class="action-row">
-          <div class="customer-select-wrapper">
-            <el-select
-              v-model="selectedCustomer"
-              :placeholder="t('pages.licenses.search.selectCustomer')"
-              clearable
-              filterable
-              size="large"
-              class="customer-select"
-              style="font-size: 20px !important;"
-              @change="handleCustomerChange"
-            >
-              <el-option
-                :label="t('pages.licenses.search.allCustomers')"
-                value=""
-              />
-              <el-option
-                v-for="customer in customers"
-                :key="customer.id"
-                :label="customer.customer_name"
-                :value="customer.id"
-              />
-            </el-select>
-          </div>
+    <section class="search-card">
+      <el-alert v-if="loadError" :title="loadError" type="error" show-icon :closable="false">
+        <template #default>
+          <el-button link type="primary" @click="loadCustomers">{{ t('pages.licenses.search.retry') }}</el-button>
+        </template>
+      </el-alert>
 
-          <div class="action-buttons">
-            <el-button
-              type="primary"
-              size="large"
-              class="action-btn query-btn"
-              @click="handleQuery"
-            >
-              {{ t('pages.licenses.actions.query') }}
-            </el-button>
+      <div class="search-content">
+        <div class="field-block">
+          <label>{{ t('pages.licenses.search.customerLabel') }}</label>
+          <el-select
+            v-model="selectedCustomer"
+            :placeholder="t('pages.licenses.search.selectCustomer')"
+            :loading="customerLoading"
+            clearable
+            filterable
+            class="customer-select"
+          >
+            <el-option
+              v-for="customer in customers"
+              :key="customer.id"
+              :label="customer.customer_name"
+              :value="customer.id"
+            />
+          </el-select>
+          <span>{{ t('pages.licenses.search.customerHint') }}</span>
+        </div>
 
-            <el-button
-              type="primary"
-              size="large"
-              class="action-btn create-btn"
-              @click="handleCreateLicense"
-            >
-              {{ t('pages.licenses.actions.createLicense') }}
-            </el-button>
-          </div>
+        <div class="action-buttons">
+          <el-button type="primary" :icon="Search" :loading="querying" @click="handleQuery">
+            {{ t('pages.licenses.actions.query') }}
+          </el-button>
+          <el-button :icon="Plus" @click="handleCreateLicense">
+            {{ t('pages.licenses.actions.createLicense') }}
+          </el-button>
         </div>
       </div>
-    </div>
+
+      <div v-if="selectedCustomerInfo" class="selected-customer">
+        <span>{{ t('pages.licenses.search.selectedCustomer') }}</span>
+        <strong>{{ selectedCustomerInfo.customer_name }}</strong>
+      </div>
+    </section>
+
+    <section class="guide-grid">
+      <article class="guide-card">
+        <div class="guide-icon"><el-icon><Search /></el-icon></div>
+        <div>
+          <h2>{{ t('pages.licenses.search.queryTitle') }}</h2>
+          <p>{{ t('pages.licenses.search.queryDescription') }}</p>
+        </div>
+      </article>
+      <article class="guide-card">
+        <div class="guide-icon"><el-icon><Plus /></el-icon></div>
+        <div>
+          <h2>{{ t('pages.licenses.search.createTitle') }}</h2>
+          <p>{{ t('pages.licenses.search.createDescription') }}</p>
+        </div>
+      </article>
+    </section>
   </div>
 </template>
 
@@ -61,6 +76,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { Back, Plus, Search } from '@element-plus/icons-vue'
 import { getCustomers, type Customer } from '@/api/customer'
 import { getLicenses } from '@/api/license'
 
@@ -69,6 +85,9 @@ const router = useRouter()
 
 const selectedCustomer = ref<string>('')
 const customers = ref<Customer[]>([])
+const customerLoading = ref(false)
+const querying = ref(false)
+const loadError = ref('')
 
 const selectedCustomerInfo = computed(() => {
   if (!selectedCustomer.value) return null
@@ -77,17 +96,17 @@ const selectedCustomerInfo = computed(() => {
 
 // 获取所有客户列表
 const loadCustomers = async () => {
+  customerLoading.value = true
+  loadError.value = ''
   try {
     const response = await getCustomers({ status: 'active', page_size: 100 })
-    customers.value = response.data.list
-  } catch (error) {
+    customers.value = response.data.list || []
+  } catch (error: any) {
     console.error('Failed to load customers:', error)
-    ElMessage.error('获取客户列表失败')
+    loadError.value = error.backendMessage || t('pages.licenses.search.loadError')
+  } finally {
+    customerLoading.value = false
   }
-}
-
-const handleCustomerChange = () => {
-  // 客户选择变化
 }
 
 // 点击查询按钮时，检查是否有授权数据
@@ -97,6 +116,7 @@ const handleQuery = async () => {
     return
   }
 
+  querying.value = true
   try {
     const response = await getLicenses({
       customer_id: selectedCustomer.value,
@@ -118,6 +138,8 @@ const handleQuery = async () => {
   } catch (error) {
     console.error('Query licenses failed:', error)
     ElMessage.error(t('pages.licenses.message.queryLicenseError'))
+  } finally {
+    querying.value = false
   }
 }
 
@@ -131,227 +153,175 @@ const handleCreateLicense = () => {
   })
 }
 
+const handleBack = () => router.push({ name: 'licenses-list' })
+
 onMounted(() => {
   loadCustomers()
 })
 </script>
 
-<style scoped lang="scss">
-@use '@/assets/styles/variables.scss' as *;
-@use 'sass:color';
-
-.license-search-container {
-  height: calc(100vh - 80px);
-  width: 100%;
-  overflow: hidden;
-}
-
-.background-section {
-  position: relative;
-  height: 100%;
-  background-image: url('/src/assets/images/license-bg.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+<style scoped>
+.license-search-page {
   display: flex;
+  min-width: 0;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  gap: 16px;
+  padding: var(--layout-content-padding);
+  box-sizing: border-box;
 }
 
-.center-title {
-  position: relative;
-  z-index: 2;
-  margin-bottom: 60px;
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
 }
 
-.platform-title {
-  font-family: 'PangMenZhengDao';
-  font-size: 56px;
-  font-style: normal;
-  font-weight: 400;
-  color: #1C1C28;
-  text-align: center;
+.page-header h1 {
   margin: 0;
-  letter-spacing: 3.36px;
-  line-height: normal;
+  color: var(--app-text-primary);
+  font-size: 24px;
+  line-height: 1.35;
 }
 
-.action-section {
-  position: relative;
-  z-index: 2;
+.page-header p {
+  margin: 4px 0 0;
+  color: var(--app-text-secondary);
+  font-size: 13px;
+}
+
+.search-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px;
-  padding: 0 24px;
+  gap: 16px;
+  padding: 20px;
+  background:
+    radial-gradient(circle at 100% 0, color-mix(in srgb, var(--el-color-primary) 10%, transparent), transparent 36%),
+    var(--app-content-bg);
+  border: 1px solid var(--app-border-color);
+  border-radius: var(--app-card-radius);
+  box-shadow: var(--app-card-shadow);
 }
 
-.action-row {
-  display: flex;
-  align-items: stretch;
-  gap: 24px;
-  width: 100%;
-  max-width: 1200px;
-
-  > * {
-    vertical-align: top;
-    margin: 0;
-  }
+.search-content {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) auto;
+  gap: 20px;
+  align-items: end;
 }
 
-.customer-select-wrapper {
-  position: relative;
-  flex: 1;
-  max-width: 900px;
-  height: 60px;
+.field-block {
   display: flex;
-  align-items: center;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-block label {
+  color: var(--app-text-primary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field-block > span {
+  color: var(--app-text-secondary);
+  font-size: 12px;
 }
 
 .customer-select {
   width: 100%;
-
-  :deep(.el-select) {
-    margin: 0;
-  }
-
-  :deep(.el-input) {
-    margin: 0;
-    height: 60px;
-  }
-
-  :deep(.el-input__wrapper) {
-    height: 60px !important;
-    font-size: 20px !important;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid #E3E3E3;
-    border-radius: 8px !important;
-    padding: 0 48px 0 16px;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    margin: 0;
-    box-shadow: none;
-
-    .el-input__inner {
-      color: #A9A9AF;
-      font-size: 20px;
-      line-height: 1.5;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-
-      &::placeholder {
-        color: #A9A9AF;
-      }
-    }
-  }
-
-  :deep(.el-input__suffix) {
-    display: none;
-  }
-
-  :deep(.el-select__wrapper) {
-    margin: 0;
-    padding: 0 20px;
-  }
 }
 
 .action-buttons {
   display: flex;
-  gap: 16px;
-  flex-shrink: 0;
-  align-items: center;
-  height: 60px;
+  gap: 8px;
+  padding-bottom: 20px;
 }
 
-.action-btn {
-  height: 40px !important;
-  padding: 0 24px;
-  font-size: 20px;
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  border-radius: 8px;
-  border: none;
-  box-sizing: border-box;
+.selected-customer {
   display: flex;
   align-items: center;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--app-border-color);
+  color: var(--app-text-secondary);
+  font-size: 13px;
+}
+
+.selected-customer strong {
+  color: var(--el-color-primary);
+  font-weight: 600;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.guide-card {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+  background: var(--app-content-bg);
+  border: 1px solid var(--app-border-color);
+  border-radius: var(--app-card-radius);
+  box-shadow: var(--app-card-shadow);
+}
+
+.guide-icon {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  align-items: center;
   justify-content: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--el-color-primary) 12%, transparent);
+  color: var(--el-color-primary);
+  font-size: 20px;
+}
+
+.guide-card h2 {
+  margin: 0 0 5px;
+  color: var(--app-text-primary);
+  font-size: 15px;
+}
+
+.guide-card p {
   margin: 0;
-  vertical-align: top;
-
-  &:deep(.el-button) {
-    margin: 0;
-    height: 40px;
-    line-height: 1;
-  }
-
-  &.query-btn {
-    min-width: 91px;
-    background-color: $primary-color;
-
-    &:hover {
-      background-color: color.adjust($primary-color, $lightness: -10%);
-    }
-  }
-
-  &.create-btn {
-    min-width: 137px;
-    background-color: $primary-color;
-
-    &:hover {
-      background-color: color.adjust($primary-color, $lightness: -10%);
-    }
-  }
+  color: var(--app-text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 @media (max-width: 768px) {
-  .platform-title {
-    font-size: 36px;
+  .license-search-page {
+    padding: 12px;
   }
 
-  .action-section {
-    padding: 0 16px;
-  }
-
-  .action-row {
-    flex-direction: column;
-    gap: 16px;
+  .page-header {
     align-items: stretch;
+    flex-direction: column;
   }
 
-  .customer-select-wrapper {
-    max-width: none;
+  .page-header .el-button {
+    width: 100%;
+  }
+
+  .search-content,
+  .guide-grid {
+    grid-template-columns: 1fr;
   }
 
   .action-buttons {
-    justify-content: center;
-    width: 100%;
-
-    .action-btn {
-      flex: 1;
-      max-width: 200px;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .platform-title {
-    font-size: 28px;
+    padding-bottom: 0;
   }
 
-  .action-btn {
-    height: 32px;
-    font-size: 16px;
-  }
-
-  .customer-select {
-    :deep(.el-input__wrapper) {
-      height: 48px;
-      font-size: 16px;
-    }
+  .action-buttons .el-button {
+    flex: 1;
   }
 }
 </style>

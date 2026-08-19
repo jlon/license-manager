@@ -1,7 +1,7 @@
 <template>
     <div class="dialog_box">
         <el-dialog v-model="visible" :title="t('enterpriseLeads.detail.title', { company: detailData?.company_name })"
-            width="800px" class="lead-detail-dialog" destroy-on-close v-loading="loading">
+            width="min(800px, calc(100vw - 32px))" class="lead-detail-dialog" destroy-on-close v-loading="loading">
             <div v-if="detailData" class="detail-content">
                 <!-- 企业基本信息 -->
                 <div class="detail-section">
@@ -126,135 +126,139 @@ watch(visible, (val) => {
 })
 </script>
 
-<style lang="scss" scoped>
-:deep(.el-dialog__headerbtn) {
-    top: 10px !important;
-}
-
+<style scoped>
 :deep(.el-dialog) {
-    border-radius: 8px;
-    overflow: hidden;
-    padding: 0 !important;
-
-
-    .el-dialog__header {
-        margin-right: 0;
-        padding: 20px 24px;
-        background: linear-gradient(90deg, #00928A 0%, #00D19E 100%) !important;
-        border-bottom: none;
-        display: flex;
-        align-items: center;
-
-        .el-dialog__title {
-            color: #fff !important;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .el-dialog__headerbtn {
-            top: 20px;
-
-            .el-dialog__close {
-                color: #fff !important;
-                font-size: 20px;
-            }
-
-            &:hover .el-dialog__close {
-                color: rgba(255, 255, 255, 0.8) !important;
-            }
-        }
-    }
-
-    .el-dialog__body {
-        padding: 24px;
-    }
+  overflow: hidden;
+  padding: 0;
+  background: var(--app-content-bg);
+  border: 1px solid var(--app-border-color);
+  border-radius: var(--app-card-radius);
 }
 
+:deep(.el-dialog__header) {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 18px 24px;
+  background: linear-gradient(120deg, var(--el-color-primary-dark-2), var(--el-color-primary));
+}
+
+:deep(.el-dialog__title),
+:deep(.el-dialog__close) {
+  color: var(--el-color-white);
+}
+
+:deep(.el-dialog__title) {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+:deep(.el-dialog__headerbtn) {
+  top: 14px;
+  right: 14px;
+}
+
+:deep(.el-dialog__body) {
+  max-height: min(70vh, 680px);
+  padding: 24px;
+  overflow-y: auto;
+}
 
 .detail-content {
-    padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .detail-section {
-    margin-bottom: 24px;
-    border: 1px solid #E9E9E9;
-
-    &:last-child {
-        margin-bottom: 0;
-    }
+  overflow: hidden;
+  border: 1px solid var(--app-border-color);
+  border-radius: 8px;
 }
 
 .section-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 16px;
-    padding-left: 0;
-    position: relative;
-    background-color: #FAFAFA;
-    padding: 11px 24px;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 11px 16px;
+  background: var(--app-action-btn-bg);
+  color: var(--app-text-primary);
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .info-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-     padding: 11px 24px;
-    box-sizing: border-box;
-   
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 24px;
+  padding: 16px;
 }
 
 .info-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-     padding: 11px 24px;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
 }
 
 .info-item {
-    display: flex;
-    font-size: 14px;
-    line-height: 1.6;
+  display: flex;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
 
-    &.block {
-        flex-direction: row;
-        align-items: flex-start;
-    }
+.info-item .label {
+  width: 100px;
+  flex-shrink: 0;
+  color: var(--app-text-secondary);
+}
 
-    .label {
-        color: #666;
-        flex-shrink: 0;
-        width: 100px;
-    }
+.info-item .value {
+  min-width: 0;
+  color: var(--app-text-primary);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
 
-    .value {
-        color: #333;
-    }
+.status-value {
+  font-weight: 600;
+}
 
-    .status-value {
-        font-weight: 500;
+.status-value.contacting,
+.status-value.completed {
+  color: var(--el-color-primary);
+}
 
-        &.contacting {
-            color: #409eff;
-        }
+.status-value.pending {
+  color: var(--el-color-warning);
+}
 
-        &.pending {
-            color: #e6a23c;
-        }
-
-        &.completed {
-            color: #333;
-        }
-
-        &.rejected {
-            color: #999;
-        }
-    }
+.status-value.rejected {
+  color: var(--el-color-info);
 }
 
 .mt-12 {
-    margin-top: 12px;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+@media (max-width: 640px) {
+  :deep(.el-dialog__header),
+  :deep(.el-dialog__body) {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .info-item {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .info-item .label {
+    width: auto;
+  }
 }
 </style>
