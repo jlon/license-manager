@@ -9,8 +9,6 @@
   认证: JWT (支持管理员和C端用户双JWT体系)
   缓存: Redis/内存缓存 (支持切换)
   数据库: MySQL (推荐)/PostgreSQL
-  支付集成: 支付宝
-  短信服务: 阿里云SMS
   加密算法: RSA
   国际化: 支持多语言错误信息和枚举显示
   
@@ -42,15 +40,7 @@ backend/
 │   │   │   ├── dashboard_handler.go
 │   │   │   ├── enum_handler.go
 │   │   │   ├── license_handler.go
-│   │   │   ├── payment_handler.go
 │   │   │   ├── system_handler.go
-│   │   │   ├── cu_auth_handler.go
-│   │   │   ├── cu_authorization_handler.go
-│   │   │   ├── cu_device_handler.go
-│   │   │   ├── cu_invoice_handler.go       # 客户端发票处理器
-│   │   │   ├── cu_order_handler.go
-│   │   │   ├── cu_profile_handler.go
-│   │   │   └── invoice_handler.go          # 管理端发票处理器
 │   │   ├── middleware/          # 中间件
 │   │   │   ├── auth.go
 │   │   │   ├── cors.go
@@ -65,43 +55,23 @@ backend/
 │   │   ├── dashboard_service.go
 │   │   ├── enum_service.go
 │   │   ├── license_service.go
-│   │   ├── payment_service.go
 │   │   ├── system_service.go
-│   │   ├── admin_invoice_service.go    # 管理端发票服务
-│   │   ├── cu_device_service.go
-│   │   ├── cu_invoice_service.go       # 客户端发票服务
-│   │   ├── cu_order_filters.go         # 订单过滤器
-│   │   ├── cu_order_filters_test.go    # 订单过滤器测试
-│   │   ├── cu_order_service.go
-│   │   ├── cu_user_service.go
 │   │   └── interfaces.go        # 接口定义
 │   ├── repository/              # 数据访问层
-│   │   ├── admin_invoice_repository.go    # 管理端发票仓储
 │   │   ├── authorization_code_repository.go
-│   │   ├── cu_invoice_repository.go       # 客户端发票仓储
-│   │   ├── cu_order_repository.go
-│   │   ├── cu_user_repository.go
 │   │   ├── customer_repository.go
 │   │   ├── dashboard_repository.go
 │   │   ├── license_repository.go
-│   │   ├── payment_repository.go
 │   │   ├── user_repository.go
 │   │   ├── gorm/                 # GORM相关扩展
 │   │   ├── errors.go
 │   │   └── interfaces.go
 │   ├── models/                  # 数据模型
-│   │   ├── admin_invoice_models.go    # 管理端发票模型
 │   │   ├── auth.go
 │   │   ├── common.go
-│   │   ├── cu_authorization.go
-│   │   ├── cu_invoice_models.go       # 客户端发票模型
-│   │   ├── cu_order.go
-│   │   ├── cu_user.go
 │   │   ├── customer.go
 │   │   ├── dashboard.go
 │   │   ├── license.go
-│   │   ├── payment.go
-│   │   ├── shared_invoice_models.go   # 共享发票模型
 │   │   ├── system.go
 │   │   └── user.go
 │   ├── config/                  # 配置管理
@@ -123,12 +93,9 @@ backend/
 │   │   ├── manager.go
 │   │   └── messages/
 │   ├── utils/                   # 工具函数
-│   │   ├── alipay.go            # 支付宝支付集成
 │   │   ├── authorization_code.go # 授权码生成
 │   │   ├── crypto.go            # 加密工具
-│   │   ├── cu_jwt.go            # C端用户JWT工具
 │   │   ├── jwt.go               # JWT工具
-│   │   └── sms.go               # 短信服务
 │   └── logger/                  # 日志封装
 │       └── logger.go
 ├── configs/
@@ -169,12 +136,7 @@ backend/
 │   ├── 004_create_licenses_table.sql
 │   ├── 005_create_authorization_changes_table.sql
 │   ├── 006_create_users_table.sql
-│   ├── 007_create_cu_users_table.sql
-│   ├── 008_create_cu_orders_table.sql
 │   ├── 009_update_authorization_codes_code_length.sql
-│   ├── 010_update_cu_orders_authorization_code_length.sql
-│   ├── 011_create_payments_table.sql
-│   ├── 012_create_invoices_table.sql
 │   └── README.md
 ├── go.mod
 └── go.sum
@@ -186,8 +148,6 @@ backend/
 - **配置驱动**：Viper管理所有配置
 - **缓存抽象**：支持内存/Redis切换，带过期时间和键构建器
 - **双JWT体系**：支持管理员和C端用户独立认证体系
-- **客户端/管理端分离**：采用cu_*前缀严格分离不同用户角色的业务逻辑
-- **模块化设计**：支持客户管理、订单管理、支付集成等独立模块
 - **国际化支持**：完整的多语言错误信息和枚举显示系统
 - **软删除支持**：所有数据表支持gorm.DeletedAt软删除
 - **SQL迁移**：复杂的索引和约束通过SQL文件管理，保证生产环境一致性

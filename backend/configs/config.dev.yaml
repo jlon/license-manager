@@ -23,10 +23,6 @@ auth:
     secret: "license-manager-dev-secret-key-32-bytes"
     expire_hours: 1
     refresh_threshold_minutes: 30
-  cu_jwt:
-    secret: "license-manager-cu-dev-secret-key-32-bytes"
-    expire_hours: 24
-    refresh_threshold_minutes: 60
   security:
     max_login_attempts: 5
     lockout_duration_minutes: 15
@@ -51,67 +47,5 @@ license:
   heartbeat_timeout: 300 # 心跳超时时间(秒) - 5分钟内为在线
   offline_timeout: 1440 # 离线超时时间(分钟) - 24小时后为异常
   expiring_days: 30 # 即将过期天数 - 30天内到期算即将过期
-
-payment:
-  # 默认支付方式
-  default_method: alipay
-
-  # 支付提供商配置 - 支付宝沙箱环境
-  providers:
-    alipay:
-      enabled: true
-      app_id: "9021000159611786"
-      private_key: "-----BEGIN PRIVATE KEY-----\nMIIEogIBAAKCAQEAhxBHcY3BLmA0glH1v1e9VnLFEc72ZyI5xNF77SMA5hGutz30\nSmzczjYvGJNYTeyWfIjIqtP0IA49XA61kpUPiTyBy2sxjDfu6ew+Yu2waynpI+Nbk\npIz8TWT1g7rqgZMsUexufmvFEpvn1AmboVKN8iZVflwc4lq5pQ/GS7uTlDK3fY32j\nEk6jxEHy8yZvkf467X0WK9AdrJ0IxUTOLBROdZySqg7mc2Iyo61xdDOuVCJjZSWFH\nt+s4UWx2VPFSbL2z4m82abGicAgj696J2PU9iLhQG2HA/EwrH8zsVyJPHTMgPFwng\nN9sxmT4U3OH8ugCnw/amEsD8VZR3PG3ypQIDAQABAoIBAFSs2Q2Q4H7xo5ncRmQ6Xq\nKW+4Ppq8MGyw7ggoAuBL84cL/C4KfUTi4d/DK9FYxs+f+DRcMLdK6wHrnbIuyN9Rq\nFy527S2nsGyWejZI6D/NvaBGu1Vczv8rGWzPFUOvcXTJ7jynYJnJjJE3N0vpRKDGG\n2tLyuhRFH7cFU/W23YJM7TflTUUh1SG0Ec+jUa+ek5nK/vsqGE7A5p/D+mW4WLfS4\nsGhfe1XzNKjuCznTYajG79YXHXBKljqq4SKoEdh0SQHoEy7H0BXqArjSbh4KdHYoW/\nKkvA/c5QpbaTuWdK3iuvq7bZ1I0SEckL/rzufj+OcgoKcnwxZG2/Eq1Nb8tUCgYEAw\ncuyQW1AZEVl4dbk9Y4JXFeWh82LZ9pmyvr9tmqwQP4Ywlb9zUlXy+Zbv1wa9acfRWu9\ndYGm3SByFk8c3UGb/s3+eY4MribqkNVkjdotC/+wfymyf3gdLypGEXjBGwNJregGFeF\nmUhWnS+YWOiCiH401uDTU1pRtW37DZgdD5ZMCgYEAsmqIRL4U+3bkIb8u26lgS3k2W\nImen8+i91jVc8wWD7/aWGNmjodimyOv9AJRt34y5apzzfcWuzr9qdNQrzGubtKjaVM6\ns6NNVGzUJkLjF4WpyFDmX/ZLZkTW0gQLMYAjmiEJkPlbpHQ81vSMCT7W76RB31vL8p\ndRJMGBz/dN6ecCgYATzaXsi6Z92J2do2EIOrh4KDcor3dkaGwCp/1PK73RFmYfTdZnq\nOwA2QxdFKNooOhQJr9Yh6Quioc+Al2XuoGfWxt6/moLTczAeh3pZPcfd8RoajFkVzjc\nPfylAmrxQLfBvqkIiVz0XGQZHGz/CaCnir2HklaBiu9V3zFGds2YYwKBgFuaNryUm1F\nAiYCKGBTPsZEOesiaX8bNZG56PZ1mey0642/eGRm0iPv+JqixSCNdt+QSz8I/ynv2naZ\nDyHkqmNRtcVjyUoFIprth5MqALPg2uCUQ5DcAzVWEoobRbK3NjHnl3HOCk3qr81Cp3f\nwhN1lyjB+RkfTLm+2zLGMKJgahAoGAGUigAVlCnUo6zj8PVOeUPJWV3tZf8ZkTtCXT\njdp9tPwZqf0ZlmVZCoQB3nclF/6PgxgH7W596DlUt8TIrdmgg28HM8C2rpY/AoCw1H3\ncMkha8gCUN308cx0I2duea3tvDUb8thfvR34d7bxCI2hTOsplfE/MVv+sjzprGwtH/84=\n-----END PRIVATE KEY-----"
-      public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjkjXfe1fXjelyi6HIzFp\n5l9PGPxDBTi/TyIsRrF5NaYRCGqqSSJj1sc440eJ7InKRb4q/7cpdjlroC6DDO1O\nHKipld1pWSqoezc2lLVxvRWGt7Tl9mDfrul1/4ywx9OnIPBx3iJvzY15XDVWlZFY\nWVJFQv5EriLn+3xy+3gaazzJYCp/PumDqMTUgp0Kjk+HuHJ5/PKtFt3AtN2GB8gl\nQEybl2Wf0qNZU9SzmEm+9I7CNvB/zUC3csRxJHTvbOtkjhCC/TrS20Xm8IFjygu9\nlBf9qzacXyfHjG6fLMU8aDn4kPAXL+wbqE2UzFmVvMNCLpEaIS3r7I8S2TGQLPDD\n6QIDAQAB\n-----END PUBLIC KEY-----"
-      gateway_url: "https://openapi-sandbox.dl.alipaydev.com/gateway.do"
-      notify_url: "http://localhost:18888/api/payment/alipay/callback"
-      return_url: "http://localhost:18888/payment/success"
-      sign_type: "RSA2"
-      charset: "utf-8"
-      format: "json"
-
-  # 通用支付配置
-  expire_minutes: 30  # 支付过期时间（分钟）
-  retry_times: 3      # 支付重试次数
-  enable_log: true    # 启用支付日志
-
-sms:
-  enabled: false  # 开发环境默认禁用，需要配置阿里云AccessKey
-  access_key_id: ""        # 请配置阿里云AccessKey ID
-  access_key_secret: ""    # 请配置阿里云AccessKey Secret
-  sign_name: "xxxx科技"
-  region_id: "cn-hangzhou"
-  endpoint: "dysmsapi.aliyuncs.com"
-
-  # 模板配置（可选，不配置则使用代码中的默认值）
-  templates:
-    register: "SMS_330275014"      # 注册验证码模板
-    reset_pwd: "SMS_330275014"     # 重置密码验证码模板
-    login: "SMS_330275014"         # 登录验证码模板
-    current_phone: "SMS_330275014" # 当前手机号验证码模板
-    new_phone: "SMS_330275014"     # 新手机号验证码模板
-
-cache:
-  enabled: true  # 是否启用缓存
-  type: memory   # 缓存类型: memory, redis
-  ttl: 30m       # 默认TTL
-
-  # Redis缓存配置（当type为redis时使用）
-  redis:
-    host: localhost
-    port: 6379
-    password: ""
-    db: 0
-    pool_size: 10
-    min_idle_conns: 5
-    conn_max_idle_time: 30m
-    dial_timeout: 5s
-    read_timeout: 3s
-    write_timeout: 3s
-
-  # 内存缓存配置（当type为memory时使用）
-  memory:
-    max_size: 10000         # 最大缓存条目数
-    cleanup_interval: 10m   # 清理间隔
 
 

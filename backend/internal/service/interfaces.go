@@ -44,16 +44,6 @@ type AuthorizationCodeService interface {
 	DeleteAuthorizationCode(ctx context.Context, id string) error
 	GetAuthorizationChangeList(ctx context.Context, authCodeID string, req *models.AuthorizationChangeListRequest) (*models.AuthorizationChangeListResponse, error)
 	GenerateAuthorizationFile(ctx context.Context, id string) ([]byte, string, string, error)
-
-	// 用户端分享功能
-	ShareAuthorizationCode(ctx context.Context, authCodeID, userID string, req *models.AuthorizationCodeShareRequest) (*models.AuthorizationCodeShareResponse, error)
-
-	// 用户端获取产品激活码
-	GetProductActivationCode(ctx context.Context, customerID string, req *models.ProductActivationCodeRequest) (*models.ProductActivationCodeResponse, error)
-
-	// 用户端授权码列表与统计
-	GetCuAuthorizationCodeList(ctx context.Context, customerID string, req *models.CuAuthorizationCodeListRequest) (*models.CuAuthorizationCodeListResponse, error)
-	GetCuAuthorizationCodeSummary(ctx context.Context, customerID string) (*models.CuAuthorizationCodeSummaryResponse, error)
 }
 
 // LicenseService 许可证服务接口
@@ -79,16 +69,4 @@ type DashboardService interface {
 
 	// 获取最近授权列表
 	GetRecentAuthorizations(ctx context.Context, req *models.DashboardRecentAuthorizationsRequest) (*models.DashboardRecentAuthorizationsResponse, error)
-}
-
-// CuDeviceService 客户设备服务接口
-type CuDeviceService interface {
-	// 获取设备列表
-	GetDeviceList(ctx context.Context, customerID string, req *models.DeviceListRequest) (*models.DeviceListResponse, error)
-
-	// 获取设备汇总统计
-	GetDeviceSummary(ctx context.Context, customerID string) (*models.DeviceSummaryResponse, error)
-
-	// 解绑设备
-	UnbindDevice(ctx context.Context, customerID, licenseID string) error
 }

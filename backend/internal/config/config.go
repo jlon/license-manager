@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/spf13/viper"
 )
@@ -15,9 +14,6 @@ type Config struct {
 	Log      LogConfig      `mapstructure:"log"`
 	I18n     I18nConfig     `mapstructure:"i18n"`
 	License  LicenseConfig  `mapstructure:"license"`
-	Payment  PaymentConfig  `mapstructure:"payment"`
-	SMS      SMSConfig      `mapstructure:"sms"`
-	Cache    CacheConfig    `mapstructure:"cache"`
 }
 
 type ServerConfig struct {
@@ -44,17 +40,10 @@ type DatabaseConfig struct {
 
 type AuthConfig struct {
 	JWT      JWTConfig      `mapstructure:"jwt"`
-	CuJWT    CuJWTConfig    `mapstructure:"cu_jwt"` // 客户用户JWT配置
 	Security SecurityConfig `mapstructure:"security"`
 }
 
 type JWTConfig struct {
-	Secret                  string `mapstructure:"secret"`
-	ExpireHours             int    `mapstructure:"expire_hours"`
-	RefreshThresholdMinutes int    `mapstructure:"refresh_threshold_minutes"`
-}
-
-type CuJWTConfig struct {
 	Secret                  string `mapstructure:"secret"`
 	ExpireHours             int    `mapstructure:"expire_hours"`
 	RefreshThresholdMinutes int    `mapstructure:"refresh_threshold_minutes"`
@@ -90,71 +79,6 @@ type RSAConfig struct {
 	PrivateKeyPath string `mapstructure:"private_key_path"` // RSA私钥文件路径
 	PublicKeyPath  string `mapstructure:"public_key_path"`  // RSA公钥文件路径
 	KeySize        int    `mapstructure:"key_size"`         // 密钥大小（2048或4096），默认2048
-}
-
-type PaymentConfig struct {
-	DefaultMethod string                      `mapstructure:"default_method"` // 默认支付方式
-	Providers     map[string]*PaymentProvider `mapstructure:"providers"`      // 支付提供商配置
-	ExpireMinutes int                         `mapstructure:"expire_minutes"` // 支付过期时间（分钟）
-	RetryTimes    int                         `mapstructure:"retry_times"`    // 支付重试次数
-	EnableLog     bool                        `mapstructure:"enable_log"`     // 启用支付日志
-}
-
-type PaymentProvider struct {
-	AppID      string `mapstructure:"app_id"`
-	PrivateKey string `mapstructure:"private_key"`
-	PublicKey  string `mapstructure:"public_key"`
-	GatewayURL string `mapstructure:"gateway_url"`
-	NotifyURL  string `mapstructure:"notify_url"`
-	ReturnURL  string `mapstructure:"return_url"`
-	SignType   string `mapstructure:"sign_type"`
-	Charset    string `mapstructure:"charset"`
-	Format     string `mapstructure:"format"`
-	Enabled    bool   `mapstructure:"enabled"`
-}
-
-type CacheConfig struct {
-	Type    string        `mapstructure:"type"`    // 缓存类型: memory, redis
-	TTL     time.Duration `mapstructure:"ttl"`     // 默认TTL
-	Enabled bool          `mapstructure:"enabled"` // 是否启用缓存
-	Redis   RedisConfig   `mapstructure:"redis"`   // Redis配置
-	Memory  MemoryConfig  `mapstructure:"memory"`  // 内存配置
-}
-
-type RedisConfig struct {
-	Host            string        `mapstructure:"host"`
-	Port            int           `mapstructure:"port"`
-	Password        string        `mapstructure:"password"`
-	DB              int           `mapstructure:"db"`
-	PoolSize        int           `mapstructure:"pool_size"`
-	MinIdleConns    int           `mapstructure:"min_idle_conns"`
-	ConnMaxIdleTime time.Duration `mapstructure:"conn_max_idle_time"`
-	DialTimeout     time.Duration `mapstructure:"dial_timeout"`
-	ReadTimeout     time.Duration `mapstructure:"read_timeout"`
-	WriteTimeout    time.Duration `mapstructure:"write_timeout"`
-}
-
-type MemoryConfig struct {
-	MaxSize         int           `mapstructure:"max_size"`         // 最大缓存条目数
-	CleanupInterval time.Duration `mapstructure:"cleanup_interval"` // 清理间隔
-}
-
-type SMSConfig struct {
-	Enabled         bool         `mapstructure:"enabled"`           // 是否启用短信服务
-	AccessKeyID     string       `mapstructure:"access_key_id"`     // 阿里云AccessKey ID
-	AccessKeySecret string       `mapstructure:"access_key_secret"` // 阿里云AccessKey Secret
-	SignName        string       `mapstructure:"sign_name"`         // 短信签名
-	RegionID        string       `mapstructure:"region_id"`         // 地域ID，默认cn-hangzhou
-	Endpoint        string       `mapstructure:"endpoint"`          // 服务端点
-	Templates       SMSTemplates `mapstructure:"templates"`         // 模板配置
-}
-
-type SMSTemplates struct {
-	Register     string `mapstructure:"register"`      // 注册模板
-	ResetPwd     string `mapstructure:"reset_pwd"`     // 重置密码模板
-	Login        string `mapstructure:"login"`         // 登录模板
-	CurrentPhone string `mapstructure:"current_phone"` // 当前手机号模板
-	NewPhone     string `mapstructure:"new_phone"`     // 新手机号模板
 }
 
 var AppConfig *Config
@@ -216,9 +140,6 @@ func setDefaults() {
 	viper.SetDefault("auth.jwt.refresh_threshold_minutes", 30)
 
 	// Cu Auth defaults (客户用户)
-	viper.SetDefault("auth.cu_jwt.secret", "license-manager-cu-default-secret-key")
-	viper.SetDefault("auth.cu_jwt.expire_hours", 24)
-	viper.SetDefault("auth.cu_jwt.refresh_threshold_minutes", 30)
 
 	viper.SetDefault("auth.security.max_login_attempts", 5)
 	viper.SetDefault("auth.security.lockout_duration_minutes", 15)
@@ -242,37 +163,6 @@ func setDefaults() {
 	viper.SetDefault("license.offline_timeout", 1440)
 	viper.SetDefault("license.expiring_days", 30)
 
-	// Payment defaults
-	viper.SetDefault("payment.default_method", "alipay")
-	viper.SetDefault("payment.expire_minutes", 30)
-	viper.SetDefault("payment.retry_times", 3)
-	viper.SetDefault("payment.enable_log", true)
-
-	// SMS defaults
-	viper.SetDefault("sms.enabled", false)
-	viper.SetDefault("sms.sign_name", "惠州顺视智能科技")
-	viper.SetDefault("sms.region_id", "cn-hangzhou")
-	viper.SetDefault("sms.endpoint", "dysmsapi.aliyuncs.com")
-
-	// Cache defaults
-	viper.SetDefault("cache.enabled", true)
-	viper.SetDefault("cache.type", "memory")
-	viper.SetDefault("cache.ttl", "30m")
-
-	// Redis cache defaults
-	viper.SetDefault("cache.redis.host", "localhost")
-	viper.SetDefault("cache.redis.port", 6379)
-	viper.SetDefault("cache.redis.db", 0)
-	viper.SetDefault("cache.redis.pool_size", 10)
-	viper.SetDefault("cache.redis.min_idle_conns", 5)
-	viper.SetDefault("cache.redis.conn_max_idle_time", "30m")
-	viper.SetDefault("cache.redis.dial_timeout", "5s")
-	viper.SetDefault("cache.redis.read_timeout", "3s")
-	viper.SetDefault("cache.redis.write_timeout", "3s")
-
-	// Memory cache defaults
-	viper.SetDefault("cache.memory.max_size", 10000)
-	viper.SetDefault("cache.memory.cleanup_interval", "10m")
 }
 
 func GetConfig() *Config {

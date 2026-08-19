@@ -261,33 +261,3 @@ type AuthorizationChangeListResponse struct {
 	PageSize   int                           `json:"page_size"`   // 每页条数
 	TotalPages int                           `json:"total_pages"` // 总页数
 }
-
-// AuthorizationCodeShareRequest 授权码分享请求结构
-type AuthorizationCodeShareRequest struct {
-	TargetContact string `json:"target_contact" binding:"required"`    // 受赠用户联系方式（手机号或邮箱）
-	ShareCount    int    `json:"share_count" binding:"required,min=1"` // 分享激活次数
-}
-
-// AuthorizationCodeShareResponse 授权码分享响应结构
-type AuthorizationCodeShareResponse struct {
-	NewAuthorizationCode AuthorizationCodeShareResponseItem `json:"new_authorization_code"` // 新生成的授权码信息
-}
-
-// AuthorizationCodeShareResponseItem 分享响应中的授权码信息
-type AuthorizationCodeShareResponseItem struct {
-	ID             string `json:"id"`              // 授权码ID
-	Code           string `json:"code"`            // 授权码
-	StartDate      string `json:"start_date"`      // 开始时间
-	EndDate        string `json:"end_date"`        // 结束时间
-	MaxActivations int    `json:"max_activations"` // 最大激活次数
-}
-
-// ProductActivationCodeRequest 获取产品激活码请求结构
-type ProductActivationCodeRequest struct {
-	AuthorizationCode string `json:"authorization_code" binding:"required"` // 授权码（旧规则格式）
-}
-
-// ProductActivationCodeResponse 获取产品激活码响应结构
-type ProductActivationCodeResponse struct {
-	ProductActivationCode string `json:"product_activation_code"` // 产品激活码：{授权码}&{payload}
-}

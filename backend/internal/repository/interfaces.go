@@ -82,22 +82,6 @@ type AuthorizationCodeRepository interface {
 
 	// RecordAuthorizationChange 记录授权变更历史
 	RecordAuthorizationChange(ctx context.Context, change *models.AuthorizationChange) error
-
-	// 事务相关方法
-	// BeginTransaction 开始事务
-	BeginTransaction(ctx context.Context) interface{}
-
-	// CreateAuthorizationCodeWithTx 在事务中创建授权码
-	CreateAuthorizationCodeWithTx(ctx context.Context, tx interface{}, authCode *models.AuthorizationCode) error
-
-	// UpdateMaxActivationsWithTx 在事务中更新授权码的最大激活次数
-	UpdateMaxActivationsWithTx(ctx context.Context, tx interface{}, authCodeID string, newMaxActivations int) error
-
-	// 用户端：查询用户授权码列表
-	GetCuAuthorizationCodeList(ctx context.Context, customerID string, req *models.CuAuthorizationCodeListRequest) (*models.CuAuthorizationCodeListResponse, error)
-
-	// 用户端：授权信息统计
-	GetCuAuthorizationCodeSummary(ctx context.Context, customerID string) (*models.CuAuthorizationCodeSummaryResponse, error)
 }
 
 // LicenseRepository 许可证数据访问接口
@@ -128,18 +112,6 @@ type LicenseRepository interface {
 
 	// GetActiveLicenseCount 获取指定授权码的激活许可证数量
 	GetActiveLicenseCount(ctx context.Context, authCodeID string) (int64, error)
-
-	// GetCustomerDeviceList 查询客户设备列表（关联授权码信息）
-	GetCustomerDeviceList(ctx context.Context, customerID string, req *models.DeviceListRequest) (*models.DeviceListResponse, error)
-
-	// GetCustomerDeviceSummary 获取客户设备汇总统计
-	GetCustomerDeviceSummary(ctx context.Context, customerID string) (*models.DeviceSummaryResponse, error)
-
-	// DeleteLicenseByID 根据ID删除许可证（物理删除，用于设备解绑）
-	DeleteLicenseByID(ctx context.Context, id string) error
-
-	// CheckLicenseBelongsToCustomer 检查许可证是否属于指定客户
-	CheckLicenseBelongsToCustomer(ctx context.Context, licenseID, customerID string) (bool, error)
 }
 
 // DashboardRepository 仪表盘数据访问接口
@@ -149,34 +121,4 @@ type DashboardRepository interface {
 
 	// GetRecentAuthorizations 获取最近授权列表
 	GetRecentAuthorizations(ctx context.Context, req *models.DashboardRecentAuthorizationsRequest) (*models.DashboardRecentAuthorizationsResponse, error)
-}
-
-// PaymentRepository 支付数据访问接口
-type PaymentRepository interface {
-	// Create 创建支付订单
-	Create(ctx context.Context, payment *models.Payment) error
-
-	// GetByID 根据ID获取支付订单
-	GetByID(ctx context.Context, id int) (*models.Payment, error)
-
-	// GetByPaymentNo 根据支付单号获取支付订单
-	GetByPaymentNo(ctx context.Context, paymentNo string) (*models.Payment, error)
-
-	// GetByBusinessID 根据业务ID获取支付订单
-	GetByBusinessID(ctx context.Context, businessType, businessID string) (*models.Payment, error)
-
-	// GetByCustomerAndCuUserID 根据客户ID和客户用户ID获取支付订单列表
-	GetByCustomerAndCuUserID(ctx context.Context, customerID, cuUserID string, offset, limit int) ([]*models.Payment, int64, error)
-
-	// Update 更新支付订单
-	Update(ctx context.Context, payment *models.Payment) error
-
-	// UpdateStatus 更新支付状态
-	UpdateStatus(ctx context.Context, paymentNo, status string, tradeNo *string, paymentTime *string) error
-
-	// Delete 删除支付订单
-	Delete(ctx context.Context, id int) error
-
-	// GetExpiredPayments 获取过期的支付订单
-	GetExpiredPayments(ctx context.Context) ([]*models.Payment, error)
 }

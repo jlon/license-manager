@@ -206,7 +206,7 @@ PUT /api/v1/authorization-codes/{id}
     "api_calls_per_day": 20000
   },
   "change_type": "upgrade",
-  "reason": "客户升级套餐"
+  "reason": "客户升级授权"
 }
 ```
 
@@ -504,7 +504,7 @@ GET /api/v1/authorization-codes/{id}/changes
         "change_type_display": "升级",
         "operator_id": "user-uuid",
         "operator_name": "张三",
-        "reason": "客户升级套餐",
+        "reason": "客户升级授权",
         "created_at": "2024-01-01T10:00:00Z"
       }
     ],

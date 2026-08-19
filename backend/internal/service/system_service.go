@@ -36,7 +36,6 @@ func (s *systemService) GetHealthStatus() *models.HealthResponse {
 		},
 		Services: map[string]string{
 			"database": "healthy", // 这里可以检查数据库连接状态
-			"cache":    "healthy", // 这里可以检查缓存状态
 		},
 	}
 }

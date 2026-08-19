@@ -17,7 +17,6 @@ import { computed } from 'vue'
 import DashboardIcon from './svg/DashboardIcon.vue'
 import CustomersIcon from './svg/CustomersIcon.vue'
 import LicensesIcon from './svg/LicensesIcon.vue'
-import InvoicesIcon from './svg/InvoicesIcon.vue'
 import EnterpriseLeadsIcon from './svg/EnterpriseLeadsIcon.vue'
 import RolesIcon from './svg/RolesIcon.vue'
 import UsersIcon from './svg/UsersIcon.vue'
@@ -35,7 +34,6 @@ const iconMap = {
   'dashboard': DashboardIcon,
   'customers': CustomersIcon,
   'licenses': LicensesIcon,
-  'invoices': InvoicesIcon,
   'enterprise-leads': EnterpriseLeadsIcon,
   'roles': RolesIcon,
   'users': UsersIcon

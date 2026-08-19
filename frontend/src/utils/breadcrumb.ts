@@ -24,9 +24,6 @@ const routeBreadcrumbKeys: Record<string, string[]> = {
   '/customers': ['customers'],
   '/enterprise-leads': ['enterpriseLeads'],
   '/licenses': ['licenses'],
-  '/invoices': ['invoices'],
-  '/invoices/detail': ['invoices', 'invoiceDetail'],
-  '/packages': ['packages'],
   '/roles': ['roles'],
   '/users': ['users'],
   '/login': ['login']
@@ -71,24 +68,6 @@ export function useBreadcrumb() {
           })
         }
       }
-
-      return items
-    }
-
-    // 特殊处理发票详情子路由（带ID）
-    if (currentPath.startsWith('/invoices/detail/')) {
-      const items: BreadcrumbItem[] = []
-
-      // 添加发票管理作为父级
-      items.push({
-        title: t('navigation.breadcrumb.invoices'),
-        path: '/invoices'
-      })
-
-      // 添加发票详情作为当前项
-      items.push({
-        title: t('navigation.breadcrumb.invoiceDetail')
-      })
 
       return items
     }

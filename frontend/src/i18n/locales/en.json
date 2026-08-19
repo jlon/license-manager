@@ -101,8 +101,6 @@
       "customers": "Customer Management",
       "enterpriseLeads": "Enterprise Leads",
       "licenses": "License Management",
-      "invoices": "Invoice Management",
-      "packages": "Package Management",
       "roles": "Roles & Permissions",
       "users": "System Users"
     },
@@ -127,9 +125,6 @@
       "customers": "Customer Management",
       "enterpriseLeads": "Enterprise Leads",
       "licenses": "License Management",
-      "invoices": "Invoice Management",
-      "packages": "Package Management",
-      "invoiceDetail": "Invoice Detail",
       "licenseList": "License List",
       "createLicense": "Create License",
       "viewLicense": "View License",
@@ -182,157 +177,7 @@
     }
   },
 
-  "packages": {
-    "title": "Package Management",
-    "table": {
-      "title": "Price Package Management",
-      "id": "Package ID",
-      "name": "Package Name",
-      "price": "Price",
-      "priceSymbol": "$",
-      "free": "Free",
-      "customPlan": "Custom Plan",
-      "cycle": "Cycle",
-      "createdAt": "Created At",
-      "updatedAt": "Updated At",
-      "status": "Status",
-      "actions": "Actions"
-    },
-    "status": {
-      "enabled": "Enabled",
-      "disabled": "Disabled"
-    },
-    "edit": {
-      "title": "Edit Package",
-      "name": "Package Name",
-      "type": "Package Type",
-      "types": {
-        "trial": "Trial Version",
-        "basic": "Basic",
-        "professional": "Professional",
-        "custom": "Custom"
-      },
-      "price": "Price",
-      "cycle": "Cycle/Description",
-      "description": "Package Description",
-      "priceDescription": "Price Description",
-      "features": "Package Features",
-      "status": "Status",
-      "sort": "Display Order",
-      "remark": "Remark",
-      "save": "Save Changes",
-      "descPlaceholder": "Experience full features, suitable for new users to trial",
-      "priceDescPlaceholder": "e.g. Custom Plan / Pay as you go",
-      "remarkPlaceholder": "Please enter remark",
-      "featurePlaceholder": "Please enter feature content"
-    },
-    "actions": {
-      "edit": "Edit"
-    },
-    "messages": {
-      "fetchError": "Failed to fetch list",
-      "fetchDetailError": "Failed to fetch details",
-      "updateSuccess": "Updated successfully",
-      "updateError": "Failed to update"
-    }
-  },
 
-  "invoices": {
-    "title": "Invoice Management",
-    "detailTitle": "Invoice Application Detail",
-    "stats": {
-      "all": "Total Applications",
-      "pending": "Pending",
-      "success": "Invoiced",
-      "rejected": "Rejected"
-    },
-    "filter": {
-      "searchLabel": "Search Invoice/Order No:",
-      "searchPlaceholder": "Enter invoice or order number",
-      "statusLabel": "Status:",
-      "allStatus": "All Status",
-      "pending": "Pending",
-      "success": "Invoiced",
-      "rejected": "Rejected",
-      "timeLabel": "Apply Time:",
-      "reset": "Reset",
-      "query": "Filter"
-    },
-    "table": {
-      "invoiceNo": "Invoice App No",
-      "user": "User",
-      "orderNo": "Order No",
-      "applyTime": "Apply Time",
-      "status": "Status",
-      "amount": "Amount",
-      "operation": "Operation",
-      "listTitle": "Invoice Application List"
-    },
-    "actions": {
-      "view": "View",
-      "upload": "Upload",
-      "reject": "Reject",
-      "back": "Back",
-      "submit": "Submit",
-      "cancel": "Cancel",
-      "confirmUpload": "Confirm Upload",
-      "confirmReject": "Confirm Reject"
-    },
-    "detail": {
-      "basicInfo": "Basic Information",
-      "invoiceInfo": "Invoice Information",
-      "rejectInfo": "Reject Information",
-      "approveInfo": "Approve Information",
-      "invoiceNo": "Invoice App No",
-      "orderNo": "Related Order No",
-      "applyTime": "Apply Time",
-      "status": "Status",
-      "userInfo": "User Info",
-      "phone": "Phone",
-      "amount": "Amount",
-      "email": "Email",
-      "invoiceType": "Invoice Type",
-      "invoiceTitle": "Invoice Title",
-      "taxId": "Tax ID",
-      "content": "Content",
-      "remark": "Remark",
-      "rejectReason": "Reject Reason",
-      "rejectTime": "Reject Time",
-      "rejectUser": "Reject By",
-      "finishTime": "Finish Time",
-      "approveUser": "Upload By",
-      "fileName": "Invoice File",
-      "approveTime": "Upload Time"
-    },
-    "dialog": {
-      "uploadTitle": "Upload Invoice File",
-      "rejectTitle": "Reject Invoice Application",
-      "rejectAlert": "After rejection, the user will be notified and need to resubmit.",
-      "reasonLabel": "Reject Reason",
-      "reasonTip": "Please select or enter the specific reason",
-      "reasonPlaceholder": "Please select reason",
-      "remarkLabel": "Details",
-      "remarkPlaceholder": "Enter detailed instructions to help user modify information",
-      "uploadLabel": "Upload Invoice File",
-      "uploadDraggerText": "Click to upload / drag to this area",
-      "uploadTip": "Support PDF format. Max 10MB",
-      "finishTimeLabel": "Finish Time",
-      "finishTimePlaceholder": "Select date and time",
-      "remarkPlaceholderUpload": "Enter remark",
-      "reasons": {
-        "title_error": "Incorrect title info",
-        "tax_id_error": "Incorrect tax ID",
-        "attachment_error": "Unclear or wrong attachment",
-        "other": "Other reasons"
-      }
-    },
-    "messages": {
-      "uploadSuccess": "Invoice uploaded successfully",
-      "rejectSuccess": "Application rejected",
-      "fetchError": "Failed to fetch data",
-      "fetchDetailError": "Failed to fetch details"
-    }
-  },
 
   "common": {
     "cancel": "Cancel",
@@ -380,27 +225,34 @@
       "platform": "License Management Platform",
       "list": {
         "title": "License List",
+        "customerTitle": "Licenses for {name}",
+        "description": "Search and manage customer licenses and review activation usage.",
         "createLicense": "Create License",
         "filter": {
           "label": "Filter:",
+          "customerPlaceholder": "Select Customer",
           "codePlaceholder": "License Code",
           "statusPlaceholder": "Status",
-          "query": "Query"
+          "query": "Query",
+          "reset": "Reset"
         },
         "table": {
           "code": "License Code",
+          "customer": "Customer",
           "status": "Status",
           "activationProgress": "Activation Progress",
           "endDate": "Expiry Time",
           "description": "Description",
           "operation": "Operation",
-          "loading": "Loading..."
+          "loading": "Loading...",
+          "empty": "No license data"
         },
         "actions": {
           "detail": "Detail",
           "lock": "Lock",
           "unlock": "Unlock",
-          "delete": "Delete"
+          "delete": "Delete",
+          "retry": "Retry"
         },
         "status": {
           "normal": "Normal",
@@ -425,7 +277,8 @@
           "unlockError": "Unlock failed",
           "deleteSuccess": "Delete successful",
           "deleteError": "Delete failed",
-          "loadError": "Failed to load data"
+          "loadError": "Failed to load licenses",
+          "customerLoadError": "Failed to load customer options"
         }
       },
       "actions": {
@@ -724,6 +577,7 @@
       },
       "form": {
         "title": "License Form",
+        "description": "Configure the customer, validity period, and license parameters.",
         "breadcrumb": {
           "licenseManagement": "License Management",
           "createLicense": "Create License",
@@ -860,6 +714,7 @@
   },
   "customers": {
     "title": "Customer Management",
+    "description": "Manage customer profiles, status, and related licenses in one place.",
     "viewCustomer": "View Customer",
     "addCustomer": "Add New Customer",
     "editCustomer": "Edit Customer",
@@ -870,6 +725,10 @@
       "enable": "Enable",
       "disable": "Disable",
       "viewLicense": "View License",
+      "query": "Search",
+      "reset": "Reset",
+      "retry": "Retry",
+      "more": "More",
       "save": "Save",
       "cancel": "Cancel"
     },
@@ -883,10 +742,12 @@
       "status": "Status",
       "createTime": "Create Time",
       "operation": "Operation",
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "empty": "No customer data"
     },
     "form": {
       "basicInfo": "Basic Information",
+      "contactInfo": "Contact Information",
       "businessInfo": "Business Information",
       "customerName": "Customer Name",
       "customerType": "Customer Type",
@@ -943,7 +804,12 @@
       "enableLoading": "Enabling...",
       "statusChangeCancel": "{action} cancelled",
       "loadEnumError": "Failed to load enum data",
-      "getDetailError": "Failed to get customer detail: "
+      "loadError": "Failed to load customers",
+      "getDetailError": "Failed to get customer detail: ",
+      "getDetailFailed": "Failed to load customer details",
+      "statusError": "Failed to update customer status",
+      "deleteError": "Failed to delete customer",
+      "saveError": "Failed to save customer"
     },
     "validation": {
       "nameRequired": "Please enter customer name",
@@ -958,6 +824,7 @@
     },
     "view": {
       "back": "Back",
+      "customerCode": "Customer Code",
       "statusInfo": "Status Information",
       "licenseStats": "License Statistics",
       "creator": "Creator",
@@ -973,7 +840,14 @@
       "expiredTime": "Inactivated Licenses",
       "noData": "--",
       "onlineLicense": "Online License",
-      "customerNotExist": "Customer data does not exist"
+      "customerNotExist": "Customer data does not exist",
+      "totalAuthCodes": "Total Authorization Codes",
+      "expiredAuthCodes": "Expired Authorization Codes",
+      "expiringAuthCodes": "Authorization Codes Expiring in 30 Days",
+      "totalLicenseCount": "Total Licenses",
+      "activeLicenseCount": "Activated Licenses",
+      "inactiveLicenseCount": "Inactive Licenses",
+      "expiredLicenseCount": "Expired Licenses"
     },
     "basicInfo": {
       "customerCode": "Customer Code",

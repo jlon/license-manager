@@ -24,10 +24,6 @@ auth:
     secret: "license-manager-dev-secret-key-32-bytes" # 32字节的随机字符串
     expire_hours: 1 # 1小时后过期
     refresh_threshold_minutes: 30 # 30分钟后可刷新token
-  cu_jwt:
-    secret: "license-manager-cu-dev-secret-key-32-bytes" # 客户用户JWT密钥
-    expire_hours: 24 # 24小时后过期
-    refresh_threshold_minutes: 60 # 60分钟后可刷新token
   security:
     max_login_attempts: 5 # 5次失败后锁定15分钟
     lockout_duration_minutes: 15 # 15分钟后解锁
@@ -53,73 +49,3 @@ license:
   offline_timeout: 1440 # 离线超时时间(分钟) - 24小时后为异常
   expiring_days: 30 # 即将过期天数 - 30天内到期算即将过期
 
-payment:
-  # 默认支付方式
-  default_method: alipay
-
-  # 支付提供商配置
-  providers:
-    alipay:
-      enabled: true
-      app_id: "your_alipay_app_id"
-      private_key: "your_alipay_private_key"
-      public_key: "alipay_public_key"
-      gateway_url: "https://openapi.alipay.com/gateway.do"
-      notify_url: "https://your-domain.com/api/payment/alipay/callback"
-      return_url: "https://your-domain.com/payment/success"
-      sign_type: "RSA2"
-      charset: "utf-8"
-      format: "json"
-
-    wechat:
-      enabled: false  # 可动态开启
-      app_id: "your_wechat_app_id"
-      mch_id: "your_wechat_mch_id"
-      private_key: "your_wechat_private_key"
-      gateway_url: "https://api.mch.weixin.qq.com/pay/unifiedorder"
-      notify_url: "https://your-domain.com/api/payment/wechat/callback"
-      # ... 其他微信支付配置
-
-  # 通用支付配置
-  expire_minutes: 30  # 支付过期时间（分钟）
-  retry_times: 3      # 支付重试次数
-  enable_log: true    # 启用支付日志
-
-sms:
-  enabled: false  # 是否启用短信服务
-  access_key_id: "your-access-key-id"        # 阿里云AccessKey ID
-  access_key_secret: "your-access-key-secret" # 阿里云AccessKey Secret
-  sign_name: "xxxx科技"                 # 短信签名
-  region_id: "cn-hangzhou"                   # 地域ID
-  endpoint: "dysmsapi.aliyuncs.com"          # 服务端点
-
-  # 模板配置（可选，不配置则使用代码中的默认值）
-  templates:
-    register: "SMS_330275014"      # 注册验证码模板
-    reset_pwd: "SMS_330275014"     # 重置密码验证码模板
-    login: "SMS_330275014"         # 登录验证码模板
-    current_phone: "SMS_330275014" # 当前手机号验证码模板
-    new_phone: "SMS_330275014"     # 新手机号验证码模板
-
-cache:
-  enabled: true  # 是否启用缓存
-  type: memory   # 缓存类型: memory, redis
-  ttl: 30m       # 默认TTL
-
-  # Redis缓存配置（当type为redis时使用）
-  redis:
-    host: localhost
-    port: 6379
-    password: ""
-    db: 0
-    pool_size: 10
-    min_idle_conns: 5
-    conn_max_idle_time: 30m
-    dial_timeout: 5s
-    read_timeout: 3s
-    write_timeout: 3s
-
-  # 内存缓存配置（当type为memory时使用）
-  memory:
-    max_size: 10000         # 最大缓存条目数
-    cleanup_interval: 10m   # 清理间隔

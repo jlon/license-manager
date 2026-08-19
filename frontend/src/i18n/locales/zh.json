@@ -101,8 +101,6 @@
       "customers": "客户管理",
       "enterpriseLeads": "企业线索",
       "licenses": "授权管理",
-      "invoices": "发票管理",
-      "packages": "套餐管理",
       "roles": "角色权限",
       "users": "系统用户"
     },
@@ -127,9 +125,6 @@
       "customers": "客户管理",
       "enterpriseLeads": "企业线索",
       "licenses": "授权管理",
-      "invoices": "发票管理",
-      "packages": "套餐管理",
-      "invoiceDetail": "发票详情",
       "licenseList": "授权列表",
       "createLicense": "创建授权",
       "viewLicense": "查看授权",
@@ -215,157 +210,7 @@
     }
   },
 
-  "packages": {
-    "title": "套餐管理",
-    "table": {
-      "title": "价格套餐管理",
-      "id": "套餐ID",
-      "name": "套餐名称",
-      "price": "价格",
-      "priceSymbol": "¥",
-      "free": "免费",
-      "customPlan": "定制方案",
-      "cycle": "周期",
-      "createdAt": "创建时间",
-      "updatedAt": "更新时间",
-      "status": "状态",
-      "actions": "操作"
-    },
-    "status": {
-      "enabled": "已启用",
-      "disabled": "已禁用"
-    },
-    "edit": {
-      "title": "编辑套餐",
-      "name": "套餐名称",
-      "type": "套餐类型",
-      "types": {
-        "trial": "试用版",
-        "basic": "基础版",
-        "professional": "专业版",
-        "custom": "定制版"
-      },
-      "price": "价格",
-      "cycle": "周期/描述",
-      "description": "套餐描述",
-      "priceDescription": "价格描述",
-      "features": "套餐特性",
-      "status": "状态",
-      "sort": "显示顺序",
-      "remark": "备注",
-      "save": "保存更改",
-      "descPlaceholder": "体验完整功能，适合新用户试用评估",
-      "priceDescPlaceholder": "例如：定制方案 / 按需定价",
-      "remarkPlaceholder": "请输入备注",
-      "featurePlaceholder": "请输入特性内容"
-    },
-    "actions": {
-      "edit": "编辑"
-    },
-    "messages": {
-      "fetchError": "获取列表失败",
-      "fetchDetailError": "获取详情失败",
-      "updateSuccess": "更新成功",
-      "updateError": "更新失败"
-    }
-  },
 
-  "invoices": {
-    "title": "发票管理",
-    "detailTitle": "发票申请详情",
-    "stats": {
-      "all": "全部发票申请",
-      "pending": "待处理申请",
-      "completed": "已开票",
-      "rejected": "已驳回"
-    },
-    "filter": {
-      "searchLabel": "搜索发票号/订单号:",
-      "searchPlaceholder": "输入发票号或订单号",
-      "statusLabel": "开票状态:",
-      "allStatus": "全部状态",
-      "pending": "待处理",
-      "completed": "已开票",
-      "rejected": "已驳回",
-      "timeLabel": "申请时间:",
-      "reset": "重置",
-      "query": "筛选"
-    },
-    "table": {
-      "invoiceNo": "发票申请号",
-      "user": "用户",
-      "orderNo": "订单号",
-      "applyTime": "申请时间",
-      "status": "开票状态",
-      "amount": "发票金额",
-      "operation": "操作",
-      "listTitle": "发票申请列表"
-    },
-    "actions": {
-      "view": "查看",
-      "upload": "上传",
-      "reject": "驳回",
-      "back": "返回",
-      "submit": "提交",
-      "cancel": "取消",
-      "confirmUpload": "确认上传",
-      "confirmReject": "确认驳回"
-    },
-    "detail": {
-      "basicInfo": "基本信息",
-      "invoiceInfo": "开票信息",
-      "rejectInfo": "驳回信息",
-      "approveInfo": "通过信息",
-      "invoiceNo": "发票申请号",
-      "orderNo": "关联订单号",
-      "applyTime": "申请时间",
-      "status": "开票状态",
-      "userInfo": "用户信息",
-      "phone": "联系电话",
-      "amount": "开票金额",
-      "email": "收票邮箱",
-      "invoiceType": "发票类型",
-      "invoiceTitle": "发票抬头",
-      "taxId": "纳税人识别号",
-      "content": "开票内容",
-      "remark": "备注信息",
-      "rejectReason": "驳回原因",
-      "rejectTime": "驳回时间",
-      "rejectUser": "驳回人员",
-      "finishTime": "开票完成时间",
-      "approveUser": "上传人员",
-      "fileName": "发票文件",
-      "approveTime": "上传时间"
-    },
-    "dialog": {
-      "uploadTitle": "上传发票文件",
-      "rejectTitle": "驳回发票申请",
-      "rejectAlert": "驳回后，用户将收到通知并需要重新提交申请。",
-      "reasonLabel": "驳回原因",
-      "reasonTip": "请选择或输入驳回的具体原因",
-      "reasonPlaceholder": "请选择驳回原因",
-      "remarkLabel": "详细说明",
-      "remarkPlaceholder": "请输入详细的驳回说明，帮助用户更准确地修改信息",
-      "uploadLabel": "上传发票文件",
-      "uploadDraggerText": "点击上传 / 拖拽到此区域",
-      "uploadTip": "支持PDF格式。最大文件大小10MB",
-      "finishTimeLabel": "开票完成时间",
-      "finishTimePlaceholder": "选择日期时间",
-      "remarkPlaceholderUpload": "输入备注信息",
-      "reasons": {
-        "title_error": "发票抬头信息有误",
-        "tax_id_error": "纳税人识别号不正确",
-        "attachment_error": "附件不清晰或有误",
-        "other": "其他原因"
-      }
-    },
-    "messages": {
-      "uploadSuccess": "发票上传成功",
-      "rejectSuccess": "发票申请已驳回",
-      "fetchError": "获取数据失败",
-      "fetchDetailError": "获取详情失败"
-    }
-  },
 
   "common": {
     "cancel": "取消",
@@ -413,27 +258,34 @@
       "platform": "授权管理平台",
       "list": {
         "title": "授权列表",
+        "customerTitle": "{name}的授权",
+        "description": "查询和管理客户授权，查看激活使用情况。",
         "createLicense": "创建授权",
         "filter": {
           "label": "筛选：",
+          "customerPlaceholder": "选择客户",
           "codePlaceholder": "授权码",
           "statusPlaceholder": "状态",
-          "query": "查询"
+          "query": "查询",
+          "reset": "重置"
         },
         "table": {
           "code": "授权码",
+          "customer": "客户",
           "status": "状态",
           "activationProgress": "激活进度",
           "endDate": "到期时间",
           "description": "备注",
           "operation": "操作",
-          "loading": "加载中..."
+          "loading": "加载中...",
+          "empty": "暂无授权数据"
         },
         "actions": {
           "detail": "详情",
           "lock": "锁定",
           "unlock": "解锁",
-          "delete": "删除"
+          "delete": "删除",
+          "retry": "重试"
         },
         "status": {
           "normal": "正常",
@@ -458,7 +310,8 @@
           "unlockError": "解锁失败",
           "deleteSuccess": "删除成功",
           "deleteError": "删除失败",
-          "loadError": "加载数据失败"
+          "loadError": "加载授权列表失败",
+          "customerLoadError": "加载客户选项失败"
         }
       },
       "actions": {
@@ -757,6 +610,7 @@
       },
       "form": {
         "title": "授权表单",
+        "description": "配置客户、有效期限和授权参数。",
         "breadcrumb": {
           "licenseManagement": "授权管理",
           "createLicense": "创建授权",
@@ -893,6 +747,7 @@
   },
   "customers": {
     "title": "客户管理",
+    "description": "集中管理客户资料、状态及关联授权。",
     "viewCustomer": "查看客户",
     "addCustomer": "添加新客户",
     "editCustomer": "编辑客户",
@@ -903,6 +758,10 @@
       "enable": "启用",
       "disable": "禁用",
       "viewLicense": "查看授权",
+      "query": "查询",
+      "reset": "重置",
+      "retry": "重试",
+      "more": "更多",
       "save": "保 存",
       "cancel": "取 消"
     },
@@ -916,10 +775,12 @@
       "status": "状态",
       "createTime": "创建时间",
       "operation": "操作",
-      "loading": "加载中..."
+      "loading": "加载中...",
+      "empty": "暂无客户数据"
     },
     "form": {
       "basicInfo": "基本信息",
+      "contactInfo": "联系信息",
       "businessInfo": "商业信息",
       "customerName": "客户名称",
       "customerType": "客户类型",
@@ -976,7 +837,12 @@
       "enableLoading": "启用中...",
       "statusChangeCancel": "已取消{action}",
       "loadEnumError": "加载枚举数据失败",
-      "getDetailError": "获取客户详情失败："
+      "loadError": "加载客户列表失败",
+      "getDetailError": "获取客户详情失败：",
+      "getDetailFailed": "获取客户详情失败",
+      "statusError": "更新客户状态失败",
+      "deleteError": "删除客户失败",
+      "saveError": "保存客户失败"
     },
     "validation": {
       "nameRequired": "请输入客户名称",
@@ -991,6 +857,7 @@
     },
     "view": {
       "back": "返 回",
+      "customerCode": "客户编码",
       "statusInfo": "状态信息",
       "licenseStats": "授权统计",
       "creator": "创建人",
@@ -1006,7 +873,14 @@
       "expiredTime": "未激活许可证数量",
       "noData": "--",
       "onlineLicense": "在线授权",
-      "customerNotExist": "客户数据不存在"
+      "customerNotExist": "客户数据不存在",
+      "totalAuthCodes": "授权码总数",
+      "expiredAuthCodes": "已过期授权码",
+      "expiringAuthCodes": "30日内到期授权码",
+      "totalLicenseCount": "许可证总数",
+      "activeLicenseCount": "已激活许可证",
+      "inactiveLicenseCount": "未激活许可证",
+      "expiredLicenseCount": "已过期许可证"
     },
     "basicInfo": {
       "customerCode": "客户编码",

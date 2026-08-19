@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"license-manager/internal/config"
 	"license-manager/internal/models"
 	"license-manager/internal/repository"
 	pkgcontext "license-manager/pkg/context"
@@ -18,13 +16,11 @@ import (
 	"license-manager/pkg/utils"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type authorizationCodeService struct {
 	authCodeRepo repository.AuthorizationCodeRepository
 	customerRepo repository.CustomerRepository
-	cuUserRepo   repository.CuUserRepository
 	licenseRepo  repository.LicenseRepository
 }
 
@@ -32,13 +28,11 @@ type authorizationCodeService struct {
 func NewAuthorizationCodeService(
 	authCodeRepo repository.AuthorizationCodeRepository,
 	customerRepo repository.CustomerRepository,
-	cuUserRepo repository.CuUserRepository,
 	licenseRepo repository.LicenseRepository,
 ) AuthorizationCodeService {
 	return &authorizationCodeService{
 		authCodeRepo: authCodeRepo,
 		customerRepo: customerRepo,
-		cuUserRepo:   cuUserRepo,
 		licenseRepo:  licenseRepo,
 	}
 }
@@ -263,102 +257,6 @@ func (s *authorizationCodeService) GenerateAuthorizationFile(ctx context.Context
 
 	fileName := fmt.Sprintf("authorization_%s.txt", authCode.Code)
 	return []byte(authCode.Code), fileName, authCode.Code, nil
-}
-
-// GetProductActivationCode 获取产品激活码：{授权码}&{payload}
-func (s *authorizationCodeService) GetProductActivationCode(ctx context.Context, customerID string, req *models.ProductActivationCodeRequest) (*models.ProductActivationCodeResponse, error) {
-	lang := pkgcontext.GetLanguageFromContext(ctx)
-
-	if customerID == "" || req == nil || strings.TrimSpace(req.AuthorizationCode) == "" {
-		return nil, i18n.NewI18nError("900001", lang)
-	}
-
-	code := strings.TrimSpace(req.AuthorizationCode)
-	if idx := strings.Index(code, "&"); idx > 0 {
-		code = strings.TrimSpace(code[:idx])
-	}
-	if code == "" {
-		return nil, i18n.NewI18nError("900001", lang)
-	}
-
-	authCode, err := s.licenseRepo.GetAuthorizationCodeByCode(ctx, code)
-	if err != nil {
-		if errors.Is(err, repository.ErrAuthorizationCodeNotFound) {
-			return nil, i18n.NewI18nError("300001", lang) // 授权码不存在
-		}
-		return nil, i18n.NewI18nError("900004", lang, err.Error())
-	}
-
-	// 校验归属
-	if authCode.CustomerID != customerID {
-		return nil, i18n.NewI18nError("100005", lang) // 权限不足
-	}
-
-	// 校验状态与有效期
-	now := time.Now()
-	if authCode.IsLocked {
-		return nil, i18n.NewI18nError("300003", lang) // 授权码已被锁定
-	}
-	if now.Before(authCode.StartDate) || now.After(authCode.EndDate) {
-		return nil, i18n.NewI18nError("300001", lang) // 授权码未生效或已过期
-	}
-
-	// 构造配置 JSON（客户端离线解析/自校验）
-	payloadData := map[string]interface{}{
-		"ver":                1,
-		"authorization_code": authCode.Code,
-		"start_date":         authCode.StartDate,
-		"end_date":           authCode.EndDate,
-		"deployment_type":    authCode.DeploymentType,
-		"max_activations":    authCode.MaxActivations,
-		"generated_at":       time.Now().Format(time.RFC3339),
-	}
-
-	if featureConfig := parseJSONField(authCode.FeatureConfig); len(featureConfig) > 0 {
-		payloadData["feature_config"] = featureConfig
-	}
-	if usageLimits := parseJSONField(authCode.UsageLimits); len(usageLimits) > 0 {
-		payloadData["usage_limits"] = usageLimits
-	}
-	if customParameters := parseJSONField(authCode.CustomParameters); len(customParameters) > 0 {
-		payloadData["custom_parameters"] = customParameters
-	}
-
-	payloadDataBytes, err := json.Marshal(payloadData)
-	if err != nil {
-		return nil, i18n.NewI18nError("900004", lang, err.Error())
-	}
-
-	// RSA 私钥签名封装（与 license_service.signLicenseFile 相同结构）
-	cfg := config.GetConfig()
-	if cfg == nil || cfg.License.RSA.PrivateKeyPath == "" {
-		return nil, i18n.NewI18nError("900004", lang, "RSA private key path not configured")
-	}
-
-	privateKey, err := utils.LoadRSAPrivateKeyFromFile(cfg.License.RSA.PrivateKeyPath)
-	if err != nil {
-		return nil, i18n.NewI18nError("900004", lang, err.Error())
-	}
-
-	signature, err := privateKey.SignData(payloadDataBytes)
-	if err != nil {
-		return nil, i18n.NewI18nError("900004", lang, err.Error())
-	}
-
-	signedPayload := map[string]interface{}{
-		"data":      string(payloadDataBytes),
-		"signature": signature,
-		"algorithm": "RSA-PSS-SHA256",
-	}
-
-	signedPayloadBytes, err := json.Marshal(signedPayload)
-	if err != nil {
-		return nil, i18n.NewI18nError("900004", lang, err.Error())
-	}
-
-	payload := base64.StdEncoding.EncodeToString(signedPayloadBytes)
-	productActivationCode := fmt.Sprintf("%s&%s", authCode.Code, payload)
-	return &models.ProductActivationCodeResponse{ProductActivationCode: productActivationCode}, nil
 }
 
 // fillAuthorizationCodeDisplayFields 填充完整授权码模型的多语言显示字段
@@ -749,220 +647,4 @@ func (s *authorizationCodeService) GetAuthorizationChangeList(ctx context.Contex
 func (s *authorizationCodeService) fillChangeDisplayFields(item *models.AuthorizationChangeListItem, lang string) {
 	// 填充变更类型显示字段
 	item.ChangeTypeDisplay = i18n.GetEnumMessage("authorization_change_type", item.ChangeType, lang)
-}
-
-// ShareAuthorizationCode 用户分享授权码
-func (s *authorizationCodeService) ShareAuthorizationCode(ctx context.Context, authCodeID, userID string, req *models.AuthorizationCodeShareRequest) (*models.AuthorizationCodeShareResponse, error) {
-	lang := pkgcontext.GetLanguageFromContext(ctx)
-
-	// 业务逻辑：参数验证
-	if authCodeID == "" || userID == "" || req == nil {
-		return nil, i18n.NewI18nError("900001", lang)
-	}
-
-	// 根据联系方式查找目标用户
-	targetUser, err := s.findUserByContact(req.TargetContact)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, i18n.NewI18nError("300104", lang) // 目标用户不存在
-		}
-		return nil, i18n.NewI18nError("900004", lang, err.Error())
-	}
-
-	// 验证不能分享给自己
-	if targetUser.ID == userID {
-		return nil, i18n.NewI18nError("300105", lang) // 不能分享给自己
-	}
-
-	// 验证目标用户状态
-	if targetUser.Status != "active" {
-		return nil, i18n.NewI18nError("300104", lang) // 目标用户不存在或状态异常
-	}
-
-	// 获取原授权码
-	authCode, err := s.authCodeRepo.GetAuthorizationCodeByID(ctx, authCodeID)
-	if err != nil {
-		if errors.Is(err, repository.ErrAuthorizationCodeNotFound) {
-			return nil, i18n.NewI18nError("300101", lang) // 授权码不存在
-		}
-		return nil, i18n.NewI18nError("900004", lang, err.Error())
-	}
-
-	// 验证授权码所有权（只能分享自己的授权码）
-	if authCode.CreatedBy != userID {
-		return nil, i18n.NewI18nError("300101", lang) // 授权码不存在（无权限访问）
-	}
-
-	// 验证授权码状态
-	if authCode.IsLocked {
-		return nil, i18n.NewI18nError("300102", lang) // 授权码已被锁定
-	}
-
-	// 计算当前已激活次数
-	currentActivations, err := s.licenseRepo.GetActiveLicenseCount(ctx, authCodeID)
-	if err != nil {
-		return nil, i18n.NewI18nError("900004", lang, err.Error())
-	}
-
-	// 计算可分享次数
-	availableActivations := authCode.MaxActivations - int(currentActivations)
-	if req.ShareCount > availableActivations {
-		return nil, i18n.NewI18nError("300103", lang) // 分享数量超过可用激活数
-	}
-
-	var newAuthCode *models.AuthorizationCode
-
-	// 开启事务
-	tx := s.authCodeRepo.BeginTransaction(ctx)
-	if tx == nil {
-		return nil, i18n.NewI18nError("300106", lang) // 数据库事务失败
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			if gormTx, ok := tx.(*gorm.DB); ok {
-				gormTx.Rollback()
-			}
-			panic(r)
-		}
-	}()
-
-	// 在事务中执行操作
-	txErr := func() error {
-		// 1. 减少原授权码的max_activations
-		newMaxActivations := authCode.MaxActivations - req.ShareCount
-		err := s.authCodeRepo.UpdateMaxActivationsWithTx(ctx, tx, authCodeID, newMaxActivations)
-		if err != nil {
-			return err
-		}
-
-		// 2. 为目标用户创建新的授权码
-		now := time.Now()
-		code, err := s.generateAuthorizationCode(targetUser.CustomerID)
-		if err != nil {
-			return i18n.NewI18nError("900004", lang, err.Error())
-		}
-		newAuthCode = &models.AuthorizationCode{
-			Code:             code,
-			CustomerID:       targetUser.CustomerID, // 使用目标用户的客户ID
-			CreatedBy:        targetUser.ID,         // 记录为目标用户创建的
-			SoftwareID:       authCode.SoftwareID,
-			Description:      authCode.Description,
-			StartDate:        now,              // 从分享时刻开始
-			EndDate:          authCode.EndDate, // 到原授权码结束时间
-			DeploymentType:   authCode.DeploymentType,
-			EncryptionType:   authCode.EncryptionType,
-			SoftwareVersion:  authCode.SoftwareVersion,
-			MaxActivations:   req.ShareCount,
-			IsLocked:         false,
-			FeatureConfig:    authCode.FeatureConfig,
-			UsageLimits:      authCode.UsageLimits,
-			CustomParameters: authCode.CustomParameters,
-		}
-
-		err = s.authCodeRepo.CreateAuthorizationCodeWithTx(ctx, tx, newAuthCode)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	}()
-
-	if txErr != nil {
-		if gormTx, ok := tx.(*gorm.DB); ok {
-			gormTx.Rollback()
-		}
-		return nil, i18n.NewI18nError("300106", lang, txErr.Error()) // 数据库事务失败
-	}
-
-	// 提交事务
-	if gormTx, ok := tx.(*gorm.DB); ok {
-		if err := gormTx.Commit().Error; err != nil {
-			return nil, i18n.NewI18nError("300106", lang, err.Error()) // 数据库事务失败
-		}
-	}
-
-	// 返回新创建的授权码信息
-	response := &models.AuthorizationCodeShareResponse{
-		NewAuthorizationCode: models.AuthorizationCodeShareResponseItem{
-			ID:             newAuthCode.ID,
-			Code:           newAuthCode.Code,
-			StartDate:      newAuthCode.StartDate.Format(time.RFC3339),
-			EndDate:        newAuthCode.EndDate.Format(time.RFC3339),
-			MaxActivations: newAuthCode.MaxActivations,
-		},
-	}
-
-	return response, nil
-}
-
-// findUserByContact 根据联系方式查找用户（手机号或邮箱）
-func (s *authorizationCodeService) findUserByContact(contact string) (*models.CuUser, error) {
-	// 判断是手机号还是邮箱
-	if strings.Contains(contact, "@") {
-		// 邮箱
-		return s.cuUserRepo.GetByEmail(contact)
-	} else {
-		// 手机号：如果没有国家代码，默认使用 +86
-		phone := contact
-		countryCode := "+86" // 默认国家代码
-
-		// 检查是否已经包含国家代码
-		if strings.HasPrefix(contact, "+") {
-			// 如果以 + 开头，分离国家代码和手机号
-			parts := strings.SplitN(contact, " ", 2)
-			if len(parts) == 2 {
-				countryCode = parts[0]
-				phone = parts[1]
-			} else {
-				// 可能是直接的格式如 +8613800000000，需要分离
-				// 简单处理：假设国家代码是 + 开头的1-4位数字
-				for i := 1; i <= 4 && i < len(contact); i++ {
-					if contact[i] >= '0' && contact[i] <= '9' {
-						continue
-					}
-					countryCode = contact[:i]
-					phone = contact[i:]
-					break
-				}
-			}
-		}
-
-		return s.cuUserRepo.GetByPhone(phone, countryCode)
-	}
-}
-
-// GetCuAuthorizationCodeList 用户端：获取当前用户授权码列表
-func (s *authorizationCodeService) GetCuAuthorizationCodeList(ctx context.Context, customerID string, req *models.CuAuthorizationCodeListRequest) (*models.CuAuthorizationCodeListResponse, error) {
-	lang := pkgcontext.GetLanguageFromContext(ctx)
-
-	if customerID == "" {
-		return nil, i18n.NewI18nError("100004", lang)
-	}
-
-	result, err := s.authCodeRepo.GetCuAuthorizationCodeList(ctx, customerID, req)
-	if err != nil {
-		return nil, i18n.NewI18nError("900004", lang, err.Error())
-	}
-
-	for i := range result.List {
-		result.List[i].StatusDisplay = i18n.GetEnumMessage("authorization_code_status", result.List[i].Status, lang)
-	}
-
-	return result, nil
-}
-
-// GetCuAuthorizationCodeSummary 用户端：授权信息统计
-func (s *authorizationCodeService) GetCuAuthorizationCodeSummary(ctx context.Context, customerID string) (*models.CuAuthorizationCodeSummaryResponse, error) {
-	lang := pkgcontext.GetLanguageFromContext(ctx)
-
-	if customerID == "" {
-		return nil, i18n.NewI18nError("100004", lang)
-	}
-
-	result, err := s.authCodeRepo.GetCuAuthorizationCodeSummary(ctx, customerID)
-	if err != nil {
-		return nil, i18n.NewI18nError("900004", lang, err.Error())
-	}
-
-	return result, nil
 }

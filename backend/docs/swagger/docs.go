@@ -25,2370 +25,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/cu/authorization-codes": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取当前登录用户的授权码列表，支持分页、状态筛选与授权码模糊搜索",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户端授权码管理"
-                ],
-                "summary": "获取用户授权码列表",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "每页数量",
-                        "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "normal",
-                            "locked",
-                            "expired"
-                        ],
-                        "type": "string",
-                        "description": "状态筛选",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "授权码模糊匹配",
-                        "name": "search",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.CuAuthorizationCodeListResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/authorization-codes/product-activation-code": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取产品激活码：{授权码}\u0026{payload}（payload 为 RSA-PSS-SHA256 签名封装串）",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户端授权码管理"
-                ],
-                "summary": "获取产品激活码",
-                "parameters": [
-                    {
-                        "description": "获取产品激活码请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.ProductActivationCodeRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "获取成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.ProductActivationCodeResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "授权码已被锁定",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "授权码不存在或已过期",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/authorization-codes/summary": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取当前登录用户的授权码统计信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户端授权码管理"
-                ],
-                "summary": "获取用户授权信息统计",
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.CuAuthorizationCodeSummaryResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/authorization-codes/{codeId}/share": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "用户可以将自己的授权码分享给其他用户（通过手机号或邮箱）",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户端授权码管理"
-                ],
-                "summary": "用户分享授权码",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "授权码ID",
-                        "name": "codeId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "分享请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthorizationCodeShareRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "分享成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.AuthorizationCodeShareResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "授权码已被锁定",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "授权码不存在或目标用户不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "不能分享给自己或分享数量超过可用激活数",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/devices": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取当前登录用户的设备列表，支持分页和筛选",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户设备管理"
-                ],
-                "summary": "获取设备列表",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "页码，默认1",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页数量，默认20，最大100",
-                        "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "设备名称模糊搜索",
-                        "name": "device_name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "按授权码ID筛选设备",
-                        "name": "authorization_code_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "是否在线筛选：true在线，false离线",
-                        "name": "is_online",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "获取成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.DeviceListResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/devices/summary": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取当前登录用户的设备汇总统计信息（总数、在线数、离线数）",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户设备管理"
-                ],
-                "summary": "获取设备汇总统计",
-                "responses": {
-                    "200": {
-                        "description": "获取成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.DeviceSummaryResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/devices/{id}": {
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "解绑指定的设备，物理删除许可证记录",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户设备管理"
-                ],
-                "summary": "解绑设备",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "许可证ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "解绑成功",
-                        "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "无权限操作此设备",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "设备不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/forgot-password": {
-            "post": {
-                "description": "提交手机号，发送密码重置验证码到手机",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户用户管理"
-                ],
-                "summary": "忘记密码 - 发送验证码",
-                "parameters": [
-                    {
-                        "description": "忘记密码请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CuUserForgotPasswordRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "验证码发送成功",
-                        "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "用户不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/invoices": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取当前客户的发票列表",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "客户发票列表",
-                "parameters": [
-                    {
-                        "minimum": 1,
-                        "type": "integer",
-                        "description": "页码，默认1",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "maximum": 100,
-                        "minimum": 1,
-                        "type": "integer",
-                        "description": "每页条数，默认10，最大100",
-                        "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "状态筛选，pending-待处理/issued-已开票/rejected-已驳回",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "搜索关键词，支持发票号或订单号模糊匹配",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "申请日期筛选，格式YYYY-MM-DD 或 RFC3339范围(start,end)",
-                        "name": "apply_date",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.InvoiceListResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "客户为已支付的订单申请发票",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "客户申请发票",
-                "parameters": [
-                    {
-                        "description": "发票申请请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.InvoiceCreateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "id": {
-                                                    "type": "string"
-                                                },
-                                                "invoice_no": {
-                                                    "type": "string"
-                                                },
-                                                "status": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/invoices/summary": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取当前客户的发票统计汇总信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "客户发票汇总信息",
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.InvoiceSummaryResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/invoices/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取指定发票的详细信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "客户发票详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "发票ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.InvoiceResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "发票不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "客户修改已被驳回的发票申请并重新提交",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "客户修改发票申请",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "发票ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "发票修改请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.InvoiceUpdateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "id": {
-                                                    "type": "string"
-                                                },
-                                                "invoice_no": {
-                                                    "type": "string"
-                                                },
-                                                "status": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "发票不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/invoices/{id}/download": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "下载指定发票的文件",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/pdf"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "客户发票下载",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "发票ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "发票文件",
-                        "schema": {
-                            "type": "file"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "发票不存在或文件不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/login": {
-            "post": {
-                "description": "通过手机号和密码或短信验证码登录客户用户账号",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户用户管理"
-                ],
-                "summary": "客户用户登录",
-                "parameters": [
-                    {
-                        "description": "登录信息",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CuUserLoginRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "token": {
-                                                    "type": "string"
-                                                },
-                                                "user": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "customer_id": {
-                                                            "type": "string"
-                                                        },
-                                                        "email": {
-                                                            "type": "string"
-                                                        },
-                                                        "id": {
-                                                            "type": "string"
-                                                        },
-                                                        "phone": {
-                                                            "type": "string"
-                                                        },
-                                                        "real_name": {
-                                                            "type": "string"
-                                                        },
-                                                        "status": {
-                                                            "type": "string"
-                                                        },
-                                                        "user_role": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "手机号、密码或验证码错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/orders": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取当前用户的订单列表，支持分页",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户订单管理"
-                ],
-                "summary": "获取用户订单列表",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "每页数量",
-                        "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "订单号或授权码模糊匹配",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "pending",
-                            "paid",
-                            "cancelled"
-                        ],
-                        "type": "string",
-                        "description": "订单状态筛选",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "today",
-                            "week",
-                            "month",
-                            "three_months"
-                        ],
-                        "type": "string",
-                        "description": "时间筛选",
-                        "name": "time",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.CuOrderListResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "创建新的产品套餐订单，支持免费和付费模式",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户订单管理"
-                ],
-                "summary": "创建订单",
-                "parameters": [
-                    {
-                        "description": "订单创建信息",
-                        "name": "order",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CuOrderCreateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "付费订单成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "expire_time": {
-                                                    "type": "string"
-                                                },
-                                                "id": {
-                                                    "type": "string"
-                                                },
-                                                "order_no": {
-                                                    "type": "string"
-                                                },
-                                                "payment_no": {
-                                                    "type": "string"
-                                                },
-                                                "payment_url": {
-                                                    "type": "string"
-                                                },
-                                                "total_amount": {
-                                                    "type": "number"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "套餐不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "当月已购买试用版",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/orders/calculate": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "根据套餐和许可数量计算价格和折扣",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户订单管理"
-                ],
-                "summary": "计算订单价格",
-                "parameters": [
-                    {
-                        "description": "价格计算请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "license_count": {
-                                    "type": "integer"
-                                },
-                                "package_id": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "discount_description": {
-                                                    "type": "string"
-                                                },
-                                                "discount_rate": {
-                                                    "type": "number"
-                                                },
-                                                "license_count": {
-                                                    "type": "integer"
-                                                },
-                                                "total_amount": {
-                                                    "type": "number"
-                                                },
-                                                "unit_price": {
-                                                    "type": "number"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "套餐不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/orders/summary": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取当前登录用户的订单汇总统计信息（总数、待支付数、已支付数）",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户订单管理"
-                ],
-                "summary": "获取订单汇总统计",
-                "responses": {
-                    "200": {
-                        "description": "获取成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.OrderSummaryResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/orders/{order_id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "根据订单ID获取订单详细信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户订单管理"
-                ],
-                "summary": "获取订单详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "订单ID",
-                        "name": "order_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.CuOrderResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "订单不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/orders/{order_id}/cancel": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "删除当前用户的订单记录",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户订单管理"
-                ],
-                "summary": "删除订单",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "订单ID",
-                        "name": "order_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    },
-                    "409": {
-                        "description": "Conflict"
-                    }
-                }
-            }
-        },
-        "/api/cu/orders/{order_id}/pay": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "对指定订单继续支付，如果支付单已过期则创建新的支付单",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户订单管理"
-                ],
-                "summary": "继续支付",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "订单ID",
-                        "name": "order_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "alipay",
-                            "wechat"
-                        ],
-                        "type": "string",
-                        "description": "支付方式",
-                        "name": "payment_method",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "expire_time": {
-                                                    "type": "string"
-                                                },
-                                                "order_id": {
-                                                    "type": "string"
-                                                },
-                                                "order_no": {
-                                                    "type": "string"
-                                                },
-                                                "payment_no": {
-                                                    "type": "string"
-                                                },
-                                                "payment_url": {
-                                                    "type": "string"
-                                                },
-                                                "total_amount": {
-                                                    "type": "number"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "订单状态不允许继续支付",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "订单不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/packages": {
-            "get": {
-                "description": "获取所有可用的产品套餐信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户订单管理"
-                ],
-                "summary": "获取套餐列表",
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "string"
-                                                    },
-                                                    "max_devices": {
-                                                        "type": "integer"
-                                                    },
-                                                    "name": {
-                                                        "type": "string"
-                                                    },
-                                                    "price": {
-                                                        "type": "number"
-                                                    },
-                                                    "type": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/profile": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取当前登录用户的个人资料信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户用户管理"
-                ],
-                "summary": "获取用户个人资料",
-                "responses": {
-                    "200": {
-                        "description": "获取成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.CuUserResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "用户不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "更新当前登录用户的个人资料信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户用户管理"
-                ],
-                "summary": "更新用户个人资料",
-                "parameters": [
-                    {
-                        "description": "个人资料信息",
-                        "name": "profile",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CuUserProfileUpdateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "个人资料更新失败",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/profile/password": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "修改当前登录用户的密码，需要提供旧密码",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户用户管理"
-                ],
-                "summary": "修改用户密码",
-                "parameters": [
-                    {
-                        "description": "密码修改信息",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CuUserChangePasswordRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "密码修改失败",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/profile/phone": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "更新当前登录用户的手机号，需要验证新旧手机号",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户用户管理"
-                ],
-                "summary": "更新用户手机号",
-                "parameters": [
-                    {
-                        "description": "手机号更新信息",
-                        "name": "phone",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CuUserPhoneUpdateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "手机号更新失败",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/profile/send-current-phone-sms": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "发送当前手机号验证码，用于手机号更新时的身份验证",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户用户管理"
-                ],
-                "summary": "发送当前手机号验证码",
-                "responses": {
-                    "200": {
-                        "description": "验证码发送成功",
-                        "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未授权",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "用户不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/profile/send-new-phone-sms": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "发送新手机号验证码，用于手机号更新时的可用性验证",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户用户管理"
-                ],
-                "summary": "发送新手机号验证码",
-                "parameters": [
-                    {
-                        "description": "新手机号信息",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CuUserSendNewPhoneSmsRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "验证码发送成功",
-                        "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未授权",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "手机号已被注册",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/register": {
-            "post": {
-                "description": "通过手机号注册客户用户账号",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户用户管理"
-                ],
-                "summary": "客户用户注册",
-                "parameters": [
-                    {
-                        "description": "注册信息",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CuUserRegisterRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "token": {
-                                                    "type": "string"
-                                                },
-                                                "user": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "customer_id": {
-                                                            "type": "string"
-                                                        },
-                                                        "email": {
-                                                            "type": "string"
-                                                        },
-                                                        "id": {
-                                                            "type": "string"
-                                                        },
-                                                        "phone": {
-                                                            "type": "string"
-                                                        },
-                                                        "real_name": {
-                                                            "type": "string"
-                                                        },
-                                                        "status": {
-                                                            "type": "string"
-                                                        },
-                                                        "user_role": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "手机号已被注册",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/reset-password": {
-            "post": {
-                "description": "通过验证码重置密码",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户用户管理"
-                ],
-                "summary": "重置密码",
-                "parameters": [
-                    {
-                        "description": "重置密码请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CuUserResetPasswordRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "重置密码失败",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/send-login-sms": {
-            "post": {
-                "description": "登录前发送短信验证码到手机",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户用户管理"
-                ],
-                "summary": "登录发送验证码",
-                "parameters": [
-                    {
-                        "description": "登录发送验证码请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CuUserSendLoginSmsRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "验证码发送成功",
-                        "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "用户不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "429": {
-                        "description": "请求过于频繁",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "短信发送失败",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cu/send-register-sms": {
-            "post": {
-                "description": "注册前发送短信验证码到手机",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "客户用户管理"
-                ],
-                "summary": "注册发送验证码",
-                "parameters": [
-                    {
-                        "description": "注册发送验证码请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CuUserSendRegisterSmsRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "验证码发送成功",
-                        "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "手机号已被注册",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "429": {
-                        "description": "请求过于频繁",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "短信发送失败",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/customers": {
             "get": {
                 "security": [
@@ -2492,13 +128,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.CustomerListResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.CustomerListResponse"
                                         }
                                     }
                                 }
@@ -2508,19 +144,19 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -2549,7 +185,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CustomerCreateRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.CustomerCreateRequest"
                         }
                     }
                 ],
@@ -2559,13 +195,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Customer"
+                                            "$ref": "#/definitions/license-manager_internal_models.Customer"
                                         }
                                     }
                                 }
@@ -2575,25 +211,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "客户已存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -2632,13 +268,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Customer"
+                                            "$ref": "#/definitions/license-manager_internal_models.Customer"
                                         }
                                     }
                                 }
@@ -2648,25 +284,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "客户不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -2702,7 +338,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CustomerUpdateRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.CustomerUpdateRequest"
                         }
                     }
                 ],
@@ -2712,13 +348,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Customer"
+                                            "$ref": "#/definitions/license-manager_internal_models.Customer"
                                         }
                                     }
                                 }
@@ -2728,25 +364,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "客户不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -2781,37 +417,37 @@ const docTemplate = `{
                     "200": {
                         "description": "删除成功",
                         "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                         }
                     },
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "客户不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "客户仍有授权，无法删除",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -2849,7 +485,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CustomerStatusUpdateRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.CustomerStatusUpdateRequest"
                         }
                     }
                 ],
@@ -2859,13 +495,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Customer"
+                                            "$ref": "#/definitions/license-manager_internal_models.Customer"
                                         }
                                     }
                                 }
@@ -2875,25 +511,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "客户不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -2923,13 +559,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.EnumListResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.EnumListResponse"
                                         }
                                     }
                                 }
@@ -2939,13 +575,13 @@ const docTemplate = `{
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -2990,13 +626,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.EnumTypeResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.EnumTypeResponse"
                                         }
                                     }
                                 }
@@ -3006,19 +642,19 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -3077,13 +713,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.LeadListResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.LeadListResponse"
                                         }
                                     }
                                 }
@@ -3093,19 +729,19 @@ const docTemplate = `{
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "权限不足",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -3129,7 +765,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.LeadCreateRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.LeadCreateRequest"
                         }
                     }
                 ],
@@ -3139,13 +775,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.LeadResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.LeadResponse"
                                         }
                                     }
                                 }
@@ -3155,13 +791,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -3191,13 +827,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.LeadSummaryResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.LeadSummaryResponse"
                                         }
                                     }
                                 }
@@ -3207,19 +843,19 @@ const docTemplate = `{
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "权限不足",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -3258,13 +894,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.LeadResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.LeadResponse"
                                         }
                                     }
                                 }
@@ -3274,25 +910,25 @@ const docTemplate = `{
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "权限不足",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "线索不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -3328,7 +964,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.LeadUpdateRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.LeadUpdateRequest"
                         }
                     }
                 ],
@@ -3338,13 +974,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.LeadResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.LeadResponse"
                                         }
                                     }
                                 }
@@ -3354,31 +990,31 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "权限不足",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "线索不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -3413,31 +1049,31 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "权限不足",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "线索不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -3483,13 +1119,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.LeadResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.LeadResponse"
                                         }
                                     }
                                 }
@@ -3499,686 +1135,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "权限不足",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "线索不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/packages": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "管理员获取套餐列表，支持类型和状态筛选",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "套餐管理"
-                ],
-                "summary": "获取套餐列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "套餐类型筛选",
-                        "name": "type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "状态筛选，1-启用，0-禁用",
-                        "name": "status",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.PackageListResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "创建新的套餐",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "套餐管理"
-                ],
-                "summary": "创建套餐",
-                "parameters": [
-                    {
-                        "description": "套餐创建请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.PackageCreateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.PackageResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/packages/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "根据ID获取套餐详细信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "套餐管理"
-                ],
-                "summary": "获取套餐详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "套餐ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.PackageResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "套餐不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "更新指定套餐的信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "套餐管理"
-                ],
-                "summary": "更新套餐",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "套餐ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "套餐更新请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.PackageUpdateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.PackageResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "套餐不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "删除指定套餐（软删除）",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "套餐管理"
-                ],
-                "summary": "删除套餐",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "套餐ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "套餐不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/packages/{id}/status": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "启用或禁用套餐",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "套餐管理"
-                ],
-                "summary": "更新套餐状态",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "套餐ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "状态，1-启用，0-禁用",
-                        "name": "status",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.PackageResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "套餐不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/payment/alipay/callback": {
-            "post": {
-                "description": "处理支付宝支付回调",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "text/plain"
-                ],
-                "tags": [
-                    "支付管理"
-                ],
-                "summary": "支付宝回调",
-                "parameters": [
-                    {
-                        "description": "支付宝回调参数",
-                        "name": "notification",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "failure",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/payment/history": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取当前用户的支付记录列表",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "支付管理"
-                ],
-                "summary": "获取用户支付历史",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "每页数量",
-                        "name": "page_size",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.PaymentListResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/payment/{payment_no}/status": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "根据支付单号获取支付状态",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "支付管理"
-                ],
-                "summary": "获取支付状态",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "支付单号",
-                        "name": "payment_no",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.PaymentStatusResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "支付单不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/public/invoices/download": {
-            "get": {
-                "description": "通过下载token下载发票文件，无需登录验证",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/pdf"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "公共发票下载",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "下载token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "发票文件",
-                        "schema": {
-                            "type": "file"
-                        }
-                    },
-                    "400": {
-                        "description": "token无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "文件不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -4204,7 +1179,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ActivateRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.ActivateRequest"
                         }
                     }
                 ],
@@ -4214,13 +1189,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.ActivateResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.ActivateResponse"
                                         }
                                     }
                                 }
@@ -4230,31 +1205,31 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "授权码已锁定或已过期",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "429": {
                         "description": "激活数量已达上限",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -4282,19 +1257,19 @@ const docTemplate = `{
                     "200": {
                         "description": "系统信息",
                         "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "权限不足",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -4322,19 +1297,19 @@ const docTemplate = `{
                     "200": {
                         "description": "刷新成功",
                         "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -4437,13 +1412,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.AuthorizationCodeListResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCodeListResponse"
                                         }
                                     }
                                 }
@@ -4453,19 +1428,19 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -4494,7 +1469,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AuthorizationCodeCreateRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCodeCreateRequest"
                         }
                     }
                 ],
@@ -4504,13 +1479,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.AuthorizationCodeCreateResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCodeCreateResponse"
                                         }
                                     }
                                 }
@@ -4520,31 +1495,31 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "客户不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "授权码已存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -4583,13 +1558,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.AuthorizationCode"
+                                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCode"
                                         }
                                     }
                                 }
@@ -4599,25 +1574,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -4653,7 +1628,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AuthorizationCodeUpdateRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCodeUpdateRequest"
                         }
                     }
                 ],
@@ -4663,13 +1638,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.AuthorizationCode"
+                                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCode"
                                         }
                                     }
                                 }
@@ -4679,25 +1654,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -4732,31 +1707,31 @@ const docTemplate = `{
                     "200": {
                         "description": "删除成功",
                         "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                         }
                     },
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -4854,13 +1829,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.AuthorizationChangeListResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationChangeListResponse"
                                         }
                                     }
                                 }
@@ -4870,25 +1845,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -4931,31 +1906,31 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "授权码不可用",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -4993,7 +1968,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AuthorizationCodeLockRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCodeLockRequest"
                         }
                     }
                 ],
@@ -5003,13 +1978,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.AuthorizationCode"
+                                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCode"
                                         }
                                     }
                                 }
@@ -5019,25 +1994,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -5099,13 +2074,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.DashboardAuthorizationTrendResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.DashboardAuthorizationTrendResponse"
                                         }
                                     }
                                 }
@@ -5115,25 +2090,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "权限不足",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -5188,13 +2163,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.DashboardRecentAuthorizationsResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.DashboardRecentAuthorizationsResponse"
                                         }
                                     }
                                 }
@@ -5204,25 +2179,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "权限不足",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -5248,7 +2223,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.HeartbeatRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.HeartbeatRequest"
                         }
                     }
                 ],
@@ -5258,13 +2233,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.HeartbeatResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.HeartbeatResponse"
                                         }
                                     }
                                 }
@@ -5274,511 +2249,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "许可证不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "许可证已被撤销",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/invoices": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "管理员查看所有发票列表，支持按客户筛选",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "管理员发票列表",
-                "parameters": [
-                    {
-                        "minimum": 1,
-                        "type": "integer",
-                        "description": "页码，默认1",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "maximum": 100,
-                        "minimum": 1,
-                        "type": "integer",
-                        "description": "每页条数，默认10，最大100",
-                        "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "状态筛选，pending-待处理/issued-已开票/rejected-已驳回",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "搜索关键词，支持发票号或订单号模糊匹配",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "申请日期筛选，格式YYYY-MM-DD 或 RFC3339范围(start,end)",
-                        "name": "apply_date",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "客户ID筛选",
-                        "name": "customer_id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.InvoiceListResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/invoices/summary": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "管理员查看全平台的发票统计汇总信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "管理员发票汇总信息",
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.InvoiceSummaryResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/invoices/upload": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "管理员上传发票PDF文件",
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "管理端发票文件上传",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "发票申请号",
-                        "name": "invoice_no",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "file",
-                        "description": "发票PDF文件",
-                        "name": "file",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.InvoiceUploadResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/invoices/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "管理员查看发票详细信息，包含关联信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "管理员发票详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "发票ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.InvoiceDetailResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "发票不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/invoices/{id}/issue": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "管理员为发票开票，上传发票文件并设置开票时间",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "管理员发票开票",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "发票ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "开票请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.InvoiceIssueRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.InvoiceResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "发票不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/invoices/{id}/reject": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "管理员驳回发票申请，需要填写驳回原因和修改建议",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "发票管理"
-                ],
-                "summary": "管理员发票驳回",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "发票ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "驳回请求",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.InvoiceRejectRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.APIResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.InvoiceResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数无效",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "未认证",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "权限不足",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "发票不存在",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "服务器内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -5876,13 +2365,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.LicenseListResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.LicenseListResponse"
                                         }
                                     }
                                 }
@@ -5892,19 +2381,19 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -5933,7 +2422,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.LicenseCreateRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.LicenseCreateRequest"
                         }
                     }
                 ],
@@ -5943,13 +2432,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.License"
+                                            "$ref": "#/definitions/license-manager_internal_models.License"
                                         }
                                     }
                                 }
@@ -5959,25 +2448,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -6016,13 +2505,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.LicenseDetailResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.LicenseDetailResponse"
                                         }
                                     }
                                 }
@@ -6032,25 +2521,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "许可证不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -6093,31 +2582,31 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "许可证不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "许可证已被撤销",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -6155,7 +2644,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.LicenseRevokeRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.LicenseRevokeRequest"
                         }
                     }
                 ],
@@ -6165,13 +2654,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.License"
+                                            "$ref": "#/definitions/license-manager_internal_models.License"
                                         }
                                     }
                                 }
@@ -6181,31 +2670,31 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "许可证不存在",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "许可证已被撤销",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -6231,7 +2720,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.LoginRequest"
+                            "$ref": "#/definitions/license-manager_internal_models.LoginRequest"
                         }
                     }
                 ],
@@ -6239,25 +2728,25 @@ const docTemplate = `{
                     "200": {
                         "description": "登录成功",
                         "schema": {
-                            "$ref": "#/definitions/models.LoginResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "用户名或密码错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -6285,13 +2774,13 @@ const docTemplate = `{
                     "200": {
                         "description": "登出成功",
                         "schema": {
-                            "$ref": "#/definitions/models.APIResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -6321,13 +2810,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/models.APIResponse"
+                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.StatsOverviewResponse"
+                                            "$ref": "#/definitions/license-manager_internal_models.StatsOverviewResponse"
                                         }
                                     }
                                 }
@@ -6337,13 +2826,13 @@ const docTemplate = `{
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -6366,7 +2855,7 @@ const docTemplate = `{
                     "200": {
                         "description": "健康状态",
                         "schema": {
-                            "$ref": "#/definitions/models.HealthResponse"
+                            "$ref": "#/definitions/license-manager_internal_models.HealthResponse"
                         }
                     }
                 }
@@ -6374,7 +2863,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.APIResponse": {
+        "license-manager_internal_models.APIResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6389,7 +2878,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ActivateRequest": {
+        "license-manager_internal_models.ActivateRequest": {
             "type": "object",
             "required": [
                 "authorization_code",
@@ -6415,7 +2904,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ActivateResponse": {
+        "license-manager_internal_models.ActivateResponse": {
             "type": "object",
             "properties": {
                 "heartbeat_interval": {
@@ -6432,7 +2921,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AuthorizationChangeListItem": {
+        "license-manager_internal_models.AuthorizationChangeListItem": {
             "type": "object",
             "properties": {
                 "change_type": {
@@ -6465,14 +2954,14 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AuthorizationChangeListResponse": {
+        "license-manager_internal_models.AuthorizationChangeListResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "description": "变更历史列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.AuthorizationChangeListItem"
+                        "$ref": "#/definitions/license-manager_internal_models.AuthorizationChangeListItem"
                     }
                 },
                 "page": {
@@ -6493,7 +2982,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AuthorizationCode": {
+        "license-manager_internal_models.AuthorizationCode": {
             "type": "object",
             "properties": {
                 "activated_licenses_count": {
@@ -6528,7 +3017,7 @@ const docTemplate = `{
                     "description": "客户信息（仅在详情接口返回）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/models.CustomerInfoForAuthCode"
+                            "$ref": "#/definitions/license-manager_internal_models.CustomerInfoForAuthCode"
                         }
                     ]
                 },
@@ -6622,7 +3111,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AuthorizationCodeCreateRequest": {
+        "license-manager_internal_models.AuthorizationCodeCreateRequest": {
             "type": "object",
             "required": [
                 "customer_id",
@@ -6687,7 +3176,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AuthorizationCodeCreateResponse": {
+        "license-manager_internal_models.AuthorizationCodeCreateResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6700,7 +3189,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AuthorizationCodeListItem": {
+        "license-manager_internal_models.AuthorizationCodeListItem": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6769,14 +3258,14 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AuthorizationCodeListResponse": {
+        "license-manager_internal_models.AuthorizationCodeListResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "description": "授权码列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.AuthorizationCodeListItem"
+                        "$ref": "#/definitions/license-manager_internal_models.AuthorizationCodeListItem"
                     }
                 },
                 "page": {
@@ -6797,7 +3286,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AuthorizationCodeLockRequest": {
+        "license-manager_internal_models.AuthorizationCodeLockRequest": {
             "type": "object",
             "properties": {
                 "is_locked": {
@@ -6816,63 +3305,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AuthorizationCodeShareRequest": {
-            "type": "object",
-            "required": [
-                "share_count",
-                "target_contact"
-            ],
-            "properties": {
-                "share_count": {
-                    "description": "分享激活次数",
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "target_contact": {
-                    "description": "受赠用户联系方式（手机号或邮箱）",
-                    "type": "string"
-                }
-            }
-        },
-        "models.AuthorizationCodeShareResponse": {
-            "type": "object",
-            "properties": {
-                "new_authorization_code": {
-                    "description": "新生成的授权码信息",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/models.AuthorizationCodeShareResponseItem"
-                        }
-                    ]
-                }
-            }
-        },
-        "models.AuthorizationCodeShareResponseItem": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "授权码",
-                    "type": "string"
-                },
-                "end_date": {
-                    "description": "结束时间",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "授权码ID",
-                    "type": "string"
-                },
-                "max_activations": {
-                    "description": "最大激活次数",
-                    "type": "integer"
-                },
-                "start_date": {
-                    "description": "开始时间",
-                    "type": "string"
-                }
-            }
-        },
-        "models.AuthorizationCodeUpdateRequest": {
+        "license-manager_internal_models.AuthorizationCodeUpdateRequest": {
             "type": "object",
             "required": [
                 "change_type"
@@ -6954,28 +3387,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AuthorizationInfo": {
-            "type": "object",
-            "properties": {
-                "authorization_code": {
-                    "description": "授权码",
-                    "type": "string"
-                },
-                "authorization_code_id": {
-                    "description": "授权码ID",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "授权描述",
-                    "type": "string"
-                },
-                "end_date": {
-                    "description": "授权到期时间",
-                    "type": "string"
-                }
-            }
-        },
-        "models.AuthorizationStats": {
+        "license-manager_internal_models.AuthorizationStats": {
             "type": "object",
             "properties": {
                 "active_licenses": {
@@ -7008,551 +3420,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CuAuthorizationCodeListItem": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "授权码",
-                    "type": "string"
-                },
-                "created_at": {
-                    "description": "创建时间",
-                    "type": "string"
-                },
-                "current_activations": {
-                    "description": "当前激活数量",
-                    "type": "integer"
-                },
-                "end_date": {
-                    "description": "到期时间",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "授权码ID",
-                    "type": "string"
-                },
-                "max_activations": {
-                    "description": "最大激活数量",
-                    "type": "integer"
-                },
-                "remaining_activations": {
-                    "description": "剩余激活数量",
-                    "type": "integer"
-                },
-                "status": {
-                    "description": "状态",
-                    "type": "string"
-                },
-                "status_display": {
-                    "description": "状态显示",
-                    "type": "string"
-                }
-            }
-        },
-        "models.CuAuthorizationCodeListResponse": {
-            "type": "object",
-            "properties": {
-                "list": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CuAuthorizationCodeListItem"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                },
-                "total_pages": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.CuAuthorizationCodeSummaryResponse": {
-            "type": "object",
-            "properties": {
-                "expired_count": {
-                    "description": "已过期授权码数量",
-                    "type": "integer"
-                },
-                "total_count": {
-                    "description": "总授权码数量",
-                    "type": "integer"
-                },
-                "valid_count": {
-                    "description": "有效授权码数量",
-                    "type": "integer"
-                },
-                "valid_max_activations_sum": {
-                    "description": "有效授权码的 ` + "`" + `max_activations` + "`" + ` 之和",
-                    "type": "integer"
-                }
-            }
-        },
-        "models.CuOrderCreateRequest": {
-            "type": "object",
-            "required": [
-                "license_count",
-                "package_id"
-            ],
-            "properties": {
-                "license_count": {
-                    "type": "integer",
-                    "maximum": 1000,
-                    "minimum": 1
-                },
-                "package_id": {
-                    "type": "string"
-                },
-                "payment_method": {
-                    "description": "可选：支付方式，不传则为免费订单 支持：alipay，wechat",
-                    "type": "string"
-                }
-            }
-        },
-        "models.CuOrderListResponse": {
-            "type": "object",
-            "properties": {
-                "orders": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CuOrderResponse"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                },
-                "total_count": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.CuOrderResponse": {
-            "type": "object",
-            "properties": {
-                "authorization_code": {
-                    "description": "授权码，已支付订单生成",
-                    "type": "string"
-                },
-                "created_at": {
-                    "description": "创建时间",
-                    "type": "string"
-                },
-                "cu_user_id": {
-                    "description": "客户用户ID",
-                    "type": "string"
-                },
-                "customer_id": {
-                    "description": "客户ID",
-                    "type": "string"
-                },
-                "discount_rate": {
-                    "description": "折扣率，0.0-1.0之间",
-                    "type": "number"
-                },
-                "expired_at": {
-                    "description": "订单过期时间",
-                    "type": "string"
-                },
-                "has_invoice_applied": {
-                    "description": "是否已申请发票（根据 invoices 表判断）",
-                    "type": "boolean"
-                },
-                "id": {
-                    "description": "订单ID",
-                    "type": "string"
-                },
-                "license_count": {
-                    "description": "许可数量",
-                    "type": "integer"
-                },
-                "order_no": {
-                    "description": "订单号，格式如ORD202601210123456789",
-                    "type": "string"
-                },
-                "package_id": {
-                    "description": "套餐ID",
-                    "type": "string"
-                },
-                "package_name": {
-                    "description": "套餐名称",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "订单状态，pending-待支付/paid-已支付",
-                    "type": "string"
-                },
-                "total_amount": {
-                    "description": "订单总金额，单位元",
-                    "type": "number"
-                },
-                "unit_price": {
-                    "description": "单价，单位元",
-                    "type": "number"
-                },
-                "updated_at": {
-                    "description": "更新时间",
-                    "type": "string"
-                }
-            }
-        },
-        "models.CuUserChangePasswordRequest": {
-            "type": "object",
-            "required": [
-                "new_password",
-                "old_password"
-            ],
-            "properties": {
-                "new_password": {
-                    "description": "新密码，必填，8-50位",
-                    "type": "string",
-                    "maxLength": 50,
-                    "minLength": 8
-                },
-                "old_password": {
-                    "description": "旧密码，必填",
-                    "type": "string"
-                }
-            }
-        },
-        "models.CuUserForgotPasswordRequest": {
-            "type": "object",
-            "required": [
-                "phone"
-            ],
-            "properties": {
-                "phone": {
-                    "description": "手机号，必填，7-20位",
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 7
-                },
-                "phone_country_code": {
-                    "description": "国家区号，可选，默认+86",
-                    "type": "string"
-                }
-            }
-        },
-        "models.CuUserLoginRequest": {
-            "type": "object",
-            "required": [
-                "login_type",
-                "phone"
-            ],
-            "properties": {
-                "login_type": {
-                    "description": "登录类型，必填，password-密码登录/sms-验证码登录",
-                    "type": "string",
-                    "enum": [
-                        "password",
-                        "sms"
-                    ]
-                },
-                "password": {
-                    "description": "密码，密码登录时必填",
-                    "type": "string"
-                },
-                "phone": {
-                    "description": "手机号，必填，7-20位",
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 7
-                },
-                "phone_country_code": {
-                    "description": "国家区号，可选，默认+86",
-                    "type": "string"
-                },
-                "sms_code": {
-                    "description": "短信验证码，验证码登录时必填",
-                    "type": "string"
-                }
-            }
-        },
-        "models.CuUserPhoneUpdateRequest": {
-            "type": "object",
-            "required": [
-                "current_sms_code",
-                "new_phone",
-                "new_phone_country_code",
-                "new_sms_code"
-            ],
-            "properties": {
-                "current_sms_code": {
-                    "description": "当前手机号验证码，必填，6位数字",
-                    "type": "string"
-                },
-                "new_phone": {
-                    "description": "新手机号，必填，11位手机号",
-                    "type": "string"
-                },
-                "new_phone_country_code": {
-                    "description": "新手机号国家区号，必填",
-                    "type": "string"
-                },
-                "new_sms_code": {
-                    "description": "新手机号验证码，必填，6位数字",
-                    "type": "string"
-                }
-            }
-        },
-        "models.CuUserProfileUpdateRequest": {
-            "type": "object",
-            "properties": {
-                "additional_info": {
-                    "description": "附加信息，可选，JSON格式",
-                    "type": "string"
-                },
-                "avatar_url": {
-                    "description": "头像URL，可选，最大500字符",
-                    "type": "string",
-                    "maxLength": 500
-                },
-                "email": {
-                    "description": "邮箱，可选，格式为邮箱地址",
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "language": {
-                    "description": "语言偏好，可选，zh-CN-中文/en-US-英文/ja-JP-日文",
-                    "type": "string",
-                    "enum": [
-                        "zh-CN",
-                        "en-US",
-                        "ja-JP"
-                    ]
-                },
-                "real_name": {
-                    "description": "真实姓名，可选，最大100字符",
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "remark": {
-                    "description": "备注，可选，最大1000字符",
-                    "type": "string",
-                    "maxLength": 1000
-                },
-                "timezone": {
-                    "description": "时区，可选，最大50字符",
-                    "type": "string",
-                    "maxLength": 50
-                }
-            }
-        },
-        "models.CuUserRegisterRequest": {
-            "type": "object",
-            "required": [
-                "password",
-                "phone",
-                "sms_code"
-            ],
-            "properties": {
-                "customer_id": {
-                    "description": "客户ID，可选，不提供则自动创建客户",
-                    "type": "string"
-                },
-                "email": {
-                    "description": "邮箱，可选，格式为邮箱地址",
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "password": {
-                    "description": "密码，必填，8-50位",
-                    "type": "string",
-                    "maxLength": 50,
-                    "minLength": 8
-                },
-                "phone": {
-                    "description": "手机号，必填，11位手机号",
-                    "type": "string"
-                },
-                "phone_country_code": {
-                    "description": "国家区号，可选，默认+86",
-                    "type": "string"
-                },
-                "real_name": {
-                    "description": "真实姓名，可选，最大100字符",
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "sms_code": {
-                    "description": "短信验证码，必填，6位数字",
-                    "type": "string"
-                }
-            }
-        },
-        "models.CuUserResetPasswordRequest": {
-            "type": "object",
-            "required": [
-                "new_password",
-                "phone",
-                "sms_code"
-            ],
-            "properties": {
-                "new_password": {
-                    "description": "新密码，必填，8-50位",
-                    "type": "string",
-                    "maxLength": 50,
-                    "minLength": 8
-                },
-                "phone": {
-                    "description": "手机号，必填，7-20位",
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 7
-                },
-                "phone_country_code": {
-                    "description": "国家区号，可选，默认+86",
-                    "type": "string"
-                },
-                "sms_code": {
-                    "description": "短信验证码，必填，6位数字",
-                    "type": "string"
-                }
-            }
-        },
-        "models.CuUserResponse": {
-            "type": "object",
-            "properties": {
-                "additional_info": {
-                    "description": "附加信息，JSON格式",
-                    "type": "string"
-                },
-                "avatar_url": {
-                    "description": "头像URL",
-                    "type": "string"
-                },
-                "created_at": {
-                    "description": "创建时间",
-                    "type": "string"
-                },
-                "customer_id": {
-                    "description": "客户ID",
-                    "type": "string"
-                },
-                "email": {
-                    "description": "邮箱",
-                    "type": "string"
-                },
-                "email_verified": {
-                    "description": "邮箱是否已验证",
-                    "type": "boolean"
-                },
-                "id": {
-                    "description": "用户ID",
-                    "type": "string"
-                },
-                "language": {
-                    "description": "语言偏好",
-                    "type": "string"
-                },
-                "last_login_at": {
-                    "description": "最后登录时间",
-                    "type": "string"
-                },
-                "last_login_ip": {
-                    "description": "最后登录IP",
-                    "type": "string"
-                },
-                "phone": {
-                    "description": "手机号",
-                    "type": "string"
-                },
-                "phone_country_code": {
-                    "description": "国家区号",
-                    "type": "string"
-                },
-                "phone_verified": {
-                    "description": "手机号是否已验证",
-                    "type": "boolean"
-                },
-                "real_name": {
-                    "description": "真实姓名",
-                    "type": "string"
-                },
-                "remark": {
-                    "description": "备注",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "账户状态，active-激活/disabled-禁用",
-                    "type": "string"
-                },
-                "timezone": {
-                    "description": "时区",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "更新时间",
-                    "type": "string"
-                },
-                "user_role": {
-                    "description": "用户角色，admin-管理员/member-成员",
-                    "type": "string"
-                }
-            }
-        },
-        "models.CuUserSendLoginSmsRequest": {
-            "type": "object",
-            "required": [
-                "phone"
-            ],
-            "properties": {
-                "phone": {
-                    "description": "手机号，必填，7-20位",
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 7
-                },
-                "phone_country_code": {
-                    "description": "国家区号，可选，默认+86",
-                    "type": "string"
-                }
-            }
-        },
-        "models.CuUserSendNewPhoneSmsRequest": {
-            "type": "object",
-            "required": [
-                "new_phone"
-            ],
-            "properties": {
-                "new_phone": {
-                    "description": "新手机号，必填，7-20位",
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 7
-                },
-                "new_phone_country_code": {
-                    "description": "新手机号国家区号，可选，默认+86",
-                    "type": "string"
-                }
-            }
-        },
-        "models.CuUserSendRegisterSmsRequest": {
-            "type": "object",
-            "required": [
-                "phone"
-            ],
-            "properties": {
-                "phone": {
-                    "description": "手机号，必填，7-20位",
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 7
-                },
-                "phone_country_code": {
-                    "description": "国家区号，可选，默认+86",
-                    "type": "string"
-                }
-            }
-        },
-        "models.Customer": {
+        "license-manager_internal_models.Customer": {
             "type": "object",
             "properties": {
                 "address": {
@@ -7562,7 +3430,7 @@ const docTemplate = `{
                     "description": "授权统计信息（仅在详情接口返回）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/models.AuthorizationStats"
+                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationStats"
                         }
                     ]
                 },
@@ -7628,7 +3496,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CustomerCreateRequest": {
+        "license-manager_internal_models.CustomerCreateRequest": {
             "type": "object",
             "required": [
                 "contact_person",
@@ -7701,7 +3569,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CustomerInfoForAuthCode": {
+        "license-manager_internal_models.CustomerInfoForAuthCode": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -7738,7 +3606,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CustomerListItem": {
+        "license-manager_internal_models.CustomerListItem": {
             "type": "object",
             "properties": {
                 "contact_person": {
@@ -7779,13 +3647,13 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CustomerListResponse": {
+        "license-manager_internal_models.CustomerListResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.CustomerListItem"
+                        "$ref": "#/definitions/license-manager_internal_models.CustomerListItem"
                     }
                 },
                 "page": {
@@ -7802,7 +3670,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CustomerStatusUpdateRequest": {
+        "license-manager_internal_models.CustomerStatusUpdateRequest": {
             "type": "object",
             "required": [
                 "status"
@@ -7818,7 +3686,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CustomerUpdateRequest": {
+        "license-manager_internal_models.CustomerUpdateRequest": {
             "type": "object",
             "properties": {
                 "address": {
@@ -7884,14 +3752,14 @@ const docTemplate = `{
                 }
             }
         },
-        "models.DashboardAuthorizationTrendResponse": {
+        "license-manager_internal_models.DashboardAuthorizationTrendResponse": {
             "type": "object",
             "properties": {
                 "period": {
                     "description": "时间段信息",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/models.TrendPeriod"
+                            "$ref": "#/definitions/license-manager_internal_models.TrendPeriod"
                         }
                     ]
                 },
@@ -7899,7 +3767,7 @@ const docTemplate = `{
                     "description": "汇总信息",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/models.TrendSummary"
+                            "$ref": "#/definitions/license-manager_internal_models.TrendSummary"
                         }
                     ]
                 },
@@ -7907,19 +3775,19 @@ const docTemplate = `{
                     "description": "趋势数据",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.TrendData"
+                        "$ref": "#/definitions/license-manager_internal_models.TrendData"
                     }
                 }
             }
         },
-        "models.DashboardRecentAuthorizationsResponse": {
+        "license-manager_internal_models.DashboardRecentAuthorizationsResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "description": "授权列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.RecentAuthorization"
+                        "$ref": "#/definitions/license-manager_internal_models.RecentAuthorization"
                     }
                 },
                 "total": {
@@ -7928,86 +3796,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.DeviceListItem": {
-            "type": "object",
-            "properties": {
-                "activated_at": {
-                    "description": "激活时间",
-                    "type": "string"
-                },
-                "authorization_info": {
-                    "description": "授权信息",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/models.AuthorizationInfo"
-                        }
-                    ]
-                },
-                "device_info": {
-                    "description": "设备信息",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "id": {
-                    "description": "许可证ID",
-                    "type": "string"
-                },
-                "is_online": {
-                    "description": "是否在线",
-                    "type": "boolean"
-                },
-                "last_heartbeat": {
-                    "description": "最后心跳时间",
-                    "type": "string"
-                },
-                "last_online_ip": {
-                    "description": "最后在线IP",
-                    "type": "string"
-                }
-            }
-        },
-        "models.DeviceListResponse": {
-            "type": "object",
-            "properties": {
-                "list": {
-                    "description": "设备列表",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.DeviceListItem"
-                    }
-                },
-                "page": {
-                    "description": "当前页码",
-                    "type": "integer"
-                },
-                "page_size": {
-                    "description": "每页数量",
-                    "type": "integer"
-                },
-                "total": {
-                    "description": "总数量",
-                    "type": "integer"
-                }
-            }
-        },
-        "models.DeviceSummaryResponse": {
-            "type": "object",
-            "properties": {
-                "offline_devices": {
-                    "description": "离线设备数",
-                    "type": "integer"
-                },
-                "online_devices": {
-                    "description": "在线设备数",
-                    "type": "integer"
-                },
-                "total_devices": {
-                    "description": "设备总数",
-                    "type": "integer"
-                }
-            }
-        },
-        "models.EnumItem": {
+        "license-manager_internal_models.EnumItem": {
             "type": "object",
             "properties": {
                 "display": {
@@ -8020,26 +3809,26 @@ const docTemplate = `{
                 }
             }
         },
-        "models.EnumListResponse": {
+        "license-manager_internal_models.EnumListResponse": {
             "type": "object",
             "properties": {
                 "enums": {
                     "description": "所有枚举类型",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.EnumTypeResponse"
+                        "$ref": "#/definitions/license-manager_internal_models.EnumTypeResponse"
                     }
                 }
             }
         },
-        "models.EnumTypeResponse": {
+        "license-manager_internal_models.EnumTypeResponse": {
             "type": "object",
             "properties": {
                 "items": {
                     "description": "枚举项列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.EnumItem"
+                        "$ref": "#/definitions/license-manager_internal_models.EnumItem"
                     }
                 },
                 "type": {
@@ -8048,7 +3837,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ErrorResponse": {
+        "license-manager_internal_models.ErrorResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -8065,20 +3854,20 @@ const docTemplate = `{
                 }
             }
         },
-        "models.GrowthRate": {
+        "license-manager_internal_models.GrowthRate": {
             "type": "object",
             "properties": {
-                "auth_codes": {
-                    "description": "授权码增长率(%)（当前总授权码数相比一个月前总授权码数的增长率）",
+                "auth_codes_mom": {
+                    "description": "auth codes MoM growth rate (%)",
                     "type": "number"
                 },
-                "licenses": {
-                    "description": "许可证增长率(%)（当前活跃许可证数相比一个月前活跃许可证数的增长率）",
+                "licenses_mom": {
+                    "description": "active licenses MoM growth rate (%)",
                     "type": "number"
                 }
             }
         },
-        "models.HealthResponse": {
+        "license-manager_internal_models.HealthResponse": {
             "type": "object",
             "properties": {
                 "services": {
@@ -8091,7 +3880,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "system": {
-                    "$ref": "#/definitions/models.SystemInfo"
+                    "$ref": "#/definitions/license-manager_internal_models.SystemInfo"
                 },
                 "timestamp": {
                     "type": "string"
@@ -8104,7 +3893,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.HeartbeatRequest": {
+        "license-manager_internal_models.HeartbeatRequest": {
             "type": "object",
             "required": [
                 "hardware_fingerprint",
@@ -8134,7 +3923,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.HeartbeatResponse": {
+        "license-manager_internal_models.HeartbeatResponse": {
             "type": "object",
             "properties": {
                 "config_updated": {
@@ -8155,445 +3944,12 @@ const docTemplate = `{
                 }
             }
         },
-        "models.InvoiceCreateRequest": {
-            "type": "object",
-            "required": [
-                "invoice_type",
-                "order_id",
-                "receiver_email",
-                "title"
-            ],
-            "properties": {
-                "content": {
-                    "description": "开票内容，非必填，最多200字符",
-                    "type": "string",
-                    "maxLength": 200
-                },
-                "invoice_type": {
-                    "description": "发票类型，必填，personal-个人/enterprise-企业普票/vat_special-增值税专用发票",
-                    "type": "string",
-                    "enum": [
-                        "personal",
-                        "enterprise",
-                        "vat_special"
-                    ]
-                },
-                "order_id": {
-                    "description": "订单ID，必填",
-                    "type": "string"
-                },
-                "receiver_email": {
-                    "description": "收票邮箱，必填，格式为邮箱地址",
-                    "type": "string"
-                },
-                "remark": {
-                    "description": "备注，可选",
-                    "type": "string"
-                },
-                "taxpayer_id": {
-                    "description": "纳税人识别号，企业发票必填，个人发票可为空",
-                    "type": "string"
-                },
-                "title": {
-                    "description": "发票抬头，必填，最多200字符",
-                    "type": "string",
-                    "maxLength": 200
-                }
-            }
-        },
-        "models.InvoiceDetailResponse": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "description": "发票金额，单位元，保留2位小数",
-                    "type": "number"
-                },
-                "applicant_name": {
-                    "description": "发票申请人真实姓名",
-                    "type": "string"
-                },
-                "applicant_phone": {
-                    "description": "发票申请人电话号码",
-                    "type": "string"
-                },
-                "content": {
-                    "description": "开票内容",
-                    "type": "string"
-                },
-                "created_at": {
-                    "description": "创建时间",
-                    "type": "string"
-                },
-                "cu_user_id": {
-                    "description": "申请人客户用户ID",
-                    "type": "string"
-                },
-                "cu_user_phone": {
-                    "description": "申请人客户用户手机号",
-                    "type": "string"
-                },
-                "customer_id": {
-                    "description": "客户ID",
-                    "type": "string"
-                },
-                "download_token": {
-                    "description": "下载令牌，用于邮件链接下载",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "发票ID",
-                    "type": "string"
-                },
-                "invoice_file_url": {
-                    "description": "发票文件下载URL，已开票后填写",
-                    "type": "string"
-                },
-                "invoice_no": {
-                    "description": "发票申请号，格式如INV202601210123456789",
-                    "type": "string"
-                },
-                "invoice_type": {
-                    "description": "发票类型，personal-个人/enterprise-企业普票/vat_special-增值税专用发票",
-                    "type": "string"
-                },
-                "invoice_type_display": {
-                    "description": "发票类型显示文本，根据当前语言显示",
-                    "type": "string"
-                },
-                "issued_at": {
-                    "description": "发票开票完成时间",
-                    "type": "string"
-                },
-                "order_id": {
-                    "description": "关联的订单ID",
-                    "type": "string"
-                },
-                "order_no": {
-                    "description": "关联的订单号",
-                    "type": "string"
-                },
-                "order_package_name": {
-                    "description": "关联订单的套餐名称",
-                    "type": "string"
-                },
-                "receiver_email": {
-                    "description": "收票邮箱",
-                    "type": "string"
-                },
-                "reject_reason": {
-                    "description": "驳回原因，已驳回时填写",
-                    "type": "string"
-                },
-                "rejected_at": {
-                    "description": "驳回时间",
-                    "type": "string"
-                },
-                "rejected_by": {
-                    "description": "驳回人ID（管理员）",
-                    "type": "string"
-                },
-                "rejecter_name": {
-                    "description": "发票驳回人姓名（管理员）",
-                    "type": "string"
-                },
-                "remark": {
-                    "description": "备注信息",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "发票状态，pending-待处理/issued-已开票/rejected-已驳回",
-                    "type": "string"
-                },
-                "status_display": {
-                    "description": "发票状态显示文本，根据当前语言显示",
-                    "type": "string"
-                },
-                "suggestion": {
-                    "description": "修改建议，已驳回时填写",
-                    "type": "string"
-                },
-                "taxpayer_id": {
-                    "description": "纳税人识别号，企业发票填写",
-                    "type": "string"
-                },
-                "title": {
-                    "description": "发票抬头",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "更新时间",
-                    "type": "string"
-                },
-                "uploaded_at": {
-                    "description": "发票文件上传时间",
-                    "type": "string"
-                },
-                "uploaded_by": {
-                    "description": "发票文件上传人ID（管理员）",
-                    "type": "string"
-                },
-                "uploader_name": {
-                    "description": "发票文件上传人姓名（管理员）",
-                    "type": "string"
-                }
-            }
-        },
-        "models.InvoiceIssueRequest": {
-            "type": "object",
-            "required": [
-                "invoice_file_url",
-                "issued_at"
-            ],
-            "properties": {
-                "invoice_file_url": {
-                    "description": "发票文件URL，必填，最大500字符",
-                    "type": "string",
-                    "maxLength": 500
-                },
-                "issued_at": {
-                    "description": "开票时间，必填，ISO 8601格式时间字符串",
-                    "type": "string"
-                }
-            }
-        },
-        "models.InvoiceListResponse": {
-            "type": "object",
-            "properties": {
-                "invoices": {
-                    "description": "发票列表",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InvoiceResponse"
-                    }
-                },
-                "page": {
-                    "description": "当前页码",
-                    "type": "integer"
-                },
-                "page_size": {
-                    "description": "每页条数",
-                    "type": "integer"
-                },
-                "total_count": {
-                    "description": "总记录数",
-                    "type": "integer"
-                }
-            }
-        },
-        "models.InvoiceRejectRequest": {
-            "type": "object",
-            "required": [
-                "reject_reason",
-                "suggestion"
-            ],
-            "properties": {
-                "reject_reason": {
-                    "description": "驳回原因，必填，最大500字符",
-                    "type": "string",
-                    "maxLength": 500
-                },
-                "suggestion": {
-                    "description": "修改建议，必填，最大500字符",
-                    "type": "string",
-                    "maxLength": 500
-                }
-            }
-        },
-        "models.InvoiceResponse": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "description": "发票金额，单位元，保留2位小数",
-                    "type": "number"
-                },
-                "content": {
-                    "description": "开票内容",
-                    "type": "string"
-                },
-                "created_at": {
-                    "description": "创建时间",
-                    "type": "string"
-                },
-                "cu_user_id": {
-                    "description": "申请人客户用户ID",
-                    "type": "string"
-                },
-                "cu_user_phone": {
-                    "description": "申请人客户用户手机号",
-                    "type": "string"
-                },
-                "customer_id": {
-                    "description": "客户ID",
-                    "type": "string"
-                },
-                "download_token": {
-                    "description": "下载令牌，用于邮件链接下载",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "发票ID",
-                    "type": "string"
-                },
-                "invoice_file_url": {
-                    "description": "发票文件下载URL，已开票后填写",
-                    "type": "string"
-                },
-                "invoice_no": {
-                    "description": "发票申请号，格式如INV202601210123456789",
-                    "type": "string"
-                },
-                "invoice_type": {
-                    "description": "发票类型，personal-个人/enterprise-企业普票/vat_special-增值税专用发票",
-                    "type": "string"
-                },
-                "invoice_type_display": {
-                    "description": "发票类型显示文本，根据当前语言显示",
-                    "type": "string"
-                },
-                "issued_at": {
-                    "description": "发票开票完成时间",
-                    "type": "string"
-                },
-                "order_id": {
-                    "description": "关联的订单ID",
-                    "type": "string"
-                },
-                "order_no": {
-                    "description": "关联的订单号",
-                    "type": "string"
-                },
-                "receiver_email": {
-                    "description": "收票邮箱",
-                    "type": "string"
-                },
-                "reject_reason": {
-                    "description": "驳回原因，已驳回时填写",
-                    "type": "string"
-                },
-                "rejected_at": {
-                    "description": "驳回时间",
-                    "type": "string"
-                },
-                "rejected_by": {
-                    "description": "驳回人ID（管理员）",
-                    "type": "string"
-                },
-                "remark": {
-                    "description": "备注信息",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "发票状态，pending-待处理/issued-已开票/rejected-已驳回",
-                    "type": "string"
-                },
-                "status_display": {
-                    "description": "发票状态显示文本，根据当前语言显示",
-                    "type": "string"
-                },
-                "suggestion": {
-                    "description": "修改建议，已驳回时填写",
-                    "type": "string"
-                },
-                "taxpayer_id": {
-                    "description": "纳税人识别号，企业发票填写",
-                    "type": "string"
-                },
-                "title": {
-                    "description": "发票抬头",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "更新时间",
-                    "type": "string"
-                },
-                "uploaded_at": {
-                    "description": "发票文件上传时间",
-                    "type": "string"
-                },
-                "uploaded_by": {
-                    "description": "发票文件上传人ID（管理员）",
-                    "type": "string"
-                }
-            }
-        },
-        "models.InvoiceSummaryResponse": {
-            "type": "object",
-            "properties": {
-                "issued_count": {
-                    "description": "已开票发票数量",
-                    "type": "integer"
-                },
-                "pending_count": {
-                    "description": "待处理发票数量",
-                    "type": "integer"
-                },
-                "rejected_count": {
-                    "description": "已驳回发票数量",
-                    "type": "integer"
-                },
-                "total_count": {
-                    "description": "发票总数",
-                    "type": "integer"
-                }
-            }
-        },
-        "models.InvoiceUpdateRequest": {
-            "type": "object",
-            "required": [
-                "invoice_type",
-                "receiver_email",
-                "title"
-            ],
-            "properties": {
-                "content": {
-                    "description": "开票内容，非必填，最多200字符",
-                    "type": "string",
-                    "maxLength": 200
-                },
-                "invoice_type": {
-                    "description": "发票类型，必填，personal-个人/enterprise-企业普票/vat_special-增值税专用发票",
-                    "type": "string",
-                    "enum": [
-                        "personal",
-                        "enterprise",
-                        "vat_special"
-                    ]
-                },
-                "receiver_email": {
-                    "description": "收票邮箱，必填，格式为邮箱地址",
-                    "type": "string"
-                },
-                "remark": {
-                    "description": "备注，可选",
-                    "type": "string"
-                },
-                "taxpayer_id": {
-                    "description": "纳税人识别号，企业发票必填，个人发票可为空",
-                    "type": "string"
-                },
-                "title": {
-                    "description": "发票抬头，必填，最多200字符",
-                    "type": "string",
-                    "maxLength": 200
-                }
-            }
-        },
-        "models.InvoiceUploadResponse": {
-            "type": "object",
-            "properties": {
-                "file_url": {
-                    "description": "上传后的文件URL",
-                    "type": "string"
-                }
-            }
-        },
-        "models.LeadCreateRequest": {
+        "license-manager_internal_models.LeadCreateRequest": {
             "type": "object",
             "required": [
                 "company_name",
                 "contact_name",
-                "contact_phone",
-                "requirement"
+                "contact_phone"
             ],
             "properties": {
                 "company_name": {
@@ -8625,18 +3981,17 @@ const docTemplate = `{
                 },
                 "requirement": {
                     "description": "需求描述",
-                    "type": "string",
-                    "minLength": 1
+                    "type": "string"
                 }
             }
         },
-        "models.LeadListResponse": {
+        "license-manager_internal_models.LeadListResponse": {
             "type": "object",
             "properties": {
                 "leads": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.LeadResponse"
+                        "$ref": "#/definitions/license-manager_internal_models.LeadResponse"
                     }
                 },
                 "page": {
@@ -8650,7 +4005,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.LeadResponse": {
+        "license-manager_internal_models.LeadResponse": {
             "type": "object",
             "properties": {
                 "company_name": {
@@ -8711,7 +4066,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.LeadSummaryResponse": {
+        "license-manager_internal_models.LeadSummaryResponse": {
             "type": "object",
             "properties": {
                 "contacted_count": {
@@ -8736,7 +4091,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.LeadUpdateRequest": {
+        "license-manager_internal_models.LeadUpdateRequest": {
             "type": "object",
             "properties": {
                 "company_name": {
@@ -8795,7 +4150,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.License": {
+        "license-manager_internal_models.License": {
             "type": "object",
             "properties": {
                 "activated_at": {
@@ -8808,7 +4163,7 @@ const docTemplate = `{
                     "description": "关联字段（用于查询时的JOIN）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/models.AuthorizationCode"
+                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCode"
                         }
                     ]
                 },
@@ -8822,7 +4177,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "customer": {
-                    "$ref": "#/definitions/models.Customer"
+                    "$ref": "#/definitions/license-manager_internal_models.Customer"
                 },
                 "customer_id": {
                     "type": "string"
@@ -8865,7 +4220,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.LicenseCreateRequest": {
+        "license-manager_internal_models.LicenseCreateRequest": {
             "type": "object",
             "required": [
                 "authorization_code_id",
@@ -8891,7 +4246,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.LicenseDetailResponse": {
+        "license-manager_internal_models.LicenseDetailResponse": {
             "type": "object",
             "properties": {
                 "activated_at": {
@@ -8978,7 +4333,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.LicenseListItem": {
+        "license-manager_internal_models.LicenseListItem": {
             "type": "object",
             "properties": {
                 "activated_at": {
@@ -9039,13 +4394,13 @@ const docTemplate = `{
                 }
             }
         },
-        "models.LicenseListResponse": {
+        "license-manager_internal_models.LicenseListResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.LicenseListItem"
+                        "$ref": "#/definitions/license-manager_internal_models.LicenseListItem"
                     }
                 },
                 "page": {
@@ -9062,7 +4417,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.LicenseRevokeRequest": {
+        "license-manager_internal_models.LicenseRevokeRequest": {
             "type": "object",
             "properties": {
                 "reason": {
@@ -9072,7 +4427,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.LoginRequest": {
+        "license-manager_internal_models.LoginRequest": {
             "type": "object",
             "required": [
                 "password",
@@ -9089,7 +4444,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.LoginResponse": {
+        "license-manager_internal_models.LoginResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -9105,343 +4460,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.OrderSummaryResponse": {
-            "type": "object",
-            "properties": {
-                "paid_orders": {
-                    "description": "已支付订单数",
-                    "type": "integer"
-                },
-                "pending_orders": {
-                    "description": "待支付订单数",
-                    "type": "integer"
-                },
-                "total_orders": {
-                    "description": "订单总数",
-                    "type": "integer"
-                }
-            }
-        },
-        "models.PackageCreateRequest": {
-            "type": "object",
-            "required": [
-                "name",
-                "type"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "maxLength": 500
-                },
-                "duration_description": {
-                    "type": "string",
-                    "maxLength": 200
-                },
-                "features": {
-                    "description": "JSON格式",
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 1
-                },
-                "price": {
-                    "type": "number",
-                    "minimum": 0
-                },
-                "price_description": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "remark": {
-                    "type": "string",
-                    "maxLength": 500
-                },
-                "sort_order": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "integer",
-                    "enum": [
-                        0,
-                        1
-                    ]
-                },
-                "type": {
-                    "type": "string",
-                    "enum": [
-                        "trial",
-                        "basic",
-                        "professional",
-                        "custom"
-                    ]
-                }
-            }
-        },
-        "models.PackageListResponse": {
-            "type": "object",
-            "properties": {
-                "packages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PackageResponse"
-                    }
-                },
-                "total_count": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.PackageResponse": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "duration_description": {
-                    "type": "string"
-                },
-                "features": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "price_description": {
-                    "type": "string"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "sort_order": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.PackageUpdateRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "maxLength": 500
-                },
-                "duration_description": {
-                    "type": "string",
-                    "maxLength": 200
-                },
-                "features": {
-                    "description": "JSON格式",
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 1
-                },
-                "price": {
-                    "type": "number",
-                    "minimum": 0
-                },
-                "price_description": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "remark": {
-                    "type": "string",
-                    "maxLength": 500
-                },
-                "sort_order": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "integer",
-                    "enum": [
-                        0,
-                        1
-                    ]
-                },
-                "type": {
-                    "type": "string",
-                    "enum": [
-                        "trial",
-                        "basic",
-                        "professional",
-                        "custom"
-                    ]
-                }
-            }
-        },
-        "models.PaymentBusinessOrder": {
-            "type": "object",
-            "properties": {
-                "authorization_code": {
-                    "description": "生成的授权码",
-                    "type": "string"
-                },
-                "order_no": {
-                    "description": "订单号",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "订单状态",
-                    "type": "string"
-                }
-            }
-        },
-        "models.PaymentListResponse": {
-            "type": "object",
-            "properties": {
-                "page": {
-                    "description": "当前页码",
-                    "type": "integer"
-                },
-                "page_size": {
-                    "description": "每页条数",
-                    "type": "integer"
-                },
-                "payments": {
-                    "description": "支付记录列表",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentResponse"
-                    }
-                },
-                "total_count": {
-                    "description": "总记录数",
-                    "type": "integer"
-                }
-            }
-        },
-        "models.PaymentResponse": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "business_id": {
-                    "type": "string"
-                },
-                "business_type": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "cu_user_id": {
-                    "type": "string"
-                },
-                "currency": {
-                    "type": "string"
-                },
-                "customer_id": {
-                    "type": "string"
-                },
-                "expire_time": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "payment_method": {
-                    "type": "string"
-                },
-                "payment_no": {
-                    "type": "string"
-                },
-                "payment_provider": {
-                    "type": "string"
-                },
-                "payment_time": {
-                    "type": "string"
-                },
-                "payment_url": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "trade_no": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.PaymentStatusResponse": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "description": "支付金额，单位元",
-                    "type": "number"
-                },
-                "business_order": {
-                    "description": "关联的业务订单信息",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/models.PaymentBusinessOrder"
-                        }
-                    ]
-                },
-                "payment_no": {
-                    "description": "支付单号",
-                    "type": "string"
-                },
-                "payment_time": {
-                    "description": "支付完成时间",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "支付状态，pending-待支付/paid-已支付/cancelled-已取消/expired-已过期/failed-支付失败",
-                    "type": "string"
-                },
-                "trade_no": {
-                    "description": "第三方交易号",
-                    "type": "string"
-                }
-            }
-        },
-        "models.ProductActivationCodeRequest": {
-            "type": "object",
-            "required": [
-                "authorization_code"
-            ],
-            "properties": {
-                "authorization_code": {
-                    "description": "授权码（旧规则格式）",
-                    "type": "string"
-                }
-            }
-        },
-        "models.ProductActivationCodeResponse": {
-            "type": "object",
-            "properties": {
-                "product_activation_code": {
-                    "description": "产品激活码：{授权码}\u0026{payload}",
-                    "type": "string"
-                }
-            }
-        },
-        "models.RecentAuthorization": {
+        "license-manager_internal_models.RecentAuthorization": {
             "type": "object",
             "properties": {
                 "code": {
@@ -9498,36 +4517,52 @@ const docTemplate = `{
                 }
             }
         },
-        "models.StatsOverviewResponse": {
+        "license-manager_internal_models.StatsOverviewResponse": {
             "type": "object",
             "properties": {
                 "abnormal_alerts": {
-                    "description": "异常告警数量（活跃许可证中心跳超时的数量，超过配置的心跳超时时间未收到心跳）",
+                    "description": "active licenses with heartbeat timeout",
                     "type": "integer"
                 },
                 "active_licenses": {
-                    "description": "活跃许可证数量（状态为active的许可证总数）",
+                    "description": "licenses with status=active",
                     "type": "integer"
                 },
-                "expiring_soon": {
-                    "description": "即将过期数量（30天内即将过期的授权码，且未被锁定）",
+                "expiring_in_30days": {
+                    "description": "auth codes expiring within 30 days, not locked",
+                    "type": "integer"
+                },
+                "expiring_in_7days": {
+                    "description": "Risk metrics",
                     "type": "integer"
                 },
                 "growth_rate": {
-                    "description": "增长率（同比上月）",
+                    "description": "Growth rates shown as sub-text, not standalone cards",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/models.GrowthRate"
+                            "$ref": "#/definitions/license-manager_internal_models.GrowthRate"
                         }
                     ]
                 },
+                "month_new_auth_codes": {
+                    "description": "auth codes created this calendar month",
+                    "type": "integer"
+                },
+                "today_new_licenses": {
+                    "description": "Flow metrics",
+                    "type": "integer"
+                },
                 "total_auth_codes": {
-                    "description": "总授权码数量（所有授权码的累计总数）",
+                    "description": "Stock metrics",
+                    "type": "integer"
+                },
+                "yesterday_new_licenses": {
+                    "description": "licenses created yesterday (for comparison)",
                     "type": "integer"
                 }
             }
         },
-        "models.SystemInfo": {
+        "license-manager_internal_models.SystemInfo": {
             "type": "object",
             "properties": {
                 "arch": {
@@ -9547,7 +4582,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.TrendData": {
+        "license-manager_internal_models.TrendData": {
             "type": "object",
             "properties": {
                 "date": {
@@ -9568,7 +4603,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.TrendPeriod": {
+        "license-manager_internal_models.TrendPeriod": {
             "type": "object",
             "properties": {
                 "description_display": {
@@ -9589,7 +4624,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.TrendSummary": {
+        "license-manager_internal_models.TrendSummary": {
             "type": "object",
             "properties": {
                 "expired_count": {

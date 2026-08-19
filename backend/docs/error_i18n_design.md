@@ -102,7 +102,7 @@ errors:
     "200001": "Customer not found"
     "200002": "Customer already exists"
     "200003": "Request too frequent, please try again later"
-    "200004": "SMS sending failed"
+    "200004": "Invalid customer information format"
   
   license:
     "300001": "Invalid license key"

@@ -1,13 +1,11 @@
 # 管理端数据库表设计文档
 
-> 本文档梳理 License Manager **管理端**（`/api/v1/...`）业务所涉及的数据库表结构，覆盖客户、授权码、许可证、发票、套餐、线索、支付、管理员用户等领域。
+> 本文档梳理 License Manager 社区版管理端业务所涉及的数据库表结构，覆盖客户、授权码、许可证、线索和管理员用户。
 >
 > 文档内容基于：
 > - `backend/migrations/*.sql`（表结构、索引、外键）
 > - `backend/internal/models/*.go`（GORM 模型定义）
 > - `backend/internal/api/routes/router.go`（管理端路由）
->
-> 与 C 端（`/api/cu/...`）相关的 `cu_users`、`cu_orders` 等表不在本文档范围内。
 
 ---
 
@@ -21,10 +19,7 @@
 | 4 | `authorization_codes` | 授权码表 | 客户授权的"业务配置容器" | `003_create_authorization_codes_table.sql`、`009_update_authorization_codes_code_length.sql` |
 | 5 | `authorization_changes` | 授权变更历史表 | 授权码续费/升级/锁定等操作的审计日志 | `005_create_authorization_changes_table.sql` |
 | 6 | `licenses` | 许可证表 | 设备激活凭证、心跳、硬件绑定 | `004_create_licenses_table.sql` |
-| 7 | `invoices` | 发票表 | C 端申请、管理端审核/开票/驳回 | `012_create_invoices_table.sql` |
-| 8 | `payments` | 支付订单表 | 套餐订单对应的支付流水（管理端查询汇总） | `011_create_payments_table.sql` |
-| 9 | `packages` | 套餐表 | 产品套餐配置（基础版/专业版等） | `013_create_packages_table.sql` |
-| 10 | `leads` | 企业线索表 | 售前线索收集与跟进 | `014_create_leads_table.sql` |
+| 7 | `leads` | 企业线索表 | 售前线索收集与跟进 | `014_create_leads_table.sql` |
 
 > 仪表盘（`dashboard`）相关数据由 `authorization_codes` 与 `licenses` 派生统计而来，不存在独立表。
 
@@ -34,9 +29,9 @@
 
 - **数据库**：MySQL 8.0+ / MariaDB 10.3+
 - **字符集**：`utf8mb4`、`utf8mb4_0900_ai_ci`
-- **主键**：使用 UUID 字符串（`VARCHAR(36)`），由 GORM `BeforeCreate` 钩子或数据库 `UUID()` 默认值生成（仅 `payments` 表使用自增 `INT`）
+- **主键**：使用 UUID 字符串（`VARCHAR(36)`），由 GORM `BeforeCreate` 钩子或数据库 `UUID()` 默认值生成
 - **时间戳**：`DATETIME(3)` 匹配 Go `time.Time`；由 GORM 维护，不由数据库默认值控制（部分迁移文件中已显式声明）
-- **软删除**：主要业务表（`customers`、`licenses`、`invoices`、`packages`、`payments` 视情况）通过 `deleted_at` 软删除
+- **软删除**：主要业务表（`customers`、`licenses` 等）通过 `deleted_at` 软删除
 - **枚举**：使用 `VARCHAR` + 应用层 `oneof` 校验，避免数据库 ENUM 带来的迁移成本
 - **JSON 字段**：MySQL 5.7+ 原生 `JSON` 类型，对应 Go 中的 `JSON` 类型
 
@@ -67,8 +62,6 @@
 
 **索引**：`username`、`email`（唯一）、`role`、`status`、`last_login_at`、`created_at`、`locked_until`；复合索引 `(role, status)`、`(status, locked_until)`。
 
-**外键**：作为 `invoices.uploaded_by`、`invoices.rejected_by` 的关联外键（`ON DELETE SET NULL`）。
-
 **业务规则**：
 - 密码使用 bcrypt 哈希存储。
 - 连续 5 次登录失败锁定 30 分钟，由应用层控制。
@@ -78,7 +71,7 @@
 
 ### 3.2 customers — 客户表
 
-管理端管理的客户主数据，是授权码、发票、订单等的归属主体。
+管理端管理的客户主数据，是授权码和许可证的归属主体。
 
 | 字段 | 类型 | 必填 | 默认值 | 说明 |
 | --- | --- | --- | --- | --- |
@@ -103,7 +96,7 @@
 
 **索引**：`customer_code`（唯一）、`customer_name`、`customer_type`、`customer_level`、`status`、`created_at`、`created_by`、`deleted_at`。
 
-**外键**：作为 `authorization_codes.customer_id`、`licenses.customer_id`、`payments.customer_id`、`invoices.customer_id` 的父表（通常 `ON DELETE RESTRICT`/`CASCADE`）。
+**外键**：作为 `authorization_codes.customer_id`、`licenses.customer_id` 的父表（通常 `ON DELETE RESTRICT`）。
 
 **编码生成规则**：
 - 格式：`CUS-YYYY-NNNN`，如 `CUS-2026-0001`。
@@ -232,126 +225,8 @@
 
 ---
 
-### 3.7 invoices — 发票表
 
-C 端客户用户提交开票申请，管理端进行**驳回**、**开票**、**文件上传**处理。
-
-| 字段 | 类型 | 必填 | 默认值 | 说明 |
-| --- | --- | --- | --- | --- |
-| `id` | `VARCHAR(36)` | ✅ | — | 主键 |
-| `invoice_no` | `VARCHAR(50)` | ✅ | — | 发票申请号，唯一 |
-| `order_id` | `VARCHAR(36)` | ✅ | — | 关联订单 ID（唯一） |
-| `order_no` | `VARCHAR(50)` | ✅ | — | 订单号（冗余快照，便于检索） |
-| `customer_id` | `VARCHAR(36)` | ✅ | — | 客户 ID |
-| `cu_user_id` | `VARCHAR(36)` | ✅ | — | 申请人（客户用户）ID |
-| `amount` | `DECIMAL(10,2)` | ✅ | — | 发票金额（取订单金额） |
-| `status` | `VARCHAR(20)` | ✅ | `pending` | 状态：`pending` / `issued` / `rejected` |
-| `invoice_type` | `VARCHAR(20)` | ✅ | — | 发票类型：`personal` / `enterprise` / `vat_special` |
-| `title` | `VARCHAR(200)` | ✅ | — | 发票抬头 |
-| `taxpayer_id` | `VARCHAR(50)` | ❌ | NULL | 纳税人识别号 |
-| `content` | `VARCHAR(200)` | ✅ | — | 开票内容 |
-| `receiver_email` | `VARCHAR(255)` | ✅ | — | 收票邮箱 |
-| `remark` | `VARCHAR(1000)` | ❌ | NULL | 备注 |
-| `invoice_file_url` | `VARCHAR(500)` | ❌ | NULL | 发票文件 URL（PDF） |
-| `uploaded_at` | `DATETIME(3)` | ❌ | NULL | 上传时间 |
-| `uploaded_by` | `VARCHAR(36)` | ❌ | NULL | 上传人（管理员 ID） |
-| `issued_at` | `DATETIME(3)` | ❌ | NULL | 开票完成时间 |
-| `reject_reason` | `VARCHAR(500)` | ❌ | NULL | 驳回原因 |
-| `suggestion` | `VARCHAR(500)` | ❌ | NULL | 修改建议 |
-| `rejected_at` | `DATETIME(3)` | ❌ | NULL | 驳回时间 |
-| `rejected_by` | `VARCHAR(36)` | ❌ | NULL | 驳回人（管理员 ID） |
-| `download_token` | `VARCHAR(64)` | ❌ | NULL | 下载 token（邮件链接用） |
-| `created_at` | `DATETIME(3)` | ✅ | — | 创建时间 |
-| `updated_at` | `DATETIME(3)` | ✅ | — | 更新时间 |
-| `deleted_at` | `DATETIME(3)` | ❌ | NULL | 软删除时间 |
-
-**索引**：`invoice_no`（唯一）、`order_id`（唯一）、`customer_id`、`cu_user_id`、`status`、`created_at`、`deleted_at`、`order_no`。
-
-**外键**：
-- `order_id → cu_orders(id) ON DELETE CASCADE`
-- `customer_id → customers(id) ON DELETE CASCADE`
-- `cu_user_id → cu_users(id) ON DELETE CASCADE`
-- `uploaded_by → users(id) ON DELETE SET NULL`
-- `rejected_by → users(id) ON DELETE SET NULL`
-
-**业务规则**：
-- 一个订单只能开一张发票（`order_id` 唯一）。
-- 管理端流程：`pending → issued`（上传文件后开票）或 `pending → rejected`（带原因/建议）。
-- `download_token` 可用于邮件免登录下载链接。
-
----
-
-### 3.8 payments — 支付订单表
-
-套餐购买等业务场景的支付流水。管理端通过该表查询汇总（按客户、状态、时间等）。
-
-| 字段 | 类型 | 必填 | 默认值 | 说明 |
-| --- | --- | --- | --- | --- |
-| `id` | `INT` | ✅ | AUTO_INCREMENT | 主键（自增） |
-| `payment_no` | `VARCHAR(64)` | ✅ | — | 支付单号，唯一 |
-| `business_type` | `VARCHAR(50)` | ✅ | — | 业务类型（如 `package_order`） |
-| `business_id` | `VARCHAR(36)` | ❌ | NULL | 业务 ID（如 `cu_orders.id`） |
-| `customer_id` | `VARCHAR(36)` | ✅ | — | 客户 ID |
-| `cu_user_id` | `VARCHAR(36)` | ✅ | — | 客户用户 ID |
-| `amount` | `DECIMAL(10,2)` | ✅ | — | 支付金额 |
-| `currency` | `VARCHAR(3)` | ❌ | `CNY` | 货币类型 |
-| `payment_method` | `VARCHAR(20)` | ❌ | `alipay` | 支付方式 |
-| `payment_provider` | `VARCHAR(20)` | ❌ | `alipay` | 支付提供商 |
-| `status` | `VARCHAR(20)` | ✅ | `pending` | 支付状态：`pending` / `paid` / `cancelled` / `expired` / `failed` / `refunded` |
-| `trade_no` | `VARCHAR(64)` | ❌ | NULL | 第三方交易号 |
-| `payment_time` | `DATETIME(3)` | ❌ | NULL | 支付完成时间 |
-| `expire_time` | `DATETIME(3)` | ✅ | — | 支付过期时间 |
-| `payment_url` | `TEXT` | ❌ | NULL | 支付链接 |
-| `notify_data` | `JSON` | ❌ | NULL | 支付回调数据 |
-| `extra_data` | `JSON` | ❌ | NULL | 扩展数据 |
-| `created_at` | `DATETIME(3)` | ✅ | CURRENT_TIMESTAMP(3) | 创建时间 |
-| `updated_at` | `DATETIME(3)` | ✅ | CURRENT_TIMESTAMP(3) ON UPDATE | 更新时间 |
-
-**索引**：`payment_no`（唯一）、复合 `(business_type, business_id)`、`customer_id`、`cu_user_id`、`status`、`created_at`。
-
-**外键**：
-- `customer_id → customers(id) ON DELETE CASCADE`
-- `cu_user_id → cu_users(id) ON DELETE CASCADE`
-
-**业务说明**：
-- `business_type + business_id` 通用关联多种业务。
-- 时间戳由数据库默认值控制（不同于其他表）—— 此表迁移文件使用 `DEFAULT CURRENT_TIMESTAMP(3)`。
-- 主键使用 `INT AUTO_INCREMENT`，与其他表 UUID 主键风格不同。
-
----
-
-### 3.9 packages — 套餐表
-
-产品套餐定义，管理端配置后供 C 端展示与下单。
-
-| 字段 | 类型 | 必填 | 默认值 | 说明 |
-| --- | --- | --- | --- | --- |
-| `id` | `VARCHAR(36)` | ✅ | UUID | 主键 |
-| `name` | `VARCHAR(100)` | ✅ | — | 套餐名称 |
-| `type` | `VARCHAR(20)` | ✅ | — | 套餐类型：`trial` / `basic` / `professional` / `custom` |
-| `price` | `DECIMAL(10,2)` | ✅ | `0` | 价格 |
-| `price_description` | `VARCHAR(100)` | ❌ | `''` | 价格描述，如"定制报价" |
-| `duration_description` | `VARCHAR(200)` | ❌ | `''` | 期限描述，如"永久有效"、"当月 25 日到期" |
-| `description` | `VARCHAR(500)` | ❌ | `''` | 套餐说明 |
-| `features` | `TEXT` | ❌ | `''` | 功能项，JSON 数组：`["功能1", "功能2"]` |
-| `status` | `TINYINT` | ✅ | `1` | 状态：`1` 启用 / `0` 禁用 |
-| `sort_order` | `INT` | ✅ | `0` | 排序，数字越大越靠前 |
-| `remark` | `VARCHAR(500)` | ❌ | `''` | 备注 |
-| `created_at` | `DATETIME` | ✅ | — | 创建时间 |
-| `updated_at` | `DATETIME` | ✅ | — | 更新时间 |
-| `deleted_at` | `DATETIME` | ❌ | NULL | 软删除时间 |
-
-**索引**：`type`、`status`、`sort_order`。
-
-**初始数据**：迁移文件预置 4 条记录（试用版、基础版、专业版、企业定制版）。
-
-**业务规则**：
-- 启用的套餐（`status = 1`）才会展示在 C 端。
-- `type` 与价格说明、期限说明组合使用，避免对定价模式做强约束。
-
----
-
-### 3.10 leads — 企业线索表
+### 3.7 leads — 企业线索表
 
 管理售前线索收集，无需登录即可由访客提交，管理端跟进与转化。
 
@@ -385,54 +260,24 @@ C 端客户用户提交开票申请，管理端进行**驳回**、**开票**、*
 ## 4. 表关系图
 
 ```
-                              ┌──────────────┐
-                              │    users     │  (管理员)
-                              └──────┬───────┘
-                                     │ (uploaded_by / rejected_by / operator / created_by / locked_by)
-                                     │
-┌──────────────┐   1     N   ┌───────┴───────────┐   1     N   ┌─────────────────────┐
-│  customers   │────────────▶│ authorization_codes │───────────▶│  authorization_     │
-│              │             │                     │            │  changes            │
-│  + customer_ │             └──────────┬──────────┘            └─────────────────────┘
-│  code_       │                        │ 1
-│  sequence    │                        │
-└──────┬───────┘                        ▼ N
-       │ 1                       ┌──────────────┐
-       │                         │   licenses   │
-       │ N                       └──────┬───────┘
-       │                                │ N
-       ▼                                │
-┌──────────────────┐                    │
-│     invoices     │                    │ (cu_orders 为关联主体)
-│ (order_id 唯一)  │
-└──────┬───────────┘
-       │ N
-       ▼
-   (cu_orders)  ───── N ────▶ ┌──────────┐
-                               │ payments │
-                               └──────────┘
+customers ──< authorization_codes ──< licenses
+                    │
+                    └──< authorization_changes
 
-┌──────────┐                ┌──────────┐
-│ packages │ (C端浏览下单)  │  leads   │ (公开提交 + 管理端跟进)
-└──────────┘                └──────────┘
+users
+leads
 ```
-
-> 注：`cu_orders`、`cu_users` 属于 C 端，不在本文档范围内，但被 `invoices` 与 `payments` 通过外键引用。
-
----
 
 ## 5. 关键设计要点
 
-1. **UUID 主键**：除 `payments` 外，全部表使用 `VARCHAR(36)` UUID 主键，避免自增 ID 暴露业务量级，便于分布式部署。
+1. **UUID 主键**：业务表使用 `VARCHAR(36)` UUID 主键，避免自增 ID 暴露业务量级，便于分布式部署。
 2. **前缀唯一索引**：`authorization_codes.code` 因字段较长，采用 `code(255)` 前缀唯一索引避开 InnoDB 3072 字节索引长度限制，碰撞概率极低。
-3. **软删除一致性**：`customers`、`licenses`、`invoices`、`packages` 等使用 `deleted_at DATETIME(3)` 软删除，`authorization_codes` 与 `authorization_changes` 不做软删除（前者的状态由字段表达，后者作为审计日志不可变）。
+3. **软删除一致性**：`customers`、`licenses` 等使用 `deleted_at DATETIME(3)` 软删除，`authorization_codes` 与 `authorization_changes` 不做软删除（前者的状态由字段表达，后者作为审计日志不可变）。
 4. **状态虚字段**：授权码的 `status`（`normal`/`locked`/`expired`）与许可证的 `is_online`（`online`/`offline`/`abnormal`）均由应用层基于时间字段计算，避免每次写入维护。
 5. **变更审计**：所有对授权码的写操作（创建、更新、锁定、解锁）均在 `authorization_changes` 留下 `old_config`/`new_config` 快照，便于审计与回滚分析。
 6. **外键策略**：
    - 业务父表（如 `customers`）使用 `ON DELETE RESTRICT`，防止级联误删。
-   - 审计/操作人外键（如 `uploaded_by`）使用 `ON DELETE SET NULL`，保留业务数据但置空操作人。
    - `authorization_changes → authorization_codes` 使用 `CASCADE`，授权码删除时一并清理历史。
-7. **管理端与 C 端分离**：所有 `cu_*` 表（`cu_users`、`cu_orders`、`cu_invoice_models`）严格归属 C 端业务；管理端通过 `customers`、`authorization_codes`、`invoices` 等共享表与 C 端解耦关联。
 
 ---
 
@@ -441,7 +286,6 @@ C 端客户用户提交开票申请，管理端进行**驳回**、**开票**、*
 | 迁移文件 | 影响表 | 变更说明 |
 | --- | --- | --- |
 | `009_update_authorization_codes_code_length.sql` | `authorization_codes` | `code VARCHAR(100) → VARCHAR(1000)`，唯一索引改为 `code(255)` 前缀索引，支持 HMAC 自包含配置授权码 |
-| `010_update_cu_orders_authorization_code_length.sql` | `cu_orders`（C 端表） | `authorization_code VARCHAR(50) → VARCHAR(500)`，配合新格式授权码（不在本文档范围，仅作参考） |
 
 ---
 

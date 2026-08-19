@@ -18,8 +18,6 @@ errors:
   customer:
     "200001": "Customer not found"
     "200002": "Customer already exists"
-    "200003": "Request too frequent, please try again later"
-    "200004": "SMS sending failed"
     "200005": "Customer name is required"
     "200006": "Invalid customer information format"
     "200007": "Failed to query customer list"
@@ -40,10 +38,6 @@ errors:
     "300010": "Invalid configuration parameters"
     "300101": "Authorization code not found"
     "300102": "Authorization code is locked"
-    "300103": "Share count exceeds available activations"
-    "300104": "Target user not found"
-    "300105": "Cannot share with yourself"
-    "300106": "Database transaction failed"
   
   # Dashboard module (40xxxx)
   dashboard:
@@ -53,58 +47,11 @@ errors:
     "400004": "Time range exceeds limit (over one year)"
     "400005": "Start date cannot be later than end date"
     "400006": "Invalid limit parameter"
-
-  # Customer User module (50xxxx)
-  cu_user:
-    "500001": "Invalid phone number format"
-    "500002": "Phone number already registered"
-    "500003": "Invalid phone or password"
-    "500004": "Forgot password failed"
-    "500005": "Reset password failed"
-    "500006": "Profile update failed"
-    "500007": "Phone update failed"
-    "500008": "Password change failed"
-    "500009": "User not found"
-    "500010": "Authentication token required"
-    "500011": "Invalid authentication token"
-    "500012": "Authentication token expired"
-    "500013": "Failed to generate token"
-    "500014": "Verification code incorrect or expired"
-    "500015": "Verification code does not exist"
-    "500016": "SMS sending too frequent, please try again later"
-    "500017": "SMS sending failed"
-    "500018": "Account locked, please try again later"
-
-  # Package order module (60xxxx)
-  cu_package:
-    "600001": "Package does not exist"
-    "600002": "Package is discontinued"
-    "600003": "Trial version purchase time limit"
-    "600004": "Trial version does not support bulk purchase"
-    "600005": "Trial version already purchased this month"
-
-  # Order module (61xxxx)
-  cu_order:
-      "601001": "Order does not exist"
-      "601005": "License quantity exceeds limit"
-      "601006": "Order has been paid and cannot be cancelled"
-      "601007": "Order status does not allow continue payment"
-
-  # System general (90xxxx)
   system:
     "900001": "Invalid request parameters"
     "900002": "Resource not found"
     "900003": "Resource conflict"
     "900004": "Internal server error"
-
-  # Invoice module (70xxxx)
-  invoice:
-    "700001": "Invoice not found"
-    "700002": "Order not found or access denied"
-    "700003": "Invoice already exists for this order"
-    "700004": "Invoice status does not allow this operation"
-    "700005": "Invoice file not found"
-
 # Common text
 common:
   success: "Success"
@@ -169,16 +116,5 @@ enums:
     "lock": "Lock"
     "unlock": "Unlock"
     "other": "Other"
-
-  invoice_status:
-    "pending": "Pending"
-    "issued": "Issued"
-    "rejected": "Rejected"
-
-  invoice_type:
-    "personal": "Personal"
-    "enterprise": "Enterprise"
-    "vat_special": "VAT Special Invoice"
-
 # Default error message
 default_error: "Unknown error"

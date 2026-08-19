@@ -73,22 +73,6 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: "企业线索", requiresAuth: true }
   },
   {
-    path: "/invoices",
-    component: () => import("@/views/Invoices/index.vue"),
-    meta: { title: "发票管理", requiresAuth: true }
-  },
-  {
-    path: "/packages",
-    component: () => import("@/views/Packages/index.vue"),
-    meta: { title: "套餐管理", requiresAuth: true }
-  },
-  {
-    path: "/invoices/detail/:id",
-    name: "invoice-detail",
-    component: () => import("@/views/Invoices/InvoiceDetail.vue"),
-    meta: { title: "发票申请详情", requiresAuth: true }
-  },
-  {
     path: "/roles",
     component: () => import("@/views/Roles.vue"),
     meta: { title: "角色管理", requiresAuth: true }

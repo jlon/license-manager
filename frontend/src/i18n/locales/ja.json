@@ -101,8 +101,6 @@
       "customers": "顧客管理",
       "enterpriseLeads": "企業リード",
       "licenses": "ライセンス管理",
-      "invoices": "発票管理",
-      "packages": "パッケージ管理",
       "roles": "ロールと権限",
       "users": "システムユーザー"
     },
@@ -127,9 +125,6 @@
       "customers": "顧客管理",
       "enterpriseLeads": "企業リード",
       "licenses": "ライセンス管理",
-      "invoices": "発票管理",
-      "packages": "パッケージ管理",
-      "invoiceDetail": "発票申請の詳細",
       "licenseList": "ライセンス一覧",
       "createLicense": "ライセンス作成",
       "viewLicense": "ライセンス表示",
@@ -182,157 +177,7 @@
     }
   },
 
-  "packages": {
-    "title": "パッケージ管理",
-    "table": {
-      "title": "価格パッケージ管理",
-      "id": "パッケージID",
-      "name": "パッケージ名",
-      "price": "価格",
-      "priceSymbol": "¥",
-      "free": "無料",
-      "customPlan": "カスタムプラン",
-      "cycle": "期間",
-      "createdAt": "作成日時",
-      "updatedAt": "更新日時",
-      "status": "ステータス",
-      "actions": "操作"
-    },
-    "status": {
-      "enabled": "有効",
-      "disabled": "無効"
-    },
-    "edit": {
-      "title": "パッケージ編集",
-      "name": "パッケージ名",
-      "type": "パッケージタイプ",
-      "types": {
-        "trial": "試用版",
-        "basic": "ベーシック",
-        "professional": "プロフェッショナル",
-        "custom": "カスタム"
-      },
-      "price": "価格",
-      "cycle": "期間/説明",
-      "description": "パッケージ説明",
-      "priceDescription": "価格説明",
-      "features": "パッケージ機能",
-      "status": "ステータス",
-      "sort": "表示順序",
-      "remark": "備考",
-      "save": "変更を保存",
-      "descPlaceholder": "全機能を体験、新ユーザー向け試用評価に最適",
-      "priceDescPlaceholder": "例：カスタムプラン / 需要に応じた価格設定",
-      "remarkPlaceholder": "備考を入力してください",
-      "featurePlaceholder": "機能内容を入力してください"
-    },
-    "actions": {
-      "edit": "編集"
-    },
-    "messages": {
-      "fetchError": "一覧の取得に失敗しました",
-      "fetchDetailError": "詳細の取得に失敗しました",
-      "updateSuccess": "更新しました",
-      "updateError": "更新に失敗しました"
-    }
-  },
 
-  "invoices": {
-    "title": "発票管理",
-    "detailTitle": "発票申請の詳細",
-    "stats": {
-      "all": "全申請数",
-      "pending": "保留中",
-      "success": "発行済み",
-      "rejected": "却下済み"
-    },
-    "filter": {
-      "searchLabel": "発票番号/注文番号で検索:",
-      "searchPlaceholder": "発票番号または注文番号を入力",
-      "statusLabel": "ステータス:",
-      "allStatus": "全ステータス",
-      "pending": "保留中",
-      "success": "発行済み",
-      "rejected": "却下済み",
-      "timeLabel": "申請時間:",
-      "reset": "リセット",
-      "query": "検索"
-    },
-    "table": {
-      "invoiceNo": "発票申請番号",
-      "user": "ユーザー",
-      "orderNo": "注文番号",
-      "applyTime": "申請時間",
-      "status": "ステータス",
-      "amount": "金額",
-      "operation": "操作",
-      "listTitle": "発票申請一覧"
-    },
-    "actions": {
-      "view": "表示",
-      "upload": "アップロード",
-      "reject": "却下",
-      "back": "戻る",
-      "submit": "送信",
-      "cancel": "キャンセル",
-      "confirmUpload": "アップロード確定",
-      "confirmReject": "却下確定"
-    },
-    "detail": {
-      "basicInfo": "基本情報",
-      "invoiceInfo": "発票情報",
-      "rejectInfo": "却下情報",
-      "approveInfo": "承認情報",
-      "invoiceNo": "発票申請番号",
-      "orderNo": "関連注文番号",
-      "applyTime": "申請時間",
-      "status": "ステータス",
-      "userInfo": "ユーザー情報",
-      "phone": "電話番号",
-      "amount": "金額",
-      "email": "メールアドレス",
-      "invoiceType": "発票タイプ",
-      "invoiceTitle": "発票名義",
-      "taxId": "納税者識別番号",
-      "content": "内容",
-      "remark": "備考",
-      "rejectReason": "却下理由",
-      "rejectTime": "却下時間",
-      "rejectUser": "却下担当者",
-      "finishTime": "完了時間",
-      "approveUser": "アップロード担当者",
-      "fileName": "ファイル名",
-      "approveTime": "アップロード時間"
-    },
-    "dialog": {
-      "uploadTitle": "発票ファイルのアップロード",
-      "rejectTitle": "発票申請の却下",
-      "rejectAlert": "却下後、ユーザーに通知され、再申請が必要になります。",
-      "reasonLabel": "却下理由",
-      "reasonTip": "具体的な却下理由を選択または入力してください",
-      "reasonPlaceholder": "理由を選択してください",
-      "remarkLabel": "詳細説明",
-      "remarkPlaceholder": "ユーザーが情報を修正しやすくなるよう、詳細な説明を入力してください",
-      "uploadLabel": "発票ファイルのアップロード",
-      "uploadDraggerText": "クリックしてアップロード / ドラッグ＆ドロップ",
-      "uploadTip": "PDF形式に対応。最大10MB",
-      "finishTimeLabel": "完了時間",
-      "finishTimePlaceholder": "日時を選択",
-      "remarkPlaceholderUpload": "備考を入力してください",
-      "reasons": {
-        "title_error": "名義情報の誤り",
-        "tax_id_error": "納税者識別番号の誤り",
-        "attachment_error": "添付ファイルが不鮮明または誤り",
-        "other": "その他の理由"
-      }
-    },
-    "messages": {
-      "uploadSuccess": "アップロードに成功しました",
-      "rejectSuccess": "申請を却下しました",
-      "fetchError": "データの取得に失敗しました",
-      "fetchDetailError": "詳細の取得に失敗しました"
-    }
-  },
   "common": {
     "cancel": "キャンセル",
     "confirm": "確認"
@@ -379,27 +224,34 @@
       "platform": "ライセンス管理プラットフォーム",
       "list": {
         "title": "ライセンス一覧",
+        "customerTitle": "{name}のライセンス",
+        "description": "顧客ライセンスの検索・管理とアクティベーション状況を確認します。",
         "createLicense": "ライセンス作成",
         "filter": {
           "label": "フィルター：",
+          "customerPlaceholder": "顧客を選択",
           "codePlaceholder": "ライセンスコード",
           "statusPlaceholder": "ステータス",
-          "query": "検索"
+          "query": "検索",
+          "reset": "リセット"
         },
         "table": {
           "code": "ライセンスコード",
+          "customer": "顧客",
           "status": "ステータス",
           "activationProgress": "アクティベーション進捗",
           "endDate": "有効期限",
           "description": "説明",
           "operation": "操作",
-          "loading": "読み込み中..."
+          "loading": "読み込み中...",
+          "empty": "ライセンスデータがありません"
         },
         "actions": {
           "detail": "詳細",
           "lock": "ロック",
           "unlock": "アンロック",
-          "delete": "削除"
+          "delete": "削除",
+          "retry": "再試行"
         },
         "status": {
           "normal": "正常",
@@ -424,7 +276,8 @@
           "unlockError": "アンロックに失敗しました",
           "deleteSuccess": "削除しました",
           "deleteError": "削除に失敗しました",
-          "loadError": "データの読み込みに失敗しました"
+          "loadError": "ライセンス一覧の読み込みに失敗しました",
+          "customerLoadError": "顧客オプションの読み込みに失敗しました"
         }
       },
       "actions": {
@@ -723,6 +576,7 @@
       },
       "form": {
         "title": "ライセンスフォーム",
+        "description": "顧客、有効期間、ライセンスパラメータを設定します。",
         "breadcrumb": {
           "licenseManagement": "ライセンス管理",
           "createLicense": "ライセンス作成",
@@ -859,6 +713,7 @@
   },
   "customers": {
     "title": "顧客管理",
+    "description": "顧客情報、ステータス、関連ライセンスを一元管理します。",
     "viewCustomer": "顧客表示",
     "addCustomer": "新規顧客追加",
     "editCustomer": "顧客編集",
@@ -869,6 +724,10 @@
       "enable": "有効化",
       "disable": "無効化",
       "viewLicense": "ライセンス表示",
+      "query": "検索",
+      "reset": "リセット",
+      "retry": "再試行",
+      "more": "その他",
       "save": "保存",
       "cancel": "キャンセル"
     },
@@ -882,10 +741,12 @@
       "status": "ステータス",
       "createTime": "作成日時",
       "operation": "操作",
-      "loading": "読み込み中..."
+      "loading": "読み込み中...",
+      "empty": "顧客データがありません"
     },
     "form": {
       "basicInfo": "基本情報",
+      "contactInfo": "連絡先情報",
       "businessInfo": "ビジネス情報",
       "customerName": "顧客名",
       "customerType": "顧客タイプ",
@@ -942,7 +803,12 @@
       "enableLoading": "有効化中...",
       "statusChangeCancel": "{action}をキャンセルしました",
       "loadEnumError": "列挙データの読み込みに失敗しました",
-      "getDetailError": "顧客詳細の取得に失敗しました："
+      "loadError": "顧客一覧の読み込みに失敗しました",
+      "getDetailError": "顧客詳細の取得に失敗しました：",
+      "getDetailFailed": "顧客詳細の読み込みに失敗しました",
+      "statusError": "顧客ステータスの更新に失敗しました",
+      "deleteError": "顧客の削除に失敗しました",
+      "saveError": "顧客の保存に失敗しました"
     },
     "validation": {
       "nameRequired": "顧客名を入力してください",
@@ -957,6 +823,7 @@
     },
     "view": {
       "back": "戻る",
+      "customerCode": "顧客コード",
       "statusInfo": "ステータス情報",
       "licenseStats": "ライセンス統計",
       "creator": "作成者",
@@ -972,7 +839,14 @@
       "expiredTime": "未アクティベートライセンス数量",
       "noData": "--",
       "onlineLicense": "オンラインライセンス",
-      "customerNotExist": "顧客データが存在しません"
+      "customerNotExist": "顧客データが存在しません",
+      "totalAuthCodes": "認証コード総数",
+      "expiredAuthCodes": "期限切れ認証コード",
+      "expiringAuthCodes": "30日以内に期限切れする認証コード",
+      "totalLicenseCount": "ライセンス総数",
+      "activeLicenseCount": "アクティベート済みライセンス",
+      "inactiveLicenseCount": "未アクティベートライセンス",
+      "expiredLicenseCount": "期限切れライセンス"
     },
     "basicInfo": {
       "customerCode": "顧客コード",
