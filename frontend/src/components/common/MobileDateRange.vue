@@ -167,7 +167,7 @@ watch(() => props.modelValue, (newVal) => {
   width: 100%;
   padding: 16px;
   background: #f7f8fa;
-  border-radius: 8px;
+  border-radius: 0;
   border: 1px solid #e4e7ed;
 }
 
@@ -196,7 +196,7 @@ watch(() => props.modelValue, (newVal) => {
   height: 40px;
   padding: 8px 12px;
   border: 1px solid #dcdfe6;
-  border-radius: 6px;
+  border-radius: 0;
   font-size: 14px;
   background: #fff;
   color: #606266;
@@ -229,7 +229,7 @@ watch(() => props.modelValue, (newVal) => {
 .quick-btn {
   padding: 6px 12px;
   border: 1px solid #ddd;
-  border-radius: 20px;
+  border-radius: 0;
   background: #fff;
   color: #666;
   font-size: 12px;

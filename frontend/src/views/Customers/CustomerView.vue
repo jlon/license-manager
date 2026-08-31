@@ -151,7 +151,7 @@ onMounted(loadCustomer)
 .info-value { min-width:0; color:var(--app-text-primary); word-break:break-word; }
 .info-value.multiline { white-space:pre-wrap; line-height:1.65; }
 .stats-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
-.stat-item { display:flex; flex-direction:column; gap:8px; padding:14px 16px; background:var(--app-bg-color); border-radius:8px; }
+.stat-item { display:flex; flex-direction:column; gap:8px; padding:14px 16px; background:var(--app-bg-color); border-radius:0; }
 .stat-item span { color:var(--app-text-secondary); font-size:13px; }
 .stat-item strong { color:var(--app-text-primary); font-size:24px; line-height:1.2; }
 

@@ -368,7 +368,7 @@ const handleUpdate = async (updatedData: any) => {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 0;
   background: color-mix(in srgb, var(--metric-color) 12%, transparent);
   color: var(--metric-color);
   font-size: 22px;

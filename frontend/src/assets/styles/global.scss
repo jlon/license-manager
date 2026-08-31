@@ -55,7 +55,9 @@ body {
   --el-color-primary-light-8: rgba(1, 156, 124, 0.2) !important;
   --el-color-primary-light-9: rgba(1, 156, 124, 0.1) !important;
   --el-color-primary-dark-2: #0e8a71 !important;
-  --el-border-radius-base: 4px;
+  --el-border-radius-base: 0;
+  --el-border-radius-small: 0;
+  --el-border-radius-round: 0;
   --el-font-size-base: 14px;
   --el-font-family: #{$font-family-primary};
 
@@ -76,7 +78,7 @@ body {
   --layout-sidebar-collapsed-width: 64px;
   --layout-content-padding: 20px;
   --layout-content-gap: 16px;
-  --app-card-radius: 10px;
+  --app-card-radius: 0;
   --app-card-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
@@ -214,12 +216,12 @@ body {
   
   &::-webkit-scrollbar-track {
     background: #F5F7FA;
-    border-radius: 4px;  // 改为4px符合8px栅格
+    border-radius: 0;
   }
   
   &::-webkit-scrollbar-thumb {
     background: #c1c1c1;
-    border-radius: 4px;  // 改为4px符合8px栅格
+    border-radius: 0;
     
     &:hover {
       background: #a8a8a8;

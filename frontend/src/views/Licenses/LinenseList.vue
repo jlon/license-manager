@@ -402,7 +402,7 @@ onMounted(async () => {
 .filter-card,
 .list-card {
   border: 1px solid var(--app-border-color);
-  border-radius: 8px;
+  border-radius: 0;
   background: var(--app-content-bg);
 }
 
@@ -441,7 +441,7 @@ onMounted(async () => {
   gap: 16px;
   margin: 16px 16px 0;
   padding: 10px 12px;
-  border-radius: 6px;
+  border-radius: 0;
   background: var(--el-color-danger-light-9);
   color: var(--el-color-danger);
 }

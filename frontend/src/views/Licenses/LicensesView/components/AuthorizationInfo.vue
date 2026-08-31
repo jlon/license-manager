@@ -223,7 +223,7 @@ const formatDateRange = () => {
 .info-card {
   background: var(--app-content-bg);
   border: 1px solid var(--app-border-color);
-  border-radius: 4px;
+  border-radius: 0;
   padding: 16px 20px;
 
   .card-title {
@@ -318,7 +318,7 @@ const formatDateRange = () => {
 
   .key-value-table {
     border: 1px solid var(--app-border-color);
-    border-radius: 4px;
+    border-radius: 0;
     overflow: hidden;
 
     .key-value-header,
@@ -358,7 +358,7 @@ const formatDateRange = () => {
 
   .key-value-empty {
     border: 1px dashed #d7dbe2;
-    border-radius: 4px;
+    border-radius: 0;
     padding: 12px 16px;
     color: var(--app-text-secondary);
     font-size: 13px;

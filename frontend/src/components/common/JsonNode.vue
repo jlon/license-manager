@@ -244,7 +244,7 @@ const removeChild = (index: number) => {
   display: inline-block;
   padding: 4px 12px;
   background: var(--app-bg-color);
-  border-radius: 4px;
+  border-radius: 0;
   font-size: 12px;
   color: var(--app-text-secondary);
 }

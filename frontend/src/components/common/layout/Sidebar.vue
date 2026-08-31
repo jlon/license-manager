@@ -94,7 +94,7 @@ const isMobileOpen = computed(() => appStore.isMobile && !appStore.sidebarCollap
   align-items: center;
   gap: 12px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 0;
   background: transparent;
   color: var(--app-text-regular);
   cursor: pointer;

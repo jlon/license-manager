@@ -173,7 +173,7 @@ watch(visible, (val) => {
 .detail-section {
   overflow: hidden;
   border: 1px solid var(--app-border-color);
-  border-radius: 8px;
+  border-radius: 0;
 }
 
 .section-title {

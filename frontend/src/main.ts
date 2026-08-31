@@ -9,6 +9,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import 'element-plus/dist/index.css'
 
 // 全局样式系统
 import './assets/styles/fonts.css' // 其他本地字体
@@ -20,7 +21,6 @@ import pinia from './store'
 import { useAppStore } from './store/modules/app'
 import { useUserStore } from './store/modules/user'
 
-import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import i18n from './i18n'
 

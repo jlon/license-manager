@@ -128,7 +128,7 @@ const handleUserCommand = async (command: string) => {
 .topbar__left,.topbar__right,.breadcrumb,.user-button,.language-button { display:flex; align-items:center; }
 .topbar__left,.topbar__right { min-width:0; gap:12px; }
 .icon-button,.language-button,.user-button,.text-button,.breadcrumb-link { border:0; background:transparent; color:var(--app-text-regular); cursor:pointer; }
-.icon-button { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; flex-shrink:0; }
+.icon-button { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:0; flex-shrink:0; }
 .icon-button:hover,.language-button:hover,.user-button:hover { background:var(--el-color-primary-light-9); color:var(--el-color-primary); }
 .breadcrumb { min-width:0; gap:8px; white-space:nowrap; }
 .breadcrumb-link { padding:0; }
@@ -136,9 +136,9 @@ const handleUserCommand = async (command: string) => {
 .breadcrumb-current { color:var(--app-text-primary); font-weight:600; overflow:hidden; text-overflow:ellipsis; }
 .breadcrumb-separator { color:var(--app-text-secondary); }
 .external-links { display:flex; align-items:center; gap:4px; }
-.text-button { padding:6px 8px; border-radius:6px; }
+.text-button { padding:6px 8px; border-radius:0; }
 .text-button:hover { color:var(--el-color-primary); background:var(--el-color-primary-light-9); }
-.language-button,.user-button { min-height:36px; padding:0 9px; gap:7px; border-radius:8px; }
+.language-button,.user-button { min-height:36px; padding:0 9px; gap:7px; border-radius:0; }
 .avatar { width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:var(--el-color-primary); color:#fff; font-weight:600; }
 .user-name { max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .user-summary { min-width:180px; padding:10px 16px; display:flex; flex-direction:column; gap:3px; color:var(--app-text-primary); }
