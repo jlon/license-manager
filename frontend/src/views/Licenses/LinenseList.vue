@@ -53,7 +53,7 @@
         />
       </el-select>
       <div class="filter-actions data-list-filter__actions">
-        <el-button type="primary" @click="queryLicenses">
+        <el-button type="primary" :loading="isUpdating" @click="queryLicenses">
           {{ t('pages.licenses.list.filter.query') }}
         </el-button>
         <el-button @click="resetFilters">
@@ -74,7 +74,9 @@
       <div class="data-list-table__scroll">
         <el-table
         :data="licenses"
-        v-loading="loading"
+        v-loading="skeletonVisible"
+        class="content-skeleton"
+        :class="{ 'is-table-skeleton': skeletonVisible, 'is-table-updating': isUpdating }"
         :element-loading-text="t('pages.licenses.list.table.loading')"
         empty-text=" "
       >
@@ -157,6 +159,7 @@
           v-model:page-size="pagination.pageSize"
           :page-sizes="[10, 20, 50, 100]"
           :total="pagination.total"
+          :disabled="loading"
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="changePageSize"
           @current-change="loadLicenses"
@@ -184,6 +187,7 @@ import {
 } from '@/api/license'
 import { formatDate } from '@/utils/date'
 import { getErrorMessage } from '@/utils/error'
+import { useInitialSkeleton } from '@/composables/useInitialSkeleton'
 
 interface CustomerOption {
   id: string
@@ -205,6 +209,7 @@ const customerOptions = ref<CustomerOption[]>([])
 const statusOptions = ref<RawEnumItem[]>([])
 const customerLoading = ref(false)
 const loading = ref(false)
+const { skeletonVisible, isUpdating, markInitialized } = useInitialSkeleton(loading)
 const loadError = ref('')
 const actionId = ref('')
 
@@ -333,6 +338,7 @@ const loadLicenses = async () => {
     loadError.value = getErrorMessage(error, t('pages.licenses.list.message.loadError'))
   } finally {
     loading.value = false
+    markInitialized()
   }
 }
 

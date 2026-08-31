@@ -213,6 +213,82 @@
   border-radius: 0;
 }
 
+// 仅大块内容首次加载使用骨架屏；查询、刷新和操作级 loading 保留轻量反馈。
+.content-skeleton > .el-loading-mask {
+  --skeleton-base: #e8f0ed;
+  --skeleton-highlight: #f8fbfa;
+  overflow: hidden;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.el-skeleton {
+  --el-skeleton-color: #e8f0ed;
+  --el-skeleton-to-color: #f8fbfa;
+}
+
+.el-skeleton__item { border-radius: 0; }
+
+.content-skeleton > .el-loading-mask .el-loading-spinner { display: none; }
+
+.content-skeleton > .el-loading-mask::before {
+  position: absolute;
+  inset: 18px;
+  background:
+    linear-gradient(var(--skeleton-base), var(--skeleton-base)) 0 0 / 28% 16px no-repeat,
+    linear-gradient(var(--skeleton-base), var(--skeleton-base)) 0 34px / 100% 38px no-repeat,
+    repeating-linear-gradient(
+      to bottom,
+      var(--skeleton-base) 0,
+      var(--skeleton-base) 13px,
+      transparent 13px,
+      transparent 34px
+    ) 0 92px / 100% calc(100% - 92px) no-repeat;
+  content: '';
+}
+
+.content-skeleton > .el-loading-mask::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -55%;
+  width: 48%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.48), transparent);
+  content: '';
+  animation: app-skeleton-wave 1.8s ease-in-out infinite;
+}
+
+.content-skeleton.el-table .el-loading-mask::before {
+  inset: 14px 16px;
+  background:
+    linear-gradient(var(--skeleton-base), var(--skeleton-base)) 0 0 / 100% 42px no-repeat,
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 15px,
+      var(--skeleton-base) 15px,
+      var(--skeleton-base) 29px,
+      transparent 29px,
+      transparent 52px
+    ) 0 46px / 100% calc(100% - 46px) no-repeat;
+}
+
+.el-table.is-table-skeleton .el-table__body-wrapper { min-height: 320px; }
+
+.el-table.is-table-updating .el-table__body-wrapper {
+  opacity: 0.68;
+  pointer-events: none;
+  transition: opacity 0.16s ease;
+}
+
+@keyframes app-skeleton-wave {
+  to { transform: translateX(330%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content-skeleton > .el-loading-mask::after { animation: none; }
+}
+
 [data-theme='dark'] {
   .el-dialog,
   .el-overlay-message-box .el-message-box,
@@ -229,4 +305,19 @@
   .el-message-box__title { color: var(--app-text-primary); }
   .el-message-box__content,
   .el-message .el-message__content { color: var(--app-text-regular); }
+
+  .content-skeleton > .el-loading-mask {
+    --skeleton-base: color-mix(in srgb, var(--app-content-bg) 72%, #4a665c);
+    --skeleton-highlight: color-mix(in srgb, var(--app-content-bg) 82%, #789087);
+    background: color-mix(in srgb, var(--app-content-bg) 96%, #10261f);
+  }
+
+  .el-skeleton {
+    --el-skeleton-color: color-mix(in srgb, var(--app-content-bg) 72%, #4a665c);
+    --el-skeleton-to-color: color-mix(in srgb, var(--app-content-bg) 82%, #789087);
+  }
+
+  .content-skeleton > .el-loading-mask::after {
+    background: linear-gradient(90deg, transparent, rgba(150, 185, 172, 0.12), transparent);
+  }
 }

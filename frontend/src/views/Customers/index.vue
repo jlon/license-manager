@@ -38,7 +38,7 @@
             <el-option v-for="option in statusOptions" :key="option.key" :label="option.display" :value="option.key" />
           </el-select>
           <div class="filter-actions data-list-filter__actions">
-            <el-button type="primary" @click="handleQuery">{{ t('customers.actions.query') }}</el-button>
+            <el-button type="primary" :loading="isUpdating" @click="handleQuery">{{ t('customers.actions.query') }}</el-button>
             <el-button @click="handleReset">{{ t('customers.actions.reset') }}</el-button>
           </div>
         </div>
@@ -55,7 +55,9 @@
 
         <div class="table-scroll data-list-table__scroll">
           <el-table
-            v-loading="loading"
+            v-loading="skeletonVisible"
+            class="content-skeleton"
+            :class="{ 'is-table-skeleton': skeletonVisible, 'is-table-updating': isUpdating }"
             :data="customers"
             :element-loading-text="t('customers.table.loading')"
             row-key="id"
@@ -110,6 +112,7 @@
             :total="pagination.total"
             layout="total, sizes, prev, pager, next, jumper"
             :pager-count="5"
+            :disabled="loading"
             @size-change="handleSizeChange"
             @current-change="loadCustomers"
           />
@@ -153,6 +156,7 @@ import {
 } from '@/api/enum'
 import { formatDateShort } from '@/utils/date'
 import { getErrorMessage } from '@/utils/error'
+import { useInitialSkeleton } from '@/composables/useInitialSkeleton'
 
 type ViewMode = 'list' | 'form' | 'detail'
 
@@ -163,6 +167,7 @@ const isEditMode = ref(false)
 const currentCustomerId = ref('')
 const customers = ref<Customer[]>([])
 const loading = ref(false)
+const { skeletonVisible, isUpdating, markInitialized } = useInitialSkeleton(loading)
 const listError = ref('')
 const enumError = ref('')
 const actionId = ref('')
@@ -213,6 +218,7 @@ const loadCustomers = async () => {
     listError.value = getErrorMessage(error, t('customers.message.loadError'))
   } finally {
     loading.value = false
+    markInitialized()
   }
 }
 

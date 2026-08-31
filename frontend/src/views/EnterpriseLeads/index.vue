@@ -11,7 +11,7 @@
         </el-button>
       </header>
 
-      <section class="metrics-grid" v-loading="summaryLoading">
+      <section class="metrics-grid" :aria-busy="summaryLoading">
         <article v-for="stat in stats" :key="stat.key" class="metric-card" :class="`metric-card--${stat.tone}`">
           <div class="metric-icon">
             <el-icon><component :is="stat.icon" /></el-icon>
@@ -40,7 +40,7 @@
             <el-option :label="t('enterpriseLeads.status.rejected')" value="rejected" />
           </el-select>
           <div class="filter-actions data-list-filter__actions">
-            <el-button type="primary" :icon="Search" @click="handleFilter">{{ t('enterpriseLeads.actions.query') }}</el-button>
+            <el-button type="primary" :icon="Search" :loading="isUpdating" @click="handleFilter">{{ t('enterpriseLeads.actions.query') }}</el-button>
             <el-button @click="handleReset">{{ t('enterpriseLeads.actions.reset') }}</el-button>
           </div>
         </div>
@@ -61,7 +61,13 @@
         </el-alert>
 
         <div class="table-scroll data-list-table__scroll">
-          <el-table v-loading="loading" :data="tableData" row-key="id">
+          <el-table
+            v-loading="skeletonVisible"
+            class="content-skeleton"
+            :class="{ 'is-table-skeleton': skeletonVisible, 'is-table-updating': isUpdating }"
+            :data="tableData"
+            row-key="id"
+          >
             <el-table-column prop="id" :label="t('enterpriseLeads.table.id')" min-width="150" show-overflow-tooltip />
             <el-table-column prop="company_name" :label="t('enterpriseLeads.table.company')" min-width="180" show-overflow-tooltip />
             <el-table-column prop="contact_name" :label="t('enterpriseLeads.table.contact')" min-width="110" />
@@ -97,6 +103,7 @@
             layout="total, sizes, prev, pager, next, jumper"
             :pager-count="5"
             :total="total"
+            :disabled="loading"
             @current-change="fetchData"
             @size-change="handleSizeChange"
           />
@@ -128,6 +135,7 @@ import LeadDetailDialog from './components/LeadDetailDialog.vue'
 import LeadEditDialog from './components/LeadEditDialog.vue'
 import { getLeads, getLeadSummary, updateLead, deleteLead, type Lead } from '@/api/lead'
 import { formatDateTime } from '@/utils/date'
+import { useInitialSkeleton } from '@/composables/useInitialSkeleton'
 
 const { t } = useI18n()
 
@@ -145,6 +153,7 @@ const filters = ref({
 
 const tableData = ref<Lead[]>([])
 const loading = ref(false)
+const { skeletonVisible, isUpdating, markInitialized } = useInitialSkeleton(loading)
 const summaryLoading = ref(false)
 const listError = ref('')
 const page = ref(1)
@@ -196,6 +205,7 @@ const fetchData = async () => {
     listError.value = error.backendMessage || t('enterpriseLeads.messages.fetchError')
   } finally {
     loading.value = false
+    markInitialized()
   }
 }
 
@@ -306,41 +316,44 @@ const handleUpdate = async (updatedData: any) => {
 }
 
 .metric-card {
-  --metric-color: var(--el-color-primary);
+  --metric-color: #07866f;
   display: flex;
   min-width: 0;
-  align-items: center;
-  gap: 13px;
-  padding: 16px 20px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 17px 20px 16px;
   background: var(--list-surface);
   border-right: 1px solid var(--list-border);
 }
 
 .metric-card:last-child { border-right: 0; }
-.metric-card--brand { background: color-mix(in srgb, var(--list-surface) 86%, #c8ecde); }
+.metric-card--brand { background: color-mix(in srgb, var(--list-surface) 92%, #b9e2d5); }
 
-.metric-card--warning { --metric-color: var(--el-color-warning); }
-.metric-card--info { --metric-color: var(--el-color-info); }
-.metric-card--success { --metric-color: var(--el-color-success); }
+.metric-card--warning { --metric-color: #5f78ad; }
+.metric-card--info { --metric-color: #4f8999; }
+.metric-card--success { --metric-color: #4b8667; }
 
 .metric-icon {
+  order: 2;
   display: flex;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
   border-radius: 0;
-  background: color-mix(in srgb, var(--metric-color) 12%, transparent);
+  background: color-mix(in srgb, var(--metric-color) 10%, var(--list-surface));
   color: var(--metric-color);
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .metric-content {
+  order: 1;
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: 3px;
+  gap: 5px;
 }
 
 .metric-label {
@@ -353,7 +366,8 @@ const handleUpdate = async (updatedData: any) => {
 
 .metric-value {
   color: var(--list-text);
-  font-size: 28px;
+  font-size: 26px;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
 }

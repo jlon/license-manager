@@ -14,7 +14,7 @@
           <article v-for="card in statCards" :key="card.key" class="metric-card" :class="`metric-card--${card.tone}`">
             <div class="metric-content">
               <span class="metric-label">{{ card.label }}</span>
-              <el-skeleton v-if="statsLoading && !stats" animated :rows="1" />
+              <el-skeleton v-if="statsSkeletonVisible" :rows="1" />
               <strong v-else class="metric-value">{{ stats ? card.value : '--' }}</strong>
               <span class="metric-help">{{ stats ? card.help : statsError || t('dashboard.noData') }}</span>
             </div>
@@ -100,7 +100,8 @@
           </div>
           <el-table
             v-else
-            v-loading="recentLoading"
+            v-loading="recentSkeletonVisible"
+            :class="{ 'content-skeleton': recentSkeletonVisible, 'is-table-skeleton': recentSkeletonVisible, 'is-table-updating': recentUpdating }"
             :data="recentData"
             @row-click="openAuthorization"
           >
@@ -140,6 +141,7 @@ import {
   type TrendSummary
 } from '@/api/dashboard'
 import { formatDate } from '@/utils/date'
+import { useInitialSkeleton } from '@/composables/useInitialSkeleton'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -150,6 +152,8 @@ const trendSummary = ref<TrendSummary | null>(null)
 const statsLoading = ref(false)
 const recentLoading = ref(false)
 const trendLoading = ref(false)
+const { skeletonVisible: statsSkeletonVisible, markInitialized: markStatsInitialized } = useInitialSkeleton(statsLoading)
+const { skeletonVisible: recentSkeletonVisible, isUpdating: recentUpdating, markInitialized: markRecentInitialized } = useInitialSkeleton(recentLoading)
 const refreshing = ref(false)
 const statsError = ref('')
 const recentError = ref('')
@@ -189,12 +193,12 @@ const errorText = (error: any) => error?.backendMessage || error?.response?.data
 const loadStats = async () => {
   statsLoading.value = true
   statsError.value = ''
-  try { stats.value = (await getOverviewStats()).data } catch (error) { statsError.value = errorText(error) } finally { statsLoading.value = false }
+  try { stats.value = (await getOverviewStats()).data } catch (error) { statsError.value = errorText(error) } finally { statsLoading.value = false; markStatsInitialized() }
 }
 const loadRecent = async () => {
   recentLoading.value = true
   recentError.value = ''
-  try { recentData.value = (await getRecentAuthorizations({ limit: 8 })).data.list } catch (error) { recentError.value = errorText(error) } finally { recentLoading.value = false }
+  try { recentData.value = (await getRecentAuthorizations({ limit: 8 })).data.list } catch (error) { recentError.value = errorText(error) } finally { recentLoading.value = false; markRecentInitialized() }
 }
 const loadTrend = async () => {
   if (trendType.value === 'custom' && !customRange.value) return
