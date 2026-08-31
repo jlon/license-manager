@@ -2,6 +2,10 @@
   <div class="license-page data-list-page">
     <header class="data-list-header">
       <div>
+        <button v-if="hasCustomerContext" type="button" class="context-back" @click="backToCustomers">
+          <el-icon><ArrowLeft /></el-icon>
+          <span>{{ t('pages.licenses.list.actions.backToCustomers') }}</span>
+        </button>
         <h1>{{ pageTitle }}</h1>
         <p>{{ t('pages.licenses.list.description') }}</p>
       </div>
@@ -168,7 +172,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { CopyDocument, Plus } from '@element-plus/icons-vue'
+import { ArrowLeft, CopyDocument, Plus } from '@element-plus/icons-vue'
 import { getCustomers } from '@/api/customer'
 import { getAuthorizationStatusEnums, type RawEnumItem } from '@/api/enum'
 import {
@@ -193,6 +197,7 @@ const { t } = useI18n()
 
 const routeCustomerId = String(route.query.customerId || '')
 const routeCustomerName = String(route.query.customerName || '')
+const hasCustomerContext = Boolean(routeCustomerId)
 const filters = reactive({ customerId: routeCustomerId, code: '', status: '' })
 const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 const licenses = ref<AuthorizationCode[]>([])
@@ -366,6 +371,7 @@ const removeLicense = async (row: AuthorizationCode) => {
       {
         confirmButtonText: t('pages.licenses.list.confirm.deleteConfirm'),
         cancelButtonText: t('pages.licenses.list.confirm.cancel'),
+        confirmButtonClass: 'dialog-confirm-danger',
         type: 'warning'
       }
     )
@@ -382,6 +388,8 @@ const removeLicense = async (row: AuthorizationCode) => {
     actionId.value = ''
   }
 }
+
+const backToCustomers = () => router.push('/customers')
 
 const copyAuthorizationCode = async (code: string) => {
   try {
@@ -400,6 +408,9 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .filter-grid { grid-template-columns:minmax(240px,320px) minmax(280px,380px) 160px auto; }
+
+.context-back { margin:0 0 6px; padding:0; display:inline-flex; align-items:center; gap:5px; border:0; background:transparent; color:#526a60; font:inherit; font-size:13px; cursor:pointer; }
+.context-back:hover { color:var(--el-color-primary); }
 
 .filter-control,.customer-filter,.code-filter { width:100%; }
 

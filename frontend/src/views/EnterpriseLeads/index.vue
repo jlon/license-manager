@@ -249,6 +249,7 @@ const handleDelete = (row: Lead) => {
     {
       confirmButtonText: t('common.confirm'),
       cancelButtonText: t('common.cancel'),
+      confirmButtonClass: 'dialog-confirm-danger',
       type: 'warning',
     }
   ).then(async () => {

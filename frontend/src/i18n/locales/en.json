@@ -310,7 +310,8 @@
           "unlock": "Unlock",
           "delete": "Delete",
           "more": "More actions",
-          "retry": "Retry"
+          "retry": "Retry",
+          "backToCustomers": "Back to customers"
         },
         "status": {
           "normal": "Normal",
@@ -579,7 +580,8 @@
           "updateLicense": "Update License",
           "changeValidity": "Change Validity Period",
           "revokeLicense": "Revoke License",
-          "downloadCertificate": "Download Authorization File"
+          "downloadCertificate": "Download Authorization File",
+          "backToList": "Back to licenses"
         },
         "updateDialog": {
           "title": "Update Authorization",
@@ -693,7 +695,8 @@
           "cancel": "Cancel",
           "create": "Create",
           "update": "Update",
-          "submit": "Submit"
+          "submit": "Submit",
+          "backToList": "Back to licenses"
         },
         "validation": {
           "customerRequired": "Please select customer",
@@ -800,7 +803,10 @@
       "retry": "Retry",
       "more": "More",
       "save": "Save",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "backToList": "Back to customers",
+      "createCustomer": "Create customer",
+      "saveChanges": "Save changes"
     },
     "table": {
       "customerCode": "Customer Code",

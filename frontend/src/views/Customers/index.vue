@@ -270,7 +270,12 @@ const toggleStatus = async (customer: Customer) => {
     await ElMessageBox.confirm(
       t(isDisabling ? 'customers.confirm.disableMessage' : 'customers.confirm.enableMessage', { name: customer.customer_name }),
       t(isDisabling ? 'customers.confirm.disableTitle' : 'customers.confirm.enableTitle'),
-      { confirmButtonText: t('customers.confirm.confirm'), cancelButtonText: t('customers.confirm.cancel'), type: 'warning' }
+      {
+        confirmButtonText: t('customers.confirm.confirm'),
+        cancelButtonText: t('customers.confirm.cancel'),
+        confirmButtonClass: 'dialog-confirm-danger',
+        type: 'warning'
+      }
     )
   } catch { return }
 

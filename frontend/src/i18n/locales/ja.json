@@ -309,7 +309,8 @@
           "unlock": "アンロック",
           "delete": "削除",
           "more": "その他の操作",
-          "retry": "再試行"
+          "retry": "再試行",
+          "backToCustomers": "顧客一覧に戻る"
         },
         "status": {
           "normal": "正常",
@@ -578,7 +579,8 @@
           "updateLicense": "ライセンス更新",
           "changeValidity": "有効期限を変更",
           "revokeLicense": "ライセンス取り消し",
-          "downloadCertificate": "認証ファイルをダウンロード"
+          "downloadCertificate": "認証ファイルをダウンロード",
+          "backToList": "ライセンス一覧に戻る"
         },
         "updateDialog": {
           "title": "ライセンスを変更",
@@ -692,7 +694,8 @@
           "cancel": "キャンセル",
           "create": "作成",
           "update": "更新",
-          "submit": "送信"
+          "submit": "送信",
+          "backToList": "ライセンス一覧に戻る"
         },
         "validation": {
           "customerRequired": "顧客を選択してください",
@@ -799,7 +802,10 @@
       "retry": "再試行",
       "more": "その他",
       "save": "保存",
-      "cancel": "キャンセル"
+      "cancel": "キャンセル",
+      "backToList": "顧客一覧に戻る",
+      "createCustomer": "顧客を作成",
+      "saveChanges": "変更を保存"
     },
     "table": {
       "customerCode": "顧客コード",

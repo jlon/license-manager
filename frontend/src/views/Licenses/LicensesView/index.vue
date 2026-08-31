@@ -1,27 +1,24 @@
 <template>
   <div class="detail-page">
-    <header class="page-header">
-      <div class="header-main">
-        <button class="breadcrumb" type="button" @click="goBack">
-          {{ t('pages.licenses.detail.breadcrumb.licenseManagement') }} /
-          {{ t('pages.licenses.detail.breadcrumb.licenseDetail') }}
-        </button>
-        <div class="title-row">
-          <h1>{{ licenseData?.code || t('pages.licenses.detail.breadcrumb.licenseDetail') }}</h1>
+    <SubpageHeader
+      :title="licenseData?.code || t('pages.licenses.detail.breadcrumb.licenseDetail')"
+      :back-label="t('pages.licenses.detail.actions.backToList')"
+      @back="goBack"
+    >
+      <template #title-meta>
           <el-tag v-if="licenseData" :type="statusType(licenseData.status)">
             {{ licenseData.status_display || t(`pages.licenses.list.status.${licenseData.status}`) }}
           </el-tag>
-        </div>
-      </div>
-      <div v-if="licenseData" class="header-actions">
+      </template>
+      <template v-if="licenseData" #actions>
         <el-button @click="copyCode">{{ t('pages.licenses.detail.actions.copyCode') }}</el-button>
         <el-button @click="openUpdateDialog">{{ t('pages.licenses.detail.actions.updateLicense') }}</el-button>
         <el-button @click="openValidityDialog">{{ t('pages.licenses.detail.actions.changeValidity') }}</el-button>
         <el-button type="primary" :loading="downloading" @click="downloadCertificate">
           {{ t('pages.licenses.detail.actions.downloadCertificate') }}
         </el-button>
-      </div>
-    </header>
+      </template>
+    </SubpageHeader>
 
     <section v-if="loadError" class="state-card">
       <el-empty :description="loadError">
@@ -146,6 +143,7 @@ import AuthorizationInfo from './components/AuthorizationInfo.vue'
 import BasicInfo from './components/BasicInfo.vue'
 import ChangeHistory from './components/ChangeHistory.vue'
 import LicenseInfo from './components/LicenseInfo.vue'
+import SubpageHeader from '@/components/common/SubpageHeader.vue'
 
 type JsonData = Record<string, unknown>
 
@@ -421,44 +419,6 @@ onMounted(loadLicense)
   box-sizing: border-box;
 }
 
-.page-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.breadcrumb {
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--app-text-secondary);
-  cursor: pointer;
-}
-
-.title-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 6px;
-
-  h1 {
-    max-width: 720px;
-    margin: 0;
-    overflow: hidden;
-    color: var(--app-text-primary);
-    font-size: 24px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-.header-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
 .detail-card,
 .state-card {
   min-height: 360px;
@@ -491,14 +451,6 @@ onMounted(loadLicense)
     padding: 12px;
   }
 
-  .page-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .header-actions {
-    justify-content: flex-start;
-  }
 }
 
 @media (max-width: 640px) {

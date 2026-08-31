@@ -1,21 +1,12 @@
 <template>
   <div class="form-page">
-    <header class="page-header">
-      <div>
-        <button class="breadcrumb" type="button" @click="goBack">
-          {{ t('pages.licenses.form.breadcrumb.licenseManagement') }} /
-          {{ t('pages.licenses.form.breadcrumb.createLicense') }}
-        </button>
-        <h1>{{ t('pages.licenses.form.breadcrumb.createLicense') }}</h1>
-        <p>{{ t('pages.licenses.form.description') }}</p>
-      </div>
-      <div class="header-actions">
-        <el-button @click="cancelCreate">{{ t('pages.licenses.form.actions.cancel') }}</el-button>
-        <el-button type="primary" :loading="submitting" @click="submitForm">
-          {{ t('pages.licenses.form.actions.create') }}
-        </el-button>
-      </div>
-    </header>
+    <SubpageHeader
+      :title="t('pages.licenses.form.breadcrumb.createLicense')"
+      :description="t('pages.licenses.form.description')"
+      :back-label="t('pages.licenses.form.actions.backToList')"
+      :back-disabled="submitting"
+      @back="cancelCreate"
+    />
 
     <el-form ref="formRef" :model="form" :rules="rules" label-position="top" class="form-content">
       <section class="form-card">
@@ -119,6 +110,13 @@
         </div>
         <JsonEditor ref="parameterEditor" v-model="customParameters" />
       </section>
+      <FormActionBar
+        :cancel-label="t('pages.licenses.form.actions.cancel')"
+        :submit-label="t('pages.licenses.form.actions.create')"
+        :loading="submitting"
+        @cancel="cancelCreate"
+        @submit="submitForm"
+      />
     </el-form>
   </div>
 </template>
@@ -133,6 +131,8 @@ import { getEnumOptions, type RawEnumItem } from '@/api/enum'
 import { createLicense, type AuthorizationCodeCreateRequest } from '@/api/license'
 import JsonEditor from '@/components/common/JsonEditor.vue'
 import { getErrorMessage } from '@/utils/error'
+import FormActionBar from '@/components/common/FormActionBar.vue'
+import SubpageHeader from '@/components/common/SubpageHeader.vue'
 
 interface CustomerOption {
   id: string
@@ -360,38 +360,6 @@ onMounted(async () => {
   box-sizing: border-box;
 }
 
-.page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-
-  h1 {
-    margin: 6px 0 0;
-    color: var(--app-text-primary);
-    font-size: 24px;
-  }
-
-  p {
-    margin: 6px 0 0;
-    color: var(--app-text-secondary);
-    font-size: 14px;
-  }
-}
-
-.breadcrumb {
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--app-text-secondary);
-  cursor: pointer;
-}
-
-.header-actions {
-  display: flex;
-  flex-shrink: 0;
-}
-
 .form-content {
   display: flex;
   flex-direction: column;
@@ -454,14 +422,6 @@ onMounted(async () => {
 }
 
 @media (max-width: 640px) {
-  .page-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .header-actions :deep(.el-button) {
-    flex: 1;
-  }
 
   .two-columns,
   .three-columns {

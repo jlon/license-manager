@@ -1,17 +1,11 @@
 <template>
   <div class="customer-form-page">
-    <header class="subpage-header">
-      <div>
-        <p class="breadcrumb">{{ t('customers.breadcrumb.customerManagement') }} /</p>
-        <h1>{{ isEdit ? t('customers.editCustomer') : t('customers.addCustomer') }}</h1>
-      </div>
-      <div class="header-actions">
-        <el-button :disabled="submitting" @click="emit('cancel')">{{ t('customers.actions.cancel') }}</el-button>
-        <el-button type="primary" :loading="submitting" :disabled="detailLoading || Boolean(detailError)" @click="handleSave">
-          {{ t('customers.actions.save') }}
-        </el-button>
-      </div>
-    </header>
+    <SubpageHeader
+      :title="isEdit ? t('customers.editCustomer') : t('customers.addCustomer')"
+      :back-label="t('customers.actions.backToList')"
+      :back-disabled="submitting"
+      @back="emit('cancel')"
+    />
 
     <el-alert v-if="enumError" :title="enumError" type="warning" show-icon :closable="false">
       <template #default>
@@ -99,6 +93,14 @@
           </el-form-item>
         </div>
       </section>
+      <FormActionBar
+        :cancel-label="t('customers.actions.cancel')"
+        :submit-label="isEdit ? t('customers.actions.saveChanges') : t('customers.actions.createCustomer')"
+        :loading="submitting"
+        :disabled="detailLoading || Boolean(detailError)"
+        @cancel="emit('cancel')"
+        @submit="handleSave"
+      />
     </el-form>
   </div>
 </template>
@@ -121,6 +123,8 @@ import {
   type RawEnumItem
 } from '@/api/enum'
 import { getErrorMessage } from '@/utils/error'
+import FormActionBar from '@/components/common/FormActionBar.vue'
+import SubpageHeader from '@/components/common/SubpageHeader.vue'
 
 interface CustomerFormData {
   name: string
@@ -245,10 +249,6 @@ onMounted(() => { loadEnums(); loadCustomer() })
 <style scoped>
 .customer-form-page,.form-sections { display:flex; flex-direction:column; gap:16px; }
 .customer-form-page { min-width:0; padding:var(--layout-content-padding); box-sizing:border-box; }
-.subpage-header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
-.breadcrumb { margin:0 0 4px; color:var(--app-text-secondary); font-size:13px; }
-.subpage-header h1 { margin:0; color:var(--app-text-primary); font-size:24px; line-height:1.35; }
-.header-actions { display:flex; gap:8px; }
 .form-card,.state-card { padding:20px; background:var(--app-content-bg); border:1px solid var(--app-border-color); border-radius:var(--app-card-radius); box-shadow:var(--app-card-shadow); }
 .form-card h2 { margin:0 0 18px; color:var(--app-text-primary); font-size:16px; }
 .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 20px; }
@@ -257,8 +257,6 @@ onMounted(() => { loadEnums(); loadCustomer() })
 
 @media (max-width:768px) {
   .customer-form-page { padding:12px; }
-  .subpage-header { align-items:stretch; flex-direction:column; }
-  .header-actions .el-button { flex:1; }
   .form-grid { grid-template-columns:1fr; }
   .full-width { grid-column:auto; }
   .form-card { padding:16px; }
