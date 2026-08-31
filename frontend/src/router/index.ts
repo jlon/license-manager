@@ -71,6 +71,10 @@ const routes: Array<RouteRecordRaw> = [
     path: "/enterprise-leads",
     component: () => import("@/views/EnterpriseLeads/index.vue"),
     meta: { title: "企业线索", requiresAuth: true }
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    redirect: "/dashboard"
   }
 ];
 
