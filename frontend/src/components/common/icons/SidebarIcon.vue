@@ -46,8 +46,8 @@ const iconClass = computed(() => ({
 
 <style scoped>
 .sidebar-icon {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,12 +59,10 @@ const iconClass = computed(() => ({
   height: 100%;
 }
 
-.sidebar-icon :deep(path) {
-  fill: #B2B8C2;
-  transition: fill 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.sidebar-icon--active :deep(path) {
-  fill: #019C7C;
-}
+.sidebar-icon :deep(svg) { color:inherit; }
+.sidebar-icon :deep(path),
+.sidebar-icon :deep(circle),
+.sidebar-icon :deep(rect),
+.sidebar-icon :deep(line),
+.sidebar-icon :deep(polyline) { transition:stroke .18s ease,fill .18s ease; }
 </style>

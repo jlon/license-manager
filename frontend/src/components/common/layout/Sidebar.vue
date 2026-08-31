@@ -81,31 +81,44 @@ const isMobileOpen = computed(() => appStore.isMobile && !appStore.sidebarCollap
 .sidebar__nav {
   flex: 1;
   overflow-y: auto;
-  padding: 14px 10px;
+  padding: 18px 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 .nav-item {
+  position: relative;
   width: 100%;
-  min-height: 44px;
-  padding: 0 14px;
+  min-height: 48px;
+  padding: 0 15px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 13px;
   border: 0;
   border-radius: 0;
   background: transparent;
-  color: var(--app-text-regular);
+  color: #586760;
   cursor: pointer;
   text-align: left;
-  transition: background 0.15s ease, color 0.15s ease;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  transition: background-color 0.18s ease, color 0.18s ease;
 }
-.nav-item:hover { background: var(--el-color-primary-light-9); color: var(--el-color-primary); }
-.nav-item--active { background: var(--el-color-primary-light-9); color: var(--el-color-primary); font-weight: 600; }
-.nav-icon { width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.nav-item::before { content:''; position:absolute; inset:8px auto 8px 0; width:3px; background:#019c7c; opacity:0; transform:scaleY(.35); transition:opacity .18s ease,transform .18s ease; }
+.nav-item:hover { background:#f2f8f6; color:#136b59; }
+.nav-item:focus-visible { outline:2px solid rgba(1,156,124,.45); outline-offset:-2px; }
+.nav-item--active { background:#eaf6f2; color:#017c63; font-weight:600; }
+.nav-item--active::before { opacity:1; transform:scaleY(1); }
+.nav-icon { width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; color:#78877f; transition:color .18s ease,transform .18s ease; }
+.nav-item:hover .nav-icon { color:#16816b; transform:translateX(1px); }
+.nav-item--active .nav-icon { color:#019c7c; }
 .nav-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sidebar--collapsed .nav-item { justify-content: center; padding: 0; }
+[data-theme="dark"] .nav-item { color:#bec9c4; }
+[data-theme="dark"] .nav-item:hover { color:#86dfc2; background:rgba(1,156,124,.12); }
+[data-theme="dark"] .nav-item--active { color:#79e2bf; background:rgba(1,156,124,.18); }
 @media (min-width: 768px) and (max-width: 1023px) {
   .sidebar { width: var(--layout-sidebar-collapsed-width); }
   .sidebar__brand { padding: 0; }
