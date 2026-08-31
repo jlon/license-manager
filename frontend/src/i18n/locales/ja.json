@@ -37,6 +37,8 @@
     "welcomeSubtitle": "アカウントにサインインして続けてください",
     "communityEdition": "オープンソース・コミュニティ版",
     "brandNote": "オープンで信頼できるソフトウェアライセンス基盤。",
+    "cloudPrompt": "運用不要のクラウドサービスをお探しですか？",
+    "cloudLink": "雪松ライセンスクラウドを見る",
     "flow": {
       "issue": "発行",
       "verify": "検証",
@@ -53,6 +55,13 @@
     "eyebrow": "コミュニティ版概要",
     "heading": "ライセンス概要",
     "description": "コミュニティ版の既存ライセンス数、傾向、最近の記録を確認します。",
+    "cloudPromo": {
+      "eyebrow": "クラウド運用",
+      "title": "雪松ライセンスクラウド",
+      "description": "導入・運用不要。AI ネイティブ API でライセンス機能を素早く統合できます。",
+      "learnMore": "詳しく見る",
+      "tryFree": "無料で試す"
+    },
     "updatedAt": "{time} に更新",
     "refresh": "更新",
     "overviewTitle": "ライセンス統計",
@@ -130,7 +139,8 @@
     },
     "external": {
       "docs": "ドキュメント",
-      "github": "GitHub"
+      "github": "GitHub",
+      "cloud": "ライセンスクラウド"
     },
     "breadcrumb": {
       "dashboard": "ダッシュボード",
@@ -273,7 +283,7 @@
         "title": "ライセンス一覧",
         "customerTitle": "{name}のライセンス",
         "description": "顧客ライセンスの検索・管理とアクティベーション状況を確認します。",
-        "createLicense": "ライセンス作成",
+        "createLicense": "新規ライセンス",
         "filter": {
           "label": "フィルター：",
           "customerPlaceholder": "顧客を選択",
@@ -298,6 +308,7 @@
           "lock": "ロック",
           "unlock": "アンロック",
           "delete": "削除",
+          "more": "その他の操作",
           "retry": "再試行"
         },
         "status": {
@@ -773,10 +784,11 @@
     "title": "顧客管理",
     "description": "顧客情報、ステータス、関連ライセンスを一元管理します。",
     "viewCustomer": "顧客表示",
-    "addCustomer": "新規顧客追加",
+    "addCustomer": "新規顧客",
     "editCustomer": "顧客編集",
     "actions": {
-      "add": "新規顧客追加",
+      "add": "新規顧客",
+      "view": "表示",
       "edit": "編集",
       "delete": "削除",
       "enable": "有効化",

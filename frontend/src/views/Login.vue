@@ -30,7 +30,12 @@
           <span>{{ t('login.flow.verify') }}</span>
         </div>
       </div>
-      <p class="brand-note">{{ t('login.brandNote') }}</p>
+      <div class="brand-footer">
+        <p class="brand-note">{{ t('login.brandNote') }}</p>
+        <a href="https://cedar-v.com/products/cedar-license-cloud/index.html" target="_blank" rel="noopener noreferrer">
+          {{ t('login.cloudPrompt') }} <span>{{ t('login.cloudLink') }} →</span>
+        </a>
+      </div>
     </section>
 
     <section class="login-panel">
@@ -179,6 +184,10 @@ onMounted(loadRememberedUsername)
 .brand-copy h1 { margin:0; width:max-content; max-width:100%; font-size:clamp(38px,3.6vw,58px); line-height:1.08; letter-spacing:-.035em; white-space:nowrap; }
 .brand-copy>p { max-width:580px; margin:24px 0 0; font-size:17px; line-height:1.8; opacity:.78; }
 .brand-note { margin:0; font-size:13px; opacity:.58; }
+.brand-footer { display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.brand-footer>a { color:rgba(226,255,245,.72); font-size:13px; text-decoration:none; }
+.brand-footer>a span { color:#8debcf; font-weight:600; }
+.brand-footer>a:hover span { color:#fff; }
 .authorization-flow { margin-top:40px; display:flex; align-items:center; gap:16px; color:#e2fff5; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:17px; font-weight:600; letter-spacing:.1em; }
 .authorization-flow span { opacity:.72; animation:flow-stage 6s ease-in-out infinite; }
 .authorization-flow span:nth-of-type(2) { animation-delay:2s; }

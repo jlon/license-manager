@@ -1,16 +1,25 @@
 <template>
-  <div class="license-page">
-    <header class="page-header">
+  <div class="license-page data-list-page">
+    <header class="data-list-header">
       <div>
         <h1>{{ pageTitle }}</h1>
         <p>{{ t('pages.licenses.list.description') }}</p>
       </div>
-      <el-button type="primary" @click="openCreate">
+      <el-button type="primary" :icon="Plus" @click="openCreate">
         {{ t('pages.licenses.list.createLicense') }}
       </el-button>
     </header>
 
-    <section class="filter-card">
+    <section class="data-list-workspace">
+      <div class="filter-card data-list-filter">
+      <div class="filter-grid data-list-filter__grid">
+      <el-input
+        v-model="filters.code"
+        class="filter-control code-filter"
+        :placeholder="t('pages.licenses.list.filter.codePlaceholder')"
+        clearable
+        @keyup.enter="queryLicenses"
+      />
       <el-select
         v-model="filters.customerId"
         class="filter-control customer-filter"
@@ -26,13 +35,6 @@
           :value="customer.id"
         />
       </el-select>
-      <el-input
-        v-model="filters.code"
-        class="filter-control code-filter"
-        :placeholder="t('pages.licenses.list.filter.codePlaceholder')"
-        clearable
-        @keyup.enter="queryLicenses"
-      />
       <el-select
         v-model="filters.status"
         class="filter-control status-filter"
@@ -46,7 +48,7 @@
           :value="option.key"
         />
       </el-select>
-      <div class="filter-actions">
+      <div class="filter-actions data-list-filter__actions">
         <el-button type="primary" @click="queryLicenses">
           {{ t('pages.licenses.list.filter.query') }}
         </el-button>
@@ -54,28 +56,41 @@
           {{ t('pages.licenses.list.filter.reset') }}
         </el-button>
       </div>
-    </section>
+      </div>
+      </div>
 
-    <section class="list-card">
-      <div v-if="loadError" class="load-error">
+      <div class="list-card data-list-table">
+      <div v-if="loadError" class="load-error data-list-alert">
         <span>{{ loadError }}</span>
         <el-button link type="primary" @click="loadLicenses">
           {{ t('pages.licenses.list.actions.retry') }}
         </el-button>
       </div>
 
-      <el-table
+      <div class="data-list-table__scroll">
+        <el-table
         :data="licenses"
         v-loading="loading"
         :element-loading-text="t('pages.licenses.list.table.loading')"
         empty-text=" "
-        stripe
       >
         <el-table-column prop="code" :label="t('pages.licenses.list.table.code')" min-width="210">
           <template #default="{ row }">
-            <button class="code-link" type="button" @click="openDetail(row)">
-              {{ row.code }}
-            </button>
+            <div class="license-code-cell">
+              <button class="code-link" type="button" @click="openDetail(row)">
+                {{ row.code }}
+              </button>
+              <el-tooltip :content="t('pages.licenses.detail.actions.copyCode')" placement="top">
+                <el-button
+                  link
+                  type="primary"
+                  :icon="CopyDocument"
+                  class="copy-code-button"
+                  :aria-label="t('pages.licenses.detail.actions.copyCode')"
+                  @click.stop="copyAuthorizationCode(row.code)"
+                />
+              </el-tooltip>
+            </div>
           </template>
         </el-table-column>
         <el-table-column :label="t('pages.licenses.list.table.customer')" min-width="150" show-overflow-tooltip>
@@ -106,9 +121,9 @@
         <el-table-column prop="description" :label="t('pages.licenses.list.table.description')" min-width="150" show-overflow-tooltip>
           <template #default="{ row }">{{ row.description || '-' }}</template>
         </el-table-column>
-        <el-table-column :label="t('pages.licenses.list.table.operation')" width="220" fixed="right" align="center">
+        <el-table-column :label="t('pages.licenses.list.table.operation')" width="240" fixed="right" align="center">
           <template #default="{ row }">
-            <div class="row-actions">
+            <div class="row-actions data-list-actions">
               <el-button link type="primary" @click="openDetail(row)">
                 {{ t('pages.licenses.list.actions.detail') }}
               </el-button>
@@ -129,18 +144,20 @@
         <template #empty>
           <el-empty :description="t('pages.licenses.list.table.empty')" />
         </template>
-      </el-table>
+        </el-table>
+      </div>
 
-      <div class="pagination">
+      <div class="pagination data-list-pagination">
         <el-pagination
           v-model:current-page="pagination.page"
           v-model:page-size="pagination.pageSize"
-          :page-sizes="[16, 32, 50, 100]"
+          :page-sizes="[10, 20, 50, 100]"
           :total="pagination.total"
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="changePageSize"
           @current-change="loadLicenses"
         />
+      </div>
       </div>
     </section>
   </div>
@@ -151,6 +168,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
+import { CopyDocument, Plus } from '@element-plus/icons-vue'
 import { getCustomers } from '@/api/customer'
 import { getAuthorizationStatusEnums, type RawEnumItem } from '@/api/enum'
 import {
@@ -168,6 +186,7 @@ interface CustomerOption {
   name: string
 }
 
+
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
@@ -175,7 +194,7 @@ const { t } = useI18n()
 const routeCustomerId = String(route.query.customerId || '')
 const routeCustomerName = String(route.query.customerName || '')
 const filters = reactive({ customerId: routeCustomerId, code: '', status: '' })
-const pagination = reactive({ page: 1, pageSize: 16, total: 0 })
+const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 const licenses = ref<AuthorizationCode[]>([])
 const customerOptions = ref<CustomerOption[]>([])
 const statusOptions = ref<RawEnumItem[]>([])
@@ -364,6 +383,15 @@ const removeLicense = async (row: AuthorizationCode) => {
   }
 }
 
+const copyAuthorizationCode = async (code: string) => {
+  try {
+    await navigator.clipboard.writeText(code)
+    ElMessage.success(t('pages.licenses.detail.messages.copySuccess'))
+  } catch {
+    ElMessage.error(t('pages.licenses.detail.messages.copyError'))
+  }
+}
+
 onMounted(async () => {
   await Promise.all([loadCustomers(), loadStatuses()])
   await loadLicenses()
@@ -371,75 +399,15 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.license-page {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-width: 0;
-  padding: var(--layout-content-padding);
-  box-sizing: border-box;
-}
+.filter-grid { grid-template-columns:minmax(240px,320px) minmax(280px,380px) 160px auto; }
 
-.page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-
-  h1 {
-    margin: 0;
-    color: var(--app-text-primary);
-    font-size: 24px;
-  }
-
-  p {
-    margin: 6px 0 0;
-    color: var(--app-text-secondary);
-    font-size: 14px;
-  }
-}
-
-.filter-card,
-.list-card {
-  border: 1px solid var(--app-border-color);
-  border-radius: 0;
-  background: var(--app-content-bg);
-}
-
-.filter-card {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 16px;
-}
-
-.filter-control {
-  width: 180px;
-}
-
-.customer-filter {
-  width: 240px;
-}
-
-.code-filter {
-  width: 220px;
-}
-
-.filter-actions {
-  display: flex;
-}
-
-.list-card {
-  min-width: 0;
-  overflow: hidden;
-}
+.filter-control,.customer-filter,.code-filter { width:100%; }
 
 .load-error {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin: 16px 16px 0;
   padding: 10px 12px;
   border-radius: 0;
   background: var(--el-color-danger-light-9);
@@ -459,6 +427,28 @@ onMounted(async () => {
   cursor: pointer;
 }
 
+.license-code-cell {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.copy-code-button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  flex-shrink: 0;
+  opacity: 0.72;
+}
+
+.copy-code-button:hover,
+.copy-code-button:focus-visible {
+  opacity: 1;
+}
+
 .activation-cell {
   display: grid;
   grid-template-columns: 52px minmax(72px, 1fr);
@@ -467,40 +457,11 @@ onMounted(async () => {
   font-variant-numeric: tabular-nums;
 }
 
-.row-actions {
-  display: flex;
-  justify-content: center;
-  white-space: nowrap;
-}
-
-.pagination {
-  display: flex;
-  justify-content: flex-end;
-  padding: 16px;
-  overflow-x: auto;
+@media (max-width: 1100px) {
+  .filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 
 @media (max-width: 768px) {
-  .license-page {
-    padding: 12px;
-  }
-
-  .page-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .filter-card,
-  .filter-control,
-  .customer-filter,
-  .code-filter,
-  .filter-actions,
-  .filter-actions :deep(.el-button) {
-    width: 100%;
-  }
-
-  .pagination {
-    justify-content: flex-start;
-  }
+  .filter-grid { grid-template-columns:1fr; }
 }
 </style>

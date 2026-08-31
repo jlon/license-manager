@@ -339,7 +339,7 @@
   background-color: $background-color-white;
   border: 1px solid $border-color-base;
   border-radius: $border-radius-base;
-  box-shadow: $box-shadow-base;
+  box-shadow: var(--app-card-shadow);
   padding: $spacing-large;
   
   @include mobile {

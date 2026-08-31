@@ -71,7 +71,7 @@
 // 卡片样式
 .el-card {
   border-radius: $border-radius-base;
-  box-shadow: $box-shadow-base;
+  box-shadow: var(--app-card-shadow);
   
   .el-card__header {
     font-weight: 500;

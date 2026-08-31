@@ -22,6 +22,22 @@
         </section>
       </section>
 
+      <section class="cloud-promo" :aria-label="t('dashboard.cloudPromo.title')">
+        <div class="cloud-promo__copy">
+          <span>{{ t('dashboard.cloudPromo.eyebrow') }}</span>
+          <strong>{{ t('dashboard.cloudPromo.title') }}</strong>
+          <p>{{ t('dashboard.cloudPromo.description') }}</p>
+        </div>
+        <div class="cloud-promo__actions">
+          <a href="https://cedar-v.com/products/cedar-license-cloud/index.html" target="_blank" rel="noopener noreferrer">
+            {{ t('dashboard.cloudPromo.learnMore') }}
+          </a>
+          <a class="cloud-promo__primary" href="https://lic.cedar-v.com" target="_blank" rel="noopener noreferrer">
+            {{ t('dashboard.cloudPromo.tryFree') }}
+          </a>
+        </div>
+      </section>
+
       <section class="panel trend-panel">
         <div class="panel-header trend-header">
           <div>
@@ -212,9 +228,9 @@ onMounted(refreshAll)
 <style lang="scss" scoped>
 .dashboard-page {
   --dashboard-border:#cfe0d9;
-  --dashboard-canvas:#eef6f2;
+  --dashboard-canvas:var(--app-bg-color);
   --dashboard-surface:#fff;
-  --dashboard-shadow:0 7px 22px rgba(20,88,70,.055);
+  --dashboard-shadow:var(--app-card-shadow);
   --dashboard-text:var(--app-text-primary);
   --dashboard-regular:#40574e;
   --dashboard-secondary:#6f827a;
@@ -244,6 +260,16 @@ onMounted(refreshAll)
 .metric-label { color:var(--metric-label-color); font-size:14px; font-weight:500; letter-spacing:.01em; }
 .metric-value { color:var(--metric); font-size:32px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.025em; line-height:1.15; }
 .metric-help { min-height:18px; overflow:hidden; color:var(--metric-help-color); font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
+.cloud-promo { min-height:76px; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:24px; background:linear-gradient(100deg,#075f50,#087b67); color:#fff; box-shadow:var(--dashboard-shadow); }
+.cloud-promo__copy { min-width:0; display:grid; grid-template-columns:auto auto minmax(0,1fr); align-items:baseline; gap:8px 14px; }
+.cloud-promo__copy>span { color:#8debcf; font-size:11px; font-weight:700; letter-spacing:.1em; }
+.cloud-promo__copy strong { font-size:17px; font-weight:650; }
+.cloud-promo__copy p { margin:0; overflow:hidden; color:rgba(255,255,255,.72); font-size:13px; text-overflow:ellipsis; white-space:nowrap; }
+.cloud-promo__actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.cloud-promo__actions a { min-height:34px; padding:0 13px; display:inline-flex; align-items:center; border:1px solid rgba(255,255,255,.36); color:#fff; font-size:13px; text-decoration:none; }
+.cloud-promo__actions a:hover { border-color:#fff; background:rgba(255,255,255,.08); }
+.cloud-promo__actions .cloud-promo__primary { border-color:#fff; background:#fff; color:#076451; font-weight:600; }
+.cloud-promo__actions .cloud-promo__primary:hover { background:#e9fff7; }
 .panel { overflow:hidden; background:var(--dashboard-surface); border:1px solid var(--dashboard-border); border-radius:0; box-shadow:var(--dashboard-shadow); }
 .panel-header { min-height:64px; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; border-bottom:1px solid var(--dashboard-border); }
 .panel-header h2 { margin:0; color:var(--dashboard-text); font-size:17px; }
@@ -296,7 +322,7 @@ onMounted(refreshAll)
   --dashboard-border:var(--app-border-color);
   --dashboard-canvas:color-mix(in srgb,var(--app-bg-color) 86%,#145848);
   --dashboard-surface:var(--app-content-bg);
-  --dashboard-shadow:none;
+  --dashboard-shadow:var(--app-card-shadow);
   --dashboard-regular:#c1d0ca;
   --dashboard-secondary:#93a69e;
   --metric-label-color:#c1d0ca;
@@ -318,6 +344,11 @@ onMounted(refreshAll)
   .dashboard-page { padding:14px; }
   .page-header { align-items:flex-start; flex-direction:column; }
   .header-actions { width:100%; justify-content:space-between; }
+  .cloud-promo { align-items:flex-start; flex-direction:column; gap:12px; }
+  .cloud-promo__copy { grid-template-columns:1fr; gap:3px; }
+  .cloud-promo__copy p { white-space:normal; }
+  .cloud-promo__actions { width:100%; }
+  .cloud-promo__actions a { flex:1; justify-content:center; }
   .overview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .metric-card { min-height:108px; padding:16px; border-bottom:1px solid var(--dashboard-border); }
   .metric-card:nth-child(3n) { border-right:1px solid var(--dashboard-border); }

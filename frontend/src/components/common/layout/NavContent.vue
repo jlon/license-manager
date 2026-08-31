@@ -82,7 +82,7 @@ const userInfo = computed(() => userStore.userInfo)
 const userInitial = computed(() => userInfo.value?.username?.charAt(0).toUpperCase() || '?')
 const externalLinks = [
   { key: 'docs', url: 'https://docs.lm.cedar-v.com/' },
-  { key: 'github', url: 'https://github.com/cedar-v/license-manager' }
+  { key: 'cloud', url: 'https://cedar-v.com/products/cedar-license-cloud/index.html' }
 ] as const
 const languageOptions: Array<{ code: SupportedLocale; label: string }> = [
   { code: 'zh', label: '中文' },
@@ -119,22 +119,24 @@ const handleUserCommand = async (command: string) => {
 
 <style scoped>
 .topbar {
+  --topbar-text: #40574e;
+  --topbar-secondary: #687d74;
   position: fixed; top: 0; left: var(--layout-sidebar-width); right: 0; z-index: 1997;
   height: var(--layout-header-height); padding: 0 20px; display: flex; align-items: center;
   justify-content: space-between; gap: 16px; background: var(--app-nav-bg);
-  border-bottom: 1px solid var(--app-border-light); transition: left 0.2s ease;
+  border-bottom: 1px solid var(--app-border-light); color:var(--topbar-text); font-size:13px; transition: left 0.2s ease;
 }
 .topbar--collapsed { left: var(--layout-sidebar-collapsed-width); }
 .topbar__left,.topbar__right,.breadcrumb,.user-button,.language-button { display:flex; align-items:center; }
 .topbar__left,.topbar__right { min-width:0; gap:12px; }
-.icon-button,.language-button,.user-button,.text-button,.breadcrumb-link { border:0; background:transparent; color:var(--app-text-regular); cursor:pointer; }
+.icon-button,.language-button,.user-button,.text-button,.breadcrumb-link { border:0; background:transparent; color:var(--topbar-text); font:inherit; cursor:pointer; }
 .icon-button { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:0; flex-shrink:0; }
 .icon-button:hover,.language-button:hover,.user-button:hover { background:var(--el-color-primary-light-9); color:var(--el-color-primary); }
 .breadcrumb { min-width:0; gap:8px; white-space:nowrap; }
 .breadcrumb-link { padding:0; }
 .breadcrumb-link:hover { color:var(--el-color-primary); }
-.breadcrumb-current { color:var(--app-text-primary); font-weight:600; overflow:hidden; text-overflow:ellipsis; }
-.breadcrumb-separator { color:var(--app-text-secondary); }
+.breadcrumb-current { color:#1f372e; font-size:13px; font-weight:650; overflow:hidden; text-overflow:ellipsis; }
+.breadcrumb-separator { color:var(--topbar-secondary); }
 .external-links { display:flex; align-items:center; gap:4px; }
 .text-button { padding:6px 8px; border-radius:0; }
 .text-button:hover { color:var(--el-color-primary); background:var(--el-color-primary-light-9); }
@@ -143,6 +145,8 @@ const handleUserCommand = async (command: string) => {
 .user-name { max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .user-summary { min-width:180px; padding:10px 16px; display:flex; flex-direction:column; gap:3px; color:var(--app-text-primary); }
 .user-summary span { color:var(--app-text-secondary); font-size:12px; }
+:global([data-theme="dark"]) .topbar { --topbar-text:#c1d0ca; --topbar-secondary:#93a69e; }
+:global([data-theme="dark"]) .breadcrumb-current { color:var(--app-text-primary); }
 @media (min-width:768px) and (max-width:1023px) { .topbar,.topbar--collapsed { left:var(--layout-sidebar-collapsed-width); } .external-links { display:none; } }
 @media (max-width:767px) { .topbar,.topbar--collapsed { left:0; padding:0 12px; } .external-links,.language-button span,.user-name { display:none; } .topbar__right { gap:4px; } .breadcrumb { max-width:48vw; } }
 </style>

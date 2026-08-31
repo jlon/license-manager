@@ -1,18 +1,19 @@
 <template>
   <Layout app-name="Cedar-V" :page-title="pageTitle">
-    <div v-if="viewMode === 'list'" class="customer-page">
-      <header class="page-header">
+    <div v-if="viewMode === 'list'" class="customer-page data-list-page">
+      <header class="data-list-header">
         <div>
           <h1>{{ t('customers.title') }}</h1>
           <p>{{ t('customers.description') }}</p>
         </div>
-        <el-button type="primary" @click="openCreate">
+        <el-button type="primary" :icon="Plus" @click="openCreate">
           {{ t('customers.actions.add') }}
         </el-button>
       </header>
 
-      <section class="filter-card">
-        <el-alert v-if="enumError" :title="enumError" type="warning" show-icon :closable="false">
+      <section class="data-list-workspace">
+        <div class="data-list-filter">
+        <el-alert v-if="enumError" :title="enumError" type="warning" show-icon :closable="false" class="enum-alert">
           <template #default>
             <el-button link type="primary" @click="loadEnums">
               {{ t('customers.actions.retry') }}
@@ -20,7 +21,13 @@
           </template>
         </el-alert>
 
-        <div class="filter-grid">
+        <div class="filter-grid data-list-filter__grid">
+          <el-input
+            v-model="filters.keyword"
+            :placeholder="t('customers.search.placeholder')"
+            clearable
+            @keyup.enter="handleQuery"
+          />
           <el-select v-model="filters.customerType" :placeholder="t('customers.filter.customerType')" clearable>
             <el-option v-for="option in customerTypeOptions" :key="option.key" :label="option.display" :value="option.key" />
           </el-select>
@@ -30,21 +37,15 @@
           <el-select v-model="filters.status" :placeholder="t('customers.filter.status')" clearable>
             <el-option v-for="option in statusOptions" :key="option.key" :label="option.display" :value="option.key" />
           </el-select>
-          <el-input
-            v-model="filters.keyword"
-            :placeholder="t('customers.search.placeholder')"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-          <div class="filter-actions">
+          <div class="filter-actions data-list-filter__actions">
             <el-button type="primary" @click="handleQuery">{{ t('customers.actions.query') }}</el-button>
             <el-button @click="handleReset">{{ t('customers.actions.reset') }}</el-button>
           </div>
         </div>
-      </section>
+        </div>
 
-      <section class="table-card">
-        <el-alert v-if="listError" :title="listError" type="error" show-icon :closable="false" class="list-alert">
+        <div class="table-card data-list-table">
+        <el-alert v-if="listError" :title="listError" type="error" show-icon :closable="false" class="data-list-alert">
           <template #default>
             <el-button link type="primary" @click="loadCustomers">
               {{ t('customers.actions.retry') }}
@@ -52,12 +53,11 @@
           </template>
         </el-alert>
 
-        <div class="table-scroll">
+        <div class="table-scroll data-list-table__scroll">
           <el-table
             v-loading="loading"
             :data="customers"
             :element-loading-text="t('customers.table.loading')"
-            stripe
             row-key="id"
           >
             <el-table-column prop="customer_code" :label="t('customers.table.customerCode')" min-width="140" show-overflow-tooltip>
@@ -77,9 +77,9 @@
             <el-table-column :label="t('customers.table.createTime')" width="130" align="center">
               <template #default="{ row }">{{ formatDateShort(row.created_at) }}</template>
             </el-table-column>
-            <el-table-column :label="t('customers.table.operation')" fixed="right" width="300" align="center" class-name="operation-column">
+            <el-table-column :label="t('customers.table.operation')" fixed="right" width="310" align="center" class-name="operation-column">
               <template #default="{ row }">
-                <div class="desktop-actions">
+                <div class="data-list-actions">
                   <el-button link type="primary" @click="openLicenses(row)">{{ t('customers.actions.viewLicense') }}</el-button>
                   <el-button link type="primary" @click="openEdit(row)">{{ t('customers.actions.edit') }}</el-button>
                   <el-button
@@ -94,19 +94,6 @@
                     {{ t('customers.actions.delete') }}
                   </el-button>
                 </div>
-                <el-dropdown class="compact-actions" trigger="click" @command="handleRowCommand($event, row)">
-                  <el-button link type="primary">{{ t('customers.actions.more') }}</el-button>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item command="licenses">{{ t('customers.actions.viewLicense') }}</el-dropdown-item>
-                      <el-dropdown-item command="edit">{{ t('customers.actions.edit') }}</el-dropdown-item>
-                      <el-dropdown-item command="status">
-                        {{ row.status === 'active' ? t('customers.actions.disable') : t('customers.actions.enable') }}
-                      </el-dropdown-item>
-                      <el-dropdown-item command="delete" divided>{{ t('customers.actions.delete') }}</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
               </template>
             </el-table-column>
             <template #empty>
@@ -115,17 +102,18 @@
           </el-table>
         </div>
 
-        <div class="pagination-row">
+        <div class="pagination-row data-list-pagination">
           <el-pagination
             v-model:current-page="pagination.page"
             v-model:page-size="pagination.pageSize"
-            :page-sizes="[16, 32, 50, 100]"
+            :page-sizes="[10, 20, 50, 100]"
             :total="pagination.total"
             layout="total, sizes, prev, pager, next, jumper"
             :pager-count="5"
             @size-change="handleSizeChange"
             @current-change="loadCustomers"
           />
+        </div>
         </div>
       </section>
     </div>
@@ -146,6 +134,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { Plus } from '@element-plus/icons-vue'
 import Layout from '@/components/common/layout/Layout.vue'
 import CustomerForm from './CustomerForm.vue'
 import CustomerView from './CustomerView.vue'
@@ -166,7 +155,6 @@ import { formatDateShort } from '@/utils/date'
 import { getErrorMessage } from '@/utils/error'
 
 type ViewMode = 'list' | 'form' | 'detail'
-type RowCommand = 'licenses' | 'edit' | 'status' | 'delete'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -179,7 +167,7 @@ const listError = ref('')
 const enumError = ref('')
 const actionId = ref('')
 const filters = reactive({ customerType: '', customerLevel: '', status: '', keyword: '' })
-const pagination = reactive({ page: 1, pageSize: 16, total: 0 })
+const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 const customerTypeOptions = ref<RawEnumItem[]>([])
 const customerLevelOptions = ref<RawEnumItem[]>([])
 const statusOptions = ref<RawEnumItem[]>([])
@@ -320,13 +308,6 @@ const removeCustomer = async (customer: Customer) => {
   }
 }
 
-const handleRowCommand = (command: RowCommand, customer: Customer) => {
-  if (command === 'licenses') openLicenses(customer)
-  if (command === 'edit') openEdit(customer)
-  if (command === 'status') toggleStatus(customer)
-  if (command === 'delete') removeCustomer(customer)
-}
-
 onMounted(() => {
   loadEnums()
   loadCustomers()
@@ -334,35 +315,14 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.customer-page { display:flex; flex-direction:column; gap:16px; min-width:0; padding:var(--layout-content-padding); box-sizing:border-box; }
-.page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
-.page-header h1 { margin:0; color:var(--app-text-primary); font-size:24px; line-height:1.35; }
-.page-header p { margin:4px 0 0; color:var(--app-text-secondary); font-size:13px; }
-.filter-card,.table-card { background:var(--app-content-bg); border:1px solid var(--app-border-color); border-radius:var(--app-card-radius); box-shadow:var(--app-card-shadow); }
-.filter-card { display:flex; flex-direction:column; gap:12px; padding:16px; }
-.filter-grid { display:grid; grid-template-columns:repeat(3,minmax(140px,180px)) minmax(220px,1fr) auto; gap:12px; align-items:center; }
-.filter-actions { display:flex; justify-content:flex-end; gap:8px; }
-.table-card { min-width:0; overflow:hidden; }
-.list-alert { margin:16px 16px 0; }
-.table-scroll { width:100%; overflow-x:auto; }
-.desktop-actions { display:flex; align-items:center; justify-content:center; white-space:nowrap; }
-.compact-actions { display:none; }
-.pagination-row { display:flex; justify-content:flex-end; padding:16px; border-top:1px solid var(--app-border-color); overflow-x:auto; }
+.filter-grid { grid-template-columns:minmax(280px,420px) repeat(3,160px) auto; }
+.enum-alert { margin-bottom:12px; }
 
 @media (max-width:1200px) {
   .filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .filter-actions { justify-content:flex-start; }
-  :deep(.operation-column) { width:100px !important; }
-  .desktop-actions { display:none; }
-  .compact-actions { display:inline-flex; }
 }
 
 @media (max-width:768px) {
-  .customer-page { padding:12px; }
-  .page-header { align-items:stretch; flex-direction:column; }
-  .page-header .el-button { width:100%; }
   .filter-grid { grid-template-columns:1fr; }
-  .filter-actions .el-button { flex:1; }
-  .pagination-row { justify-content:flex-start; }
 }
 </style>

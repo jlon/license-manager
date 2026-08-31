@@ -37,6 +37,8 @@
     "welcomeSubtitle": "Sign in to your account to continue",
     "communityEdition": "Open Source Community Edition",
     "brandNote": "Open and reliable software licensing essentials.",
+    "cloudPrompt": "Prefer a managed cloud service?",
+    "cloudLink": "Explore Cedar License Cloud",
     "flow": {
       "issue": "ISSUE",
       "verify": "VERIFY",
@@ -53,6 +55,13 @@
     "eyebrow": "Community Overview",
     "heading": "License Overview",
     "description": "Monitor the community edition's existing license volume, trends, and recent records.",
+    "cloudPromo": {
+      "eyebrow": "MANAGED CLOUD",
+      "title": "Cedar License Cloud",
+      "description": "Skip deployment and operations. Integrate licensing quickly with AI-native APIs.",
+      "learnMore": "Learn more",
+      "tryFree": "Try free"
+    },
     "updatedAt": "Updated at {time}",
     "refresh": "Refresh",
     "overviewTitle": "License statistics",
@@ -130,7 +139,8 @@
     },
     "external": {
       "docs": "Docs",
-      "github": "GitHub"
+      "github": "GitHub",
+      "cloud": "License Cloud"
     },
     "breadcrumb": {
       "dashboard": "Dashboard",
@@ -274,7 +284,7 @@
         "title": "License List",
         "customerTitle": "Licenses for {name}",
         "description": "Search and manage customer licenses and review activation usage.",
-        "createLicense": "Create License",
+        "createLicense": "New License",
         "filter": {
           "label": "Filter:",
           "customerPlaceholder": "Select Customer",
@@ -299,6 +309,7 @@
           "lock": "Lock",
           "unlock": "Unlock",
           "delete": "Delete",
+          "more": "More actions",
           "retry": "Retry"
         },
         "status": {
@@ -774,10 +785,11 @@
     "title": "Customer Management",
     "description": "Manage customer profiles, status, and related licenses in one place.",
     "viewCustomer": "View Customer",
-    "addCustomer": "Add New Customer",
+    "addCustomer": "New Customer",
     "editCustomer": "Edit Customer",
     "actions": {
-      "add": "Add New Customer",
+      "add": "New Customer",
+      "view": "View",
       "edit": "Edit",
       "delete": "Delete",
       "enable": "Enable",

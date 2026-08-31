@@ -1,7 +1,7 @@
 <template>
   <Layout app-name="Cedar-V" :page-title="t('enterpriseLeads.title')">
-    <div class="lead-page">
-      <header class="page-header">
+    <div class="lead-page data-list-page">
+      <header class="data-list-header">
         <div>
           <h1>{{ t('enterpriseLeads.title') }}</h1>
           <p>{{ t('enterpriseLeads.description') }}</p>
@@ -23,8 +23,9 @@
         </article>
       </section>
 
-      <section class="filter-card">
-        <div class="filter-grid">
+      <section class="data-list-workspace">
+        <div class="filter-card data-list-filter">
+        <div class="filter-grid data-list-filter__grid">
           <el-input
             v-model="filters.keyword"
             :placeholder="t('enterpriseLeads.filter.searchPlaceholder')"
@@ -38,29 +39,29 @@
             <el-option :label="t('enterpriseLeads.status.completed')" value="completed" />
             <el-option :label="t('enterpriseLeads.status.rejected')" value="rejected" />
           </el-select>
-          <div class="filter-actions">
+          <div class="filter-actions data-list-filter__actions">
             <el-button type="primary" :icon="Search" @click="handleFilter">{{ t('enterpriseLeads.actions.query') }}</el-button>
             <el-button @click="handleReset">{{ t('enterpriseLeads.actions.reset') }}</el-button>
           </div>
         </div>
-      </section>
+        </div>
 
-      <section class="table-card">
-        <div class="table-heading">
+        <div class="table-card data-list-table">
+        <div class="table-heading data-list-table__heading">
           <div>
             <h2>{{ t('enterpriseLeads.table.title') }}</h2>
             <span>{{ total.toLocaleString() }} {{ t('enterpriseLeads.table.unit') }}</span>
           </div>
         </div>
 
-        <el-alert v-if="listError" :title="listError" type="error" show-icon :closable="false" class="list-alert">
+        <el-alert v-if="listError" :title="listError" type="error" show-icon :closable="false" class="data-list-alert">
           <template #default>
             <el-button link type="primary" @click="fetchData">{{ t('enterpriseLeads.actions.retry') }}</el-button>
           </template>
         </el-alert>
 
-        <div class="table-scroll">
-          <el-table v-loading="loading" :data="tableData" stripe row-key="id">
+        <div class="table-scroll data-list-table__scroll">
+          <el-table v-loading="loading" :data="tableData" row-key="id">
             <el-table-column prop="id" :label="t('enterpriseLeads.table.id')" min-width="150" show-overflow-tooltip />
             <el-table-column prop="company_name" :label="t('enterpriseLeads.table.company')" min-width="180" show-overflow-tooltip />
             <el-table-column prop="contact_name" :label="t('enterpriseLeads.table.contact')" min-width="110" />
@@ -75,21 +76,11 @@
             </el-table-column>
             <el-table-column :label="t('enterpriseLeads.table.actions')" width="210" fixed="right" align="center" class-name="operation-column">
               <template #default="{ row }">
-                <div class="desktop-actions">
+                <div class="data-list-actions">
                   <el-button link type="primary" @click="handleView(row)">{{ t('enterpriseLeads.actions.view') }}</el-button>
                   <el-button link type="primary" @click="handleEdit(row)">{{ t('enterpriseLeads.actions.edit') }}</el-button>
                   <el-button link type="danger" @click="handleDelete(row)">{{ t('enterpriseLeads.actions.delete') }}</el-button>
                 </div>
-                <el-dropdown class="compact-actions" trigger="click" @command="handleRowCommand($event, row)">
-                  <el-button link type="primary">{{ t('enterpriseLeads.actions.more') }}</el-button>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item command="view">{{ t('enterpriseLeads.actions.view') }}</el-dropdown-item>
-                      <el-dropdown-item command="edit">{{ t('enterpriseLeads.actions.edit') }}</el-dropdown-item>
-                      <el-dropdown-item command="delete" divided>{{ t('enterpriseLeads.actions.delete') }}</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
               </template>
             </el-table-column>
             <template #empty>
@@ -98,7 +89,7 @@
           </el-table>
         </div>
 
-        <div class="pagination-row">
+        <div class="pagination-row data-list-pagination">
           <el-pagination
             v-model:current-page="page"
             v-model:page-size="pageSize"
@@ -109,6 +100,7 @@
             @current-change="fetchData"
             @size-change="handleSizeChange"
           />
+        </div>
         </div>
       </section>
     </div>
@@ -243,12 +235,6 @@ const handleEdit = (row: Lead) => {
   editVisible.value = true
 }
 
-const handleRowCommand = (command: string, row: Lead) => {
-  if (command === 'view') handleView(row)
-  else if (command === 'edit') handleEdit(row)
-  else if (command === 'delete') handleDelete(row)
-}
-
 const statusTagType = (status: string): 'primary' | 'success' | 'warning' | 'info' => {
   if (status === 'completed') return 'success'
   if (status === 'pending') return 'warning'
@@ -303,44 +289,19 @@ const handleUpdate = async (updatedData: any) => {
 </script>
 
 <style scoped>
-.lead-page {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-width: 0;
-  padding: var(--layout-content-padding);
-  box-sizing: border-box;
-}
-
-.page-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.page-header h1,
 .table-heading h2 {
   margin: 0;
   color: var(--app-text-primary);
 }
 
-.page-header h1 {
-  font-size: 24px;
-  line-height: 1.35;
-}
-
-.page-header p {
-  margin: 4px 0 0;
-  color: var(--app-text-secondary);
-  font-size: 13px;
-}
-
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  min-height: 96px;
+  min-height: 94px;
+  overflow: hidden;
+  background: var(--list-surface);
+  border: 1px solid var(--list-border);
+  box-shadow: var(--list-shadow);
 }
 
 .metric-card {
@@ -348,14 +309,14 @@ const handleUpdate = async (updatedData: any) => {
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: 14px;
-  padding: 16px;
-  background: var(--app-content-bg);
-  border: 1px solid var(--app-border-color);
-  border-left: 4px solid var(--metric-color);
-  border-radius: var(--app-card-radius);
-  box-shadow: var(--app-card-shadow);
+  gap: 13px;
+  padding: 16px 20px;
+  background: var(--list-surface);
+  border-right: 1px solid var(--list-border);
 }
+
+.metric-card:last-child { border-right: 0; }
+.metric-card--brand { background: color-mix(in srgb, var(--list-surface) 86%, #c8ecde); }
 
 .metric-card--warning { --metric-color: var(--el-color-warning); }
 .metric-card--info { --metric-color: var(--el-color-info); }
@@ -363,15 +324,15 @@ const handleUpdate = async (updatedData: any) => {
 
 .metric-icon {
   display: flex;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
   border-radius: 0;
   background: color-mix(in srgb, var(--metric-color) 12%, transparent);
   color: var(--metric-color);
-  font-size: 22px;
+  font-size: 20px;
 }
 
 .metric-content {
@@ -383,97 +344,24 @@ const handleUpdate = async (updatedData: any) => {
 
 .metric-label {
   overflow: hidden;
-  color: var(--app-text-secondary);
-  font-size: 13px;
+  color: var(--list-secondary);
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .metric-value {
-  color: var(--app-text-primary);
-  font-size: 26px;
+  color: var(--list-text);
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
   line-height: 1.2;
-}
-
-.filter-card,
-.table-card {
-  background: var(--app-content-bg);
-  border: 1px solid var(--app-border-color);
-  border-radius: var(--app-card-radius);
-  box-shadow: var(--app-card-shadow);
-}
-
-.filter-card {
-  padding: 16px;
 }
 
 .filter-grid {
   display: grid;
-  grid-template-columns: minmax(240px, 1fr) minmax(160px, 220px) auto;
+  grid-template-columns: minmax(320px, 520px) 220px auto;
   gap: 12px;
   align-items: center;
-}
-
-.filter-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.table-card {
-  min-width: 0;
-  overflow: hidden;
-}
-
-.table-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  border-bottom: 1px solid var(--app-border-color);
-}
-
-.table-heading > div {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-
-.table-heading h2 {
-  font-size: 16px;
-}
-
-.table-heading span {
-  color: var(--app-text-secondary);
-  font-size: 12px;
-}
-
-.list-alert {
-  margin: 16px 16px 0;
-}
-
-.table-scroll {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.desktop-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-}
-
-.compact-actions {
-  display: none;
-}
-
-.pagination-row {
-  display: flex;
-  justify-content: flex-end;
-  padding: 16px;
-  border-top: 1px solid var(--app-border-color);
-  overflow-x: auto;
 }
 
 @media (max-width: 1200px) {
@@ -481,45 +369,25 @@ const handleUpdate = async (updatedData: any) => {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  :deep(.operation-column) {
-    width: 100px !important;
-  }
+  .metric-card:nth-child(2n) { border-right: 0; }
+  .metric-card:nth-child(-n + 2) { border-bottom: 1px solid var(--list-border); }
 
-  .desktop-actions {
-    display: none;
-  }
-
-  .compact-actions {
-    display: inline-flex;
-  }
 }
 
 @media (max-width: 768px) {
-  .lead-page {
-    padding: 12px;
-  }
-
-  .page-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .page-header .el-button {
-    width: 100%;
-  }
-
   .metrics-grid,
   .filter-grid {
     grid-template-columns: 1fr;
   }
 
-  .filter-actions .el-button {
-    flex: 1;
+  .metric-card,
+  .metric-card:nth-child(2n) {
+    border-right: 0;
+    border-bottom: 1px solid var(--list-border);
   }
 
-  .pagination-row {
-    justify-content: flex-start;
-  }
+  .metric-card:last-child { border-bottom: 0; }
+
 }
 
 @media (max-width: 480px) {
