@@ -29,35 +29,35 @@ const chartOption = computed(() => {
   const totalValues = props.data.map(item => item.total_authorizations)
   return {
     animationDuration: 350,
-    color: ['#019c7c', '#4f8ef7', '#e89b24'],
+    color: ['#019c7c', '#66c9a9', '#d94c4c'],
     grid: { left: '3%', right: '3%', top: 48, bottom: 12, containLabel: true },
     legend: {
       top: 8,
-      icon: 'roundRect',
+      icon: 'rect',
       itemWidth: 12,
       itemHeight: 8,
-      textStyle: { color: appStore.isDark ? '#cfd3dc' : '#606266' },
+      textStyle: { color: appStore.isDark ? '#c1d0ca' : '#40574e' },
       data: [totalName, newName, expiredName]
     },
     xAxis: {
       type: 'category',
       boundaryGap: false,
       data: props.data.map(item => item.date.substring(5)),
-      axisLine: { lineStyle: { color: appStore.isDark ? '#606266' : '#dcdfe6' } },
+      axisLine: { lineStyle: { color: appStore.isDark ? '#606266' : '#dceae5' } },
       axisTick: { show: false },
-      axisLabel: { color: appStore.isDark ? '#cfd3dc' : '#606266', fontSize: 12, hideOverlap: true }
+      axisLabel: { color: appStore.isDark ? '#c1d0ca' : '#52685f', fontSize: 12, hideOverlap: true }
     },
     yAxis: [
       {
         type: 'value', min: 0, minInterval: 1,
         axisLine: { show: false }, axisTick: { show: false },
-        axisLabel: { color: appStore.isDark ? '#cfd3dc' : '#606266', fontSize: 12 },
-        splitLine: { lineStyle: { color: appStore.isDark ? '#414243' : '#ebeef5' } }
+        axisLabel: { color: appStore.isDark ? '#c1d0ca' : '#52685f', fontSize: 12 },
+        splitLine: { lineStyle: { color: appStore.isDark ? '#414243' : '#e7f0ec' } }
       },
       {
         type: 'value', min: 0, minInterval: 1,
         axisLine: { show: false }, axisTick: { show: false }, splitLine: { show: false },
-        axisLabel: { color: appStore.isDark ? '#cfd3dc' : '#606266', fontSize: 12 }
+        axisLabel: { color: appStore.isDark ? '#c1d0ca' : '#52685f', fontSize: 12 }
       }
     ],
     tooltip: {
@@ -66,13 +66,13 @@ const chartOption = computed(() => {
       confine: true,
       backgroundColor: appStore.isDark ? '#2d2d2d' : '#ffffff',
       borderColor: appStore.isDark ? '#414243' : '#e4e7ed',
-      textStyle: { color: appStore.isDark ? '#ffffff' : '#303133' }
+      textStyle: { color: appStore.isDark ? '#ffffff' : '#294138' }
     },
     series: [
       {
         name: totalName, type: 'line', yAxisIndex: 0,
         data: totalValues, smooth: true, showSymbol: totalValues.length <= 31, symbolSize: 6,
-        lineStyle: { width: 3 }, areaStyle: { color: 'rgba(1, 156, 124, 0.10)' }, emphasis: { focus: 'series' }
+        lineStyle: { width: 3 }, areaStyle: { color: 'rgba(1, 156, 124, 0.08)' }, emphasis: { focus: 'series' }
       },
       {
         name: newName, type: 'bar', yAxisIndex: 1, stack: 'daily', barMaxWidth: 16,

@@ -51,7 +51,7 @@
   "dashboard": {
     "title": "ダッシュボード",
     "eyebrow": "コミュニティ版概要",
-    "heading": "ライセンス運用概要",
+    "heading": "ライセンス概要",
     "description": "コミュニティ版の既存ライセンス数、傾向、最近の記録を確認します。",
     "updatedAt": "{time} に更新",
     "refresh": "更新",
@@ -60,6 +60,7 @@
     "trendTitle": "認可の推移",
     "trendDescription": "直近7日間、30日間、または指定期間の認可数の変化を確認します。",
     "trendSummary": {
+      "title": "期間サマリー",
       "total": "期間末の認可総数",
       "new": "期間内の新規",
       "expired": "期間内の期限切れ",

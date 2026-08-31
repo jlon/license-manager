@@ -51,7 +51,7 @@
   "dashboard": {
     "title": "仪表盘",
     "eyebrow": "社区版概览",
-    "heading": "授权运营概览",
+    "heading": "授权概览",
     "description": "集中查看社区版现有授权规模、趋势和近期记录。",
     "updatedAt": "更新于 {time}",
     "refresh": "刷新",
@@ -60,6 +60,7 @@
     "trendTitle": "授权趋势",
     "trendDescription": "查看最近7天、最近30天或自定义范围内的授权变化。",
     "trendSummary": {
+      "title": "本期摘要",
       "total": "期末授权总量",
       "new": "期间新增",
       "expired": "期间到期",

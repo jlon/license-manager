@@ -51,7 +51,7 @@
   "dashboard": {
     "title": "Dashboard",
     "eyebrow": "Community Overview",
-    "heading": "License Operations Overview",
+    "heading": "License Overview",
     "description": "Monitor the community edition's existing license volume, trends, and recent records.",
     "updatedAt": "Updated at {time}",
     "refresh": "Refresh",
@@ -60,6 +60,7 @@
     "trendTitle": "Authorization Trend",
     "trendDescription": "View authorization changes over the last 7 days, 30 days, or a custom range.",
     "trendSummary": {
+      "title": "Period summary",
       "total": "Ending Total",
       "new": "New in Period",
       "expired": "Expired in Period",

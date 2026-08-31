@@ -1,35 +1,31 @@
 <template>
   <Layout app-name="Cedar-V" :page-title="t('dashboard.title')">
     <div class="dashboard-page">
-      <header class="page-header">
-        <div>
-          <p class="eyebrow">{{ t('dashboard.eyebrow') }}</p>
+      <section class="overview-panel">
+        <header class="page-header">
           <h1>{{ t('dashboard.heading') }}</h1>
-          <p class="page-description">{{ t('dashboard.description') }}</p>
-        </div>
-        <div class="header-actions">
-          <span v-if="lastUpdatedAt" class="updated-at">{{ t('dashboard.updatedAt', { time: lastUpdatedAt }) }}</span>
-          <el-button :icon="Refresh" :loading="refreshing" @click="refreshAll">{{ t('dashboard.refresh') }}</el-button>
-        </div>
-      </header>
-
-      <section class="overview-grid" :aria-label="t('dashboard.overviewTitle')">
-        <article v-for="card in statCards" :key="card.key" class="metric-card" :class="`metric-card--${card.tone}`">
-          <div class="metric-icon"><el-icon><component :is="card.icon" /></el-icon></div>
-          <div class="metric-content">
-            <span class="metric-label">{{ card.label }}</span>
-            <el-skeleton v-if="statsLoading && !stats" animated :rows="1" />
-            <strong v-else class="metric-value">{{ stats ? card.value : '--' }}</strong>
-            <span class="metric-help">{{ stats ? card.help : statsError || t('dashboard.noData') }}</span>
+          <div class="header-actions">
+            <span v-if="lastUpdatedAt" class="updated-at">{{ t('dashboard.updatedAt', { time: lastUpdatedAt }) }}</span>
+            <el-button :icon="Refresh" :loading="refreshing" @click="refreshAll">{{ t('dashboard.refresh') }}</el-button>
           </div>
-        </article>
+        </header>
+
+        <section class="overview-grid" :aria-label="t('dashboard.overviewTitle')">
+          <article v-for="card in statCards" :key="card.key" class="metric-card" :class="`metric-card--${card.tone}`">
+            <div class="metric-content">
+              <span class="metric-label">{{ card.label }}</span>
+              <el-skeleton v-if="statsLoading && !stats" animated :rows="1" />
+              <strong v-else class="metric-value">{{ stats ? card.value : '--' }}</strong>
+              <span class="metric-help">{{ stats ? card.help : statsError || t('dashboard.noData') }}</span>
+            </div>
+          </article>
+        </section>
       </section>
 
       <section class="panel trend-panel">
         <div class="panel-header trend-header">
           <div>
             <h2>{{ t('dashboard.trendTitle') }}</h2>
-            <p>{{ t('dashboard.trendDescription') }}</p>
           </div>
           <div class="trend-controls">
             <el-radio-group v-model="trendType" size="small" @change="handleTrendTypeChange">
@@ -57,13 +53,18 @@
             <el-button link type="primary" @click="loadTrend">{{ t('dashboard.retry') }}</el-button>
           </div>
           <template v-else>
-            <div v-if="trendSummary" class="trend-summary">
-              <div v-for="item in trendSummaryItems" :key="item.key" class="trend-summary__item">
-                <span>{{ item.label }}</span>
-                <strong>{{ item.value }}</strong>
+            <div class="trend-layout">
+              <div class="trend-chart-area">
+                <LicenseTrendChart :data="trendData" :empty-text="t('dashboard.noTrendData')" />
               </div>
+              <aside v-if="trendSummary" class="trend-summary" :aria-label="t('dashboard.trendSummary.title')">
+                <h3>{{ t('dashboard.trendSummary.title') }}</h3>
+                <div v-for="item in trendSummaryItems" :key="item.key" class="trend-summary__item">
+                  <span>{{ item.label }}</span>
+                  <strong>{{ item.value }}</strong>
+                </div>
+              </aside>
             </div>
-            <LicenseTrendChart :data="trendData" :empty-text="t('dashboard.noTrendData')" />
           </template>
         </div>
       </section>
@@ -72,7 +73,6 @@
         <div class="panel-header">
           <div>
             <h2>{{ t('dashboard.recentLicenses.title') }}</h2>
-            <p>{{ t('dashboard.recentDescription') }}</p>
           </div>
           <el-button link type="primary" @click="router.push({ name: 'licenses-list' })">{{ t('dashboard.viewAll') }}</el-button>
         </div>
@@ -86,7 +86,6 @@
             v-else
             v-loading="recentLoading"
             :data="recentData"
-            stripe
             @row-click="openAuthorization"
           >
             <el-table-column prop="customer_name" :label="t('dashboard.recentLicenses.columns.customerName')" min-width="150" show-overflow-tooltip />
@@ -109,10 +108,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, markRaw, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { Bell, CircleCheck, Clock, Key, Plus, Refresh, Warning, WarningFilled } from '@element-plus/icons-vue'
+import { Refresh, WarningFilled } from '@element-plus/icons-vue'
 import Layout from '@/components/common/layout/Layout.vue'
 import LicenseTrendChart from '@/components/charts/LicenseTrendChart.vue'
 import {
@@ -147,12 +146,12 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 const statCards = computed(() => {
   const data = stats.value
   return [
-    { key: 'total', label: t('dashboard.stats.totalAuthCodes'), value: data?.total_auth_codes ?? 0, help: t('dashboard.stats.subText.monthNew', { n: data?.month_new_auth_codes ?? 0 }), tone: 'brand', icon: markRaw(Key) },
-    { key: 'active', label: t('dashboard.stats.activeLicenses'), value: data?.active_licenses ?? 0, help: t('dashboard.stats.subText.vsLastMonth', { rate: formatRate(data?.growth_rate?.licenses_mom) }), tone: 'success', icon: markRaw(CircleCheck) },
-    { key: 'today', label: t('dashboard.stats.todayNewLicenses'), value: data?.today_new_licenses ?? 0, help: t('dashboard.stats.subText.yesterday', { n: data?.yesterday_new_licenses ?? 0 }), tone: 'neutral', icon: markRaw(Plus) },
-    { key: 'due7', label: t('dashboard.stats.expiringIn7Days'), value: data?.expiring_in_7days ?? 0, help: (data?.expiring_in_7days ?? 0) > 0 ? t('dashboard.stats.subText.urgent') : t('dashboard.stats.subText.noRisk'), tone: 'danger', icon: markRaw(Warning) },
-    { key: 'due30', label: t('dashboard.stats.expiringIn30Days'), value: data?.expiring_in_30days ?? 0, help: t('dashboard.stats.subText.expiryReminder'), tone: 'warning', icon: markRaw(Clock) },
-    { key: 'alerts', label: t('dashboard.stats.abnormalAlerts'), value: data?.abnormal_alerts ?? 0, help: t('dashboard.stats.subText.heartbeatTimeout'), tone: 'danger', icon: markRaw(Bell) }
+    { key: 'total', label: t('dashboard.stats.totalAuthCodes'), value: data?.total_auth_codes ?? 0, help: t('dashboard.stats.subText.monthNew', { n: data?.month_new_auth_codes ?? 0 }), tone: 'brand' },
+    { key: 'active', label: t('dashboard.stats.activeLicenses'), value: data?.active_licenses ?? 0, help: t('dashboard.stats.subText.vsLastMonth', { rate: formatRate(data?.growth_rate?.licenses_mom) }), tone: 'success' },
+    { key: 'today', label: t('dashboard.stats.todayNewLicenses'), value: data?.today_new_licenses ?? 0, help: t('dashboard.stats.subText.yesterday', { n: data?.yesterday_new_licenses ?? 0 }), tone: 'neutral' },
+    { key: 'due7', label: t('dashboard.stats.expiringIn7Days'), value: data?.expiring_in_7days ?? 0, help: (data?.expiring_in_7days ?? 0) > 0 ? t('dashboard.stats.subText.urgent') : t('dashboard.stats.subText.noRisk'), tone: (data?.expiring_in_7days ?? 0) > 0 ? 'danger' : 'neutral' },
+    { key: 'due30', label: t('dashboard.stats.expiringIn30Days'), value: data?.expiring_in_30days ?? 0, help: t('dashboard.stats.subText.expiryReminder'), tone: (data?.expiring_in_30days ?? 0) > 0 ? 'warning' : 'neutral' },
+    { key: 'alerts', label: t('dashboard.stats.abnormalAlerts'), value: data?.abnormal_alerts ?? 0, help: t('dashboard.stats.subText.heartbeatTimeout'), tone: (data?.abnormal_alerts ?? 0) > 0 ? 'danger' : 'neutral' }
   ]
 })
 const trendSummaryItems = computed(() => {
@@ -212,43 +211,65 @@ onMounted(refreshAll)
 
 <style lang="scss" scoped>
 .dashboard-page {
-  --dashboard-border: var(--app-border-color);
-  --dashboard-surface-muted: color-mix(in srgb, var(--app-bg-color) 78%, var(--app-content-bg));
-  --dashboard-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-  padding: var(--layout-content-padding);
+  --dashboard-border:#cfe0d9;
+  --dashboard-canvas:#eef6f2;
+  --dashboard-surface:#fff;
+  --dashboard-shadow:0 7px 22px rgba(20,88,70,.055);
+  --dashboard-text:var(--app-text-primary);
+  --dashboard-regular:#40574e;
+  --dashboard-secondary:#6f827a;
+  --metric-label-color:#40574e;
+  --metric-help-color:#6f827a;
+  --metric-number-color:#183129;
+  min-height:calc(100vh - var(--layout-header-height));
+  padding:24px;
   display:flex;
   flex-direction:column;
-  gap:var(--layout-content-gap);
+  gap:18px;
+  background:var(--dashboard-canvas);
 }
-.page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
-.eyebrow { margin:0 0 4px; color:var(--el-color-primary); font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
-.page-header h1 { margin:0; color:var(--app-text-primary); font-size:24px; line-height:1.35; }
-.page-description,.panel-header p { margin:4px 0 0; color:var(--app-text-secondary); font-size:13px; }
+.overview-panel { overflow:hidden; background:var(--dashboard-surface); border:1px solid var(--dashboard-border); box-shadow:var(--dashboard-shadow); }
+.page-header { min-height:58px; padding:10px 20px; display:flex; align-items:center; justify-content:space-between; gap:20px; border-bottom:1px solid var(--dashboard-border); }
+.page-header h1 { margin:0; color:var(--dashboard-text); font-size:20px; font-weight:650; line-height:1.3; letter-spacing:-.015em; }
 .header-actions { display:flex; align-items:center; gap:12px; flex-shrink:0; }
-.updated-at { color:var(--app-text-secondary); font-size:12px; }
-.overview-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
-.metric-card { --metric:#64748b; min-height:112px; padding:18px; display:flex; align-items:center; gap:14px; background:var(--app-content-bg); border:1px solid var(--dashboard-border); border-left:4px solid var(--metric); border-radius:0; box-shadow:var(--dashboard-shadow); }
-.metric-card--brand{--metric:#019c7c}.metric-card--success{--metric:#39a56b}.metric-card--warning{--metric:#e89b24}.metric-card--danger{--metric:#e45b5b}
-.metric-icon { width:42px; height:42px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1px solid color-mix(in srgb,var(--metric) 30%,transparent); border-radius:0; background:color-mix(in srgb,var(--metric) 10%,transparent); color:var(--metric); font-size:22px; }
+.updated-at { color:var(--dashboard-secondary); font-size:12px; }
+.overview-grid { position:relative; display:grid; grid-template-columns:1.2fr repeat(5,minmax(0,1fr)); overflow:hidden; background:var(--dashboard-surface); }
+.metric-card { --metric:var(--metric-number-color); min-width:0; min-height:118px; padding:19px 20px; display:flex; align-items:center; background:var(--dashboard-surface); border-right:1px solid var(--dashboard-border); }
+.metric-card:last-child { border-right:0; }
+.metric-card--brand { --metric:#008c70; background:color-mix(in srgb,var(--dashboard-surface) 82%,#bcebd9); }
+.metric-card--success { --metric:#13765f; }
+.metric-card--warning { --metric:#c67d0a; }
+.metric-card--danger { --metric:#cf4545; }
 .metric-content { min-width:0; display:flex; flex:1; flex-direction:column; gap:3px; }
-.metric-label { color:var(--app-text-regular); font-size:13px; }
-.metric-value { color:var(--app-text-primary); font-size:28px; line-height:1.2; }
-.metric-help { min-height:18px; overflow:hidden; color:var(--app-text-secondary); font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
-.panel { overflow:hidden; background:var(--app-content-bg); border:1px solid var(--dashboard-border); border-radius:0; box-shadow:var(--dashboard-shadow); }
-.panel-header { min-height:66px; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:16px; border-bottom:1px solid var(--app-border-light); }
-.panel-header h2 { margin:0; color:var(--app-text-primary); font-size:16px; }
+.metric-label { color:var(--metric-label-color); font-size:14px; font-weight:500; letter-spacing:.01em; }
+.metric-value { color:var(--metric); font-size:32px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.025em; line-height:1.15; }
+.metric-help { min-height:18px; overflow:hidden; color:var(--metric-help-color); font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
+.panel { overflow:hidden; background:var(--dashboard-surface); border:1px solid var(--dashboard-border); border-radius:0; box-shadow:var(--dashboard-shadow); }
+.panel-header { min-height:64px; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; border-bottom:1px solid var(--dashboard-border); }
+.panel-header h2 { margin:0; color:var(--dashboard-text); font-size:17px; }
 .trend-controls { display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; }
-.panel-body { min-height:120px; padding:12px 18px 18px; }
-.chart-body { min-height:280px; }
-.trend-summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; padding:4px 0 10px; }
-.trend-summary__item { min-width:0; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--dashboard-surface-muted); border:1px solid var(--dashboard-border); border-radius:0; }
-.trend-summary__item span { overflow:hidden; color:var(--app-text-secondary); font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
-.trend-summary__item strong { color:var(--app-text-primary); font-size:16px; }
-.state-block { min-height:220px; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--app-text-secondary); }
-.table-wrap { overflow-x:auto; }
+.panel-body { min-height:120px; padding:0; }
+.chart-body { min-height:310px; }
+.trend-layout { min-height:310px; display:grid; grid-template-columns:minmax(0,3fr) minmax(220px,1fr); }
+.trend-chart-area { min-width:0; padding:12px 18px 8px; }
+.trend-summary { padding:22px 20px; display:flex; flex-direction:column; justify-content:center; background:color-mix(in srgb,var(--dashboard-surface) 94%,#bcebd9); border-left:1px solid var(--dashboard-border); }
+.trend-summary h3 { margin:0 0 12px; color:var(--dashboard-regular); font-size:13px; font-weight:600; }
+.trend-summary__item { min-width:0; padding:13px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; border-bottom:1px solid var(--dashboard-border); }
+.trend-summary__item:last-child { border-bottom:0; }
+.trend-summary__item span { overflow:hidden; color:var(--dashboard-secondary); font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
+.trend-summary__item strong { color:var(--dashboard-text); font-size:18px; font-variant-numeric:tabular-nums; }
+.state-block { min-height:220px; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--dashboard-secondary); }
+.table-wrap { padding:0 20px 12px; overflow-x:auto; }
 .table-wrap :deep(.el-table) { border-radius:0; }
 .table-wrap :deep(.el-table__row) { cursor:pointer; }
-.table-wrap :deep(.el-table__header th.el-table__cell) { background:var(--dashboard-surface-muted); }
+.table-wrap :deep(.el-table__header th.el-table__cell) { background:color-mix(in srgb,var(--dashboard-surface) 82%,#cdeee1); color:var(--dashboard-regular); }
+.table-wrap :deep(.el-table td.el-table__cell) { border-bottom-color:var(--dashboard-border); }
+.table-wrap :deep(.el-table__body .cell) { color:var(--dashboard-regular); }
+.dashboard-page :deep(.el-empty__description p) { color:var(--dashboard-secondary); }
+.dashboard-page :deep(.el-radio-button__inner) { color:var(--dashboard-regular); }
+.dashboard-page :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) { color:#fff; }
+.dashboard-page :deep(.el-radio-button.is-active .el-radio-button__inner) { color:#fff; }
+.dashboard-page :deep(.el-button:not(.el-button--primary):not(.is-link)) { color:var(--dashboard-regular); }
 .status-tag { display:inline-flex; min-width:54px; padding:3px 9px; justify-content:center; border:1px solid currentColor; border-radius:0; font-size:12px; line-height:18px; }
 .status-tag--normal { color:#287a54; background:#eaf8f0; }
 .status-tag--locked { color:#a56605; background:#fff5df; }
@@ -271,20 +292,43 @@ onMounted(refreshAll)
 .dashboard-page :deep(.el-radio-button:last-child .el-radio-button__inner) {
   border-radius:0;
 }
-@media (max-width:1199px) { .overview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-@media (max-width:1023px) { .trend-summary { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+:global([data-theme="dark"]) .dashboard-page {
+  --dashboard-border:var(--app-border-color);
+  --dashboard-canvas:color-mix(in srgb,var(--app-bg-color) 86%,#145848);
+  --dashboard-surface:var(--app-content-bg);
+  --dashboard-shadow:none;
+  --dashboard-regular:#c1d0ca;
+  --dashboard-secondary:#93a69e;
+  --metric-label-color:#c1d0ca;
+  --metric-help-color:#93a69e;
+  --metric-number-color:#f0f5f3;
+}
+@media (max-width:1199px) {
+  .overview-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .metric-card:nth-child(3n) { border-right:0; }
+  .metric-card:nth-child(-n+3) { border-bottom:1px solid var(--dashboard-border); }
+}
+@media (max-width:1023px) {
+  .trend-layout { grid-template-columns:1fr; }
+  .trend-summary { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); padding:14px 18px; border-top:1px solid var(--dashboard-border); border-left:0; }
+  .trend-summary h3 { grid-column:1/-1; }
+  .trend-summary__item { padding:10px 12px; }
+}
 @media (max-width:767px) {
-  .dashboard-page { padding:12px; }
+  .dashboard-page { padding:14px; }
   .page-header { align-items:flex-start; flex-direction:column; }
   .header-actions { width:100%; justify-content:space-between; }
-  .overview-grid { grid-template-columns:1fr; }
-  .metric-card { min-height:96px; }
+  .overview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .metric-card { min-height:108px; padding:16px; border-bottom:1px solid var(--dashboard-border); }
+  .metric-card:nth-child(3n) { border-right:1px solid var(--dashboard-border); }
+  .metric-card:nth-child(2n) { border-right:0; }
+  .metric-card:nth-last-child(-n+2) { border-bottom:0; }
   .trend-header { align-items:flex-start; flex-direction:column; }
   .trend-controls { width:100%; justify-content:flex-start; }
   .trend-controls :deep(.el-date-editor) { width:100%; }
   .panel-header { padding:13px 14px; }
-  .panel-body { padding:10px 14px 14px; }
   .trend-summary { grid-template-columns:1fr 1fr; gap:8px; }
-  .trend-summary__item { padding:9px 10px; align-items:flex-start; flex-direction:column; gap:2px; }
+  .trend-summary__item { padding:9px 10px; }
+  .table-wrap { padding:0 14px 10px; }
 }
 </style>
