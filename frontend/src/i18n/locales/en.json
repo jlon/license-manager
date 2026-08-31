@@ -2,12 +2,14 @@
   "login": {
     "title": "Authorization Management Platform",
     "subtitle": "Sign in to your account",
+    "usernameLabel": "Username",
+    "passwordLabel": "Password",
     "usernamePlaceholder": "Please enter Username",
     "passwordPlaceholder": "Enter password",
     "remember": "Remember username",
     "forgotPassword": "Forgot password?",
     "forgotPasswordAlert": "Password recovery feature is not implemented yet",
-    "submit": "Get Started",
+    "submit": "Log in",
     "success": "Login successful",
     "error": {
       "required": "Please enter username and password",
@@ -31,10 +33,15 @@
       "uptime": "Uptime",
       "support": "Support"
     },
-    "welcomeTitle": "Welcome back",
+    "welcomeTitle": "Log in",
     "welcomeSubtitle": "Sign in to your account to continue",
     "communityEdition": "Open Source Community Edition",
     "brandNote": "Open and reliable software licensing essentials.",
+    "flow": {
+      "issue": "ISSUE",
+      "verify": "VERIFY",
+      "activate": "ACTIVATE"
+    },
     "copyright": "© {year} Cedar-V. All rights reserved."
   },
   "sidebar": {

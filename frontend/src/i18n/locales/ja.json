@@ -2,12 +2,14 @@
   "login": {
     "title": "権限管理プラットフォーム",
     "subtitle": "アカウントにログイン",
+    "usernameLabel": "ユーザー名",
+    "passwordLabel": "パスワード",
     "usernamePlaceholder": "ユーザー名を入力してください",
     "passwordPlaceholder": "パスワードを入力してください",
     "remember": "ユーザー名を記憶する",
     "forgotPassword": "パスワードをお忘れですか？",
     "forgotPasswordAlert": "パスワード回復機能はまだ実装されていません",
-    "submit": "利用開始",
+    "submit": "ログイン",
     "success": "ログインしました",
     "error": {
       "required": "ユーザー名とパスワードを入力してください",
@@ -31,10 +33,15 @@
       "uptime": "稼働率",
       "support": "サポート"
     },
-    "welcomeTitle": "おかえりなさい",
+    "welcomeTitle": "ログイン",
     "welcomeSubtitle": "アカウントにサインインして続けてください",
     "communityEdition": "オープンソース・コミュニティ版",
     "brandNote": "オープンで信頼できるソフトウェアライセンス基盤。",
+    "flow": {
+      "issue": "発行",
+      "verify": "検証",
+      "activate": "有効化"
+    },
     "copyright": "© {year} Cedar-V. All rights reserved."
   },
   "sidebar": {

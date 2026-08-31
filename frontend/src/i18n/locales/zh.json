@@ -2,12 +2,14 @@
   "login": {
     "title": "授权管理平台",
     "subtitle": "登录您的账户",
+    "usernameLabel": "用户名",
+    "passwordLabel": "密码",
     "usernamePlaceholder": "请输入用户名",
     "passwordPlaceholder": "请输入密码",
     "remember": "记住用户名",
     "forgotPassword": "忘记密码？",
     "forgotPasswordAlert": "忘记密码功能暂未实现",
-    "submit": "开始使用",
+    "submit": "登录",
     "success": "登录成功",
     "error": {
       "required": "请输入用户名和密码",
@@ -18,7 +20,7 @@
       "passwordRequired": "请输入密码",
       "passwordMinLength": "密码至少需要6个字符"
     },
-    "heroTitleLine1": "软件授权",
+    "heroTitleLine1": "雪松软件授权",
     "heroTitleLine2": "管理系统",
     "heroSubtitle": "赋能软件商业化，构建 B2B 与 B2C 全场景的软件授权体系。",
     "stats": {
@@ -31,10 +33,15 @@
       "uptime": "可用率",
       "support": "全天支持"
     },
-    "welcomeTitle": "授权管理平台",
+    "welcomeTitle": "登录",
     "welcomeSubtitle": "登录您的账户",
     "communityEdition": "开源社区版",
     "brandNote": "开放、可靠的软件授权基础能力。",
+    "flow": {
+      "issue": "签发",
+      "verify": "验证",
+      "activate": "激活"
+    },
     "copyright": "© {year} Cedar-V. 保留所有权利。"
   },
   "sidebar": {
