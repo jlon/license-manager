@@ -82,17 +82,18 @@
             <el-table-column :label="t('customers.table.operation')" fixed="right" width="310" align="center" class-name="operation-column">
               <template #default="{ row }">
                 <div class="data-list-actions">
-                  <el-button link type="primary" @click="openLicenses(row)">{{ t('customers.actions.viewLicense') }}</el-button>
-                  <el-button link type="primary" @click="openEdit(row)">{{ t('customers.actions.edit') }}</el-button>
+                  <el-button plain size="small" type="primary" @click="openLicenses(row)">{{ t('customers.actions.viewLicense') }}</el-button>
+                  <el-button plain size="small" type="primary" @click="openEdit(row)">{{ t('customers.actions.edit') }}</el-button>
                   <el-button
-                    link
+                    plain
+                    size="small"
                     :type="row.status === 'active' ? 'warning' : 'success'"
                     :loading="actionId === row.id"
                     @click="toggleStatus(row)"
                   >
                     {{ row.status === 'active' ? t('customers.actions.disable') : t('customers.actions.enable') }}
                   </el-button>
-                  <el-button link type="danger" :loading="actionId === row.id" @click="removeCustomer(row)">
+                  <el-button plain size="small" type="danger" :loading="actionId === row.id" @click="removeCustomer(row)">
                     {{ t('customers.actions.delete') }}
                   </el-button>
                 </div>
