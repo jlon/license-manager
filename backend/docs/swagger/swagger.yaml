@@ -1226,10 +1226,11 @@ paths:
         type: string
       - description: 客户等级筛选
         enum:
-        - normal
+        - basic
+        - active
         - vip
-        - enterprise
         - strategic
+        - other
         in: query
         name: customer_level
         type: string

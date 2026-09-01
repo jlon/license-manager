@@ -32,7 +32,13 @@
             <el-option v-for="option in customerTypeOptions" :key="option.key" :label="option.display" :value="option.key" />
           </el-select>
           <el-select v-model="filters.customerLevel" :placeholder="t('customers.filter.customerLevel')" clearable>
-            <el-option v-for="option in customerLevelOptions" :key="option.key" :label="option.display" :value="option.key" />
+            <template #label="{ label, value }">
+              <el-rate v-if="value" :model-value="Number(label) || 0" disabled class="customer-level-rate" />
+              <span v-else>{{ label }}</span>
+            </template>
+            <el-option v-for="option in customerLevelOptions" :key="option.key" :label="option.display" :value="option.key">
+              <el-rate :model-value="Number(option.display) || 0" disabled class="customer-level-rate" />
+            </el-option>
           </el-select>
           <el-select v-model="filters.status" :placeholder="t('customers.filter.status')" clearable>
             <el-option v-for="option in statusOptions" :key="option.key" :label="option.display" :value="option.key" />
@@ -70,7 +76,11 @@
             <el-table-column prop="customer_name" :label="t('customers.table.customerName')" min-width="180" show-overflow-tooltip />
             <el-table-column prop="customer_type_display" :label="t('customers.table.customerType')" min-width="120" />
             <el-table-column prop="contact_person" :label="t('customers.table.contactPerson')" min-width="120" show-overflow-tooltip />
-            <el-table-column prop="customer_level_display" :label="t('customers.table.customerLevel')" min-width="120" />
+            <el-table-column prop="customer_level_display" :label="t('customers.table.customerLevel')" min-width="140" align="center">
+              <template #default="{ row }">
+                <el-rate :model-value="Number(row.customer_level_display) || 0" disabled class="customer-level-rate" />
+              </template>
+            </el-table-column>
             <el-table-column prop="status_display" :label="t('customers.table.status')" width="100" align="center">
               <template #default="{ row }">
                 <el-tag :type="row.status === 'active' ? 'success' : 'info'" effect="light">{{ row.status_display }}</el-tag>
@@ -329,6 +339,10 @@ onMounted(() => {
 <style scoped>
 .filter-grid { grid-template-columns:minmax(280px,420px) repeat(3,160px) auto; }
 .enum-alert { margin-bottom:12px; }
+.customer-level-rate { height:22px; }
+.customer-level-rate :deep(.el-rate__item) { margin-right:3px; }
+.customer-level-rate :deep(.el-rate__icon) { margin-right:0; color:#f5a623; font-size:17px; }
+.customer-level-rate :deep(.el-rate__icon:not(.is-active)) { color:#e8eeeb; }
 
 @media (max-width:1200px) {
   .filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }

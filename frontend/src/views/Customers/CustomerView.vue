@@ -26,7 +26,15 @@
             :class="{ 'full-width': item.fullWidth, 'is-code': item.kind === 'code', 'is-status': item.kind === 'status' }"
           >
             <span class="info-label">{{ item.label }}</span>
-            <span class="info-value" :class="{ multiline: item.multiline }">{{ item.value || '-' }}</span>
+            <span class="info-value" :class="{ multiline: item.multiline }">
+              <el-rate
+                v-if="item.kind === 'level'"
+                :model-value="Number(item.value) || 0"
+                disabled
+                class="customer-level-rate"
+              />
+              <template v-else>{{ item.value || '-' }}</template>
+            </span>
           </div>
         </div>
       </section>
@@ -74,7 +82,7 @@ interface DetailItem {
   value?: string
   fullWidth?: boolean
   multiline?: boolean
-  kind?: 'code' | 'status'
+  kind?: 'code' | 'status' | 'level'
 }
 
 interface DetailSection {
@@ -90,7 +98,7 @@ const detailSections = computed<DetailSection[]>(() => [
       { label: t('customers.view.customerCode'), value: customer.value?.customer_code, kind: 'code' },
       { label: t('customers.form.customerName'), value: customer.value?.customer_name },
       { label: t('customers.form.customerType'), value: customer.value?.customer_type_display },
-      { label: t('customers.form.customerLevel'), value: customer.value?.customer_level_display },
+      { label: t('customers.form.customerLevel'), value: customer.value?.customer_level_display, kind: 'level' },
       { label: t('customers.form.status'), value: customer.value?.status_display, kind: 'status' }
     ]
   },
@@ -164,6 +172,10 @@ onMounted(loadCustomer)
 .info-label { color:#587067; font-size:13px; font-weight:500; line-height:1.5; white-space:nowrap; }
 .info-value { min-width:0; color:#233a31; font-size:14px; font-weight:500; line-height:1.55; word-break:break-word; }
 .info-value.multiline { white-space:pre-wrap; line-height:1.65; }
+.customer-level-rate { height:22px; }
+.customer-level-rate :deep(.el-rate__item) { margin-right:4px; }
+.customer-level-rate :deep(.el-rate__icon) { margin-right:0; color:#f5a623; font-size:18px; }
+.customer-level-rate :deep(.el-rate__icon:not(.is-active)) { color:#e8eeeb; }
 .info-item.is-code .info-value { color:#008f72; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:13px; font-weight:600; }
 .info-item.is-status .info-value { width:max-content; padding:2px 9px; color:#167a5c; background:#e9f7f1; border:1px solid #d0ecdf; font-size:12px; font-weight:600; line-height:1.6; }
 .stats-grid { padding:16px 18px 18px; display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:10px; background:#fff; }

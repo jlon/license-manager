@@ -76,10 +76,11 @@ enums:
     expired: "已过期"
   
   customer_level:
-    "basic": "基础客户"
-    "active": "活跃客户"
-    "vip": "VIP客户"
-    "strategic": "战略合作客户"
+    "basic": "1"
+    "active": "2"
+    "vip": "3"
+    "strategic": "4"
+    "other": "5"
   
   customer_status:
     "active": "激活"

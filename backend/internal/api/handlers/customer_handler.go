@@ -35,7 +35,7 @@ func NewCustomerHandler(customerService service.CustomerService) *CustomerHandle
 // @Param page_size query int false "每页条数，默认20，最大100" minimum(1) maximum(100)
 // @Param search query string false "搜索关键词(支持客户编码、名称、联系人、邮箱)"
 // @Param customer_type query string false "客户类型筛选" Enums(individual, enterprise, government, education)
-// @Param customer_level query string false "客户等级筛选" Enums(normal, vip, enterprise, strategic)
+// @Param customer_level query string false "客户等级筛选" Enums(basic, active, vip, strategic, other)
 // @Param status query string false "状态筛选" Enums(active, disabled)
 // @Param sort query string false "排序字段，默认created_at" Enums(created_at, updated_at, customer_name, customer_code)
 // @Param order query string false "排序方向，默认desc" Enums(asc, desc)

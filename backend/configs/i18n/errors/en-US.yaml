@@ -75,10 +75,11 @@ enums:
     expired: "Expired"
   
   customer_level:
-    "basic": "Basic Customer"
-    "active": "Active Customer"
-    "vip": "VIP Customer"
-    "strategic": "Strategic Partner"
+    "basic": "1"
+    "active": "2"
+    "vip": "3"
+    "strategic": "4"
+    "other": "5"
   
   customer_status:
     "active": "Active"

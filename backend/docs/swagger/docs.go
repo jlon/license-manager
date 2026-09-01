@@ -79,10 +79,11 @@ const docTemplate = `{
                     },
                     {
                         "enum": [
-                            "normal",
+                            "basic",
+                            "active",
                             "vip",
-                            "enterprise",
-                            "strategic"
+                            "strategic",
+                            "other"
                         ],
                         "type": "string",
                         "description": "客户等级筛选",

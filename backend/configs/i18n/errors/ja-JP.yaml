@@ -76,10 +76,11 @@ enums:
     expired: "期限切れ"
   
   customer_level:
-    "basic": "基本顧客"
-    "active": "アクティブ顧客"
-    "vip": "VIP顧客"
-    "strategic": "戦略的パートナー"
+    "basic": "1"
+    "active": "2"
+    "vip": "3"
+    "strategic": "4"
+    "other": "5"
   
   customer_status:
     "active": "アクティブ"

@@ -44,7 +44,13 @@
           </el-form-item>
           <el-form-item :label="t('customers.form.customerLevel')" prop="level">
             <el-select v-model="formData.level" :placeholder="t('customers.form.placeholder.select')">
-              <el-option v-for="option in customerLevelOptions" :key="option.key" :label="option.display" :value="option.key" />
+              <template #label="{ label, value }">
+                <el-rate v-if="value" :model-value="Number(label) || 0" disabled class="customer-level-rate" />
+                <span v-else>{{ label }}</span>
+              </template>
+              <el-option v-for="option in customerLevelOptions" :key="option.key" :label="option.display" :value="option.key">
+                <el-rate :model-value="Number(option.display) || 0" disabled class="customer-level-rate" />
+              </el-option>
             </el-select>
           </el-form-item>
           <el-form-item :label="t('customers.form.status')" prop="status">
@@ -254,6 +260,10 @@ onMounted(() => { loadEnums(); loadCustomer() })
 .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 20px; }
 .full-width { grid-column:1 / -1; }
 :deep(.el-select) { width:100%; }
+.customer-level-rate { height:22px; }
+.customer-level-rate :deep(.el-rate__item) { margin-right:3px; }
+.customer-level-rate :deep(.el-rate__icon) { margin-right:0; color:#f5a623; font-size:17px; }
+.customer-level-rate :deep(.el-rate__icon:not(.is-active)) { color:#e8eeeb; }
 
 @media (max-width:768px) {
   .customer-form-page { padding:12px; }
