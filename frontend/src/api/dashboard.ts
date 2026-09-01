@@ -108,3 +108,68 @@ export interface StatsOverviewData {
 export const getOverviewStats = (): Promise<ApiResponse<StatsOverviewData>> => {
   return Axios.get('/api/v1/stats/overview')
 }
+
+export interface DashboardCountBreakdown {
+  total: number
+  activated: number
+  not_activated: number
+}
+
+export interface DashboardExpiryReminder {
+  authorization_count: number
+  affected_device_count: number
+}
+
+export interface RecentActivationItem {
+  id: string
+  authorization_code_id: string
+  customer_name: string
+  description: string
+  hardware_fingerprint: string
+  activated_at: string
+  end_date: string
+}
+
+export interface DashboardHomeData {
+  generated_at: string
+  overview: {
+    valid_authorizations: DashboardCountBreakdown
+    activated_devices: { total: number }
+    remaining_activation_slots: number
+  }
+  expiry_reminders: {
+    due_7_days: DashboardExpiryReminder
+    due_8_to_30_days: DashboardExpiryReminder
+    expired: DashboardExpiryReminder
+  }
+  recent_authorizations: RecentAuthorizationItem[]
+  recent_activations: RecentActivationItem[]
+}
+
+export interface DashboardTrendPoint {
+  date: string
+  count: number
+}
+
+export interface DashboardBusinessTrendsData {
+  period: {
+    type: '7d' | '30d' | 'custom'
+    start_date: string
+    end_date: string
+  }
+  authorization_creation_trend: DashboardTrendPoint[]
+  activation_trend: DashboardTrendPoint[]
+}
+
+export const getDashboardHome = (): Promise<ApiResponse<DashboardHomeData>> => {
+  return Axios.get('/api/v1/dashboard/home')
+}
+
+export const getDashboardBusinessTrends = (params?: {
+  period?: '7d' | '30d' | 'custom'
+  start_date?: string
+  end_date?: string
+  timezone?: string
+}): Promise<ApiResponse<DashboardBusinessTrendsData>> => {
+  return Axios.get('/api/v1/dashboard/trends', { params })
+}

@@ -119,6 +119,12 @@ type LicenseRepository interface {
 
 // DashboardRepository 仪表盘数据访问接口
 type DashboardRepository interface {
+	// GetHomeData 获取首页概览、到期提醒和最近记录。
+	GetHomeData(ctx context.Context, now time.Time, recentLimit int) (*models.DashboardHomeResponse, error)
+
+	// GetBusinessTrendData 获取授权码创建和许可证激活的每日趋势。
+	GetBusinessTrendData(ctx context.Context, startDate, endDate time.Time) ([]models.DashboardTrendPoint, []models.DashboardTrendPoint, error)
+
 	// GetAuthorizationTrendData 获取授权趋势数据
 	GetAuthorizationTrendData(ctx context.Context, startDate, endDate time.Time) ([]models.TrendData, error)
 

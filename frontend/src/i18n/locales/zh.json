@@ -52,9 +52,8 @@
   },
   "dashboard": {
     "title": "仪表盘",
-    "eyebrow": "社区版概览",
     "heading": "授权概览",
-    "description": "集中查看社区版现有授权规模、趋势和近期记录。",
+    "description": "集中查看授权容量、设备激活、到期风险和业务趋势。",
     "cloudPromo": {
       "eyebrow": "云端托管",
       "title": "雪松授权云",
@@ -65,16 +64,31 @@
     "updatedAt": "更新于 {time}",
     "refresh": "刷新",
     "overviewTitle": "授权统计",
-    "noData": "数据暂不可用",
-    "trendTitle": "授权趋势",
-    "trendDescription": "查看最近7天、最近30天或自定义范围内的授权变化。",
-    "trendSummary": {
-      "title": "本期摘要",
-      "total": "期末授权总量",
-      "new": "期间新增",
-      "expired": "期间到期",
-      "growth": "期间增长率"
+    "overview": {
+      "validAuthorizations": "有效授权",
+      "validBreakdown": "已激活授权 {activated} · 未激活授权 {notActivated}",
+      "activatedDevices": "已激活设备",
+      "activatedDevicesHelp": "当前处于激活状态的设备",
+      "remainingSlots": "剩余激活名额",
+      "remainingSlotsHelp": "有效授权下仍可使用的激活名额"
     },
+    "expiry": {
+      "title": "到期提醒",
+      "description": "按三个互不重叠的区间统计授权码及受影响的已激活设备。",
+      "due7": "7天内到期",
+      "due8To30": "8–30天到期",
+      "expired": "已过期",
+      "affectedDevices": "涉及 {n} 台已激活设备"
+    },
+    "noData": "数据暂不可用",
+    "trendTitle": "业务趋势",
+    "trendDescription": "分别查看授权码创建和许可证激活数量。",
+    "trends": {
+      "authorizationCreation": "授权码创建趋势",
+      "activation": "许可证激活趋势"
+    },
+    "period7d": "最近7天",
+    "period30d": "最近30天",
     "customRange": "自定义",
     "to": "至",
     "startDate": "开始日期",
@@ -82,25 +96,19 @@
     "retry": "重试",
     "loadFailed": "数据加载失败",
     "noTrendData": "当前时间范围暂无趋势数据",
-    "recentDescription": "最近创建的授权记录。",
     "viewAll": "查看全部",
-    "noRecentData": "暂无近期授权",
-    "stats": {
-      "totalAuthCodes": "授权码总量",
-      "activeLicenses": "活跃许可证",
-      "todayNewLicenses": "今日新增授权",
-      "expiringIn7Days": "7天内到期",
-      "expiringIn30Days": "30天内到期",
-      "abnormalAlerts": "异常告警",
-      "subText": {
-        "monthNew": "本月新增 {n} 个",
-        "vsLastMonth": "较上月 {rate}%",
-        "yesterday": "昨日 {n} 个",
-        "urgent": "紧急跟进",
-        "heartbeatTimeout": "心跳超时",
-        "noRisk": "当前无紧急到期",
-        "expiryReminder": "提前关注到期授权"
-      }
+    "noCustomer": "未关联客户",
+    "noRecentAuthorizations": "暂无最近授权",
+    "noRecentActivations": "暂无最近激活",
+    "recentAuthorizations": { "title": "最近授权" },
+    "recentActivations": { "title": "最近激活" },
+    "columns": {
+      "customerName": "客户名称",
+      "description": "描述",
+      "activationUsage": "已激活 / 名额",
+      "device": "设备指纹",
+      "activationTime": "激活时间",
+      "expiryTime": "到期时间"
     },
     "recentLicenses": {
       "title": "最近授权",

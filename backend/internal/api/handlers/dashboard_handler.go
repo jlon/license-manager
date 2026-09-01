@@ -157,3 +157,71 @@ func (h *DashboardHandler) GetRecentAuthorizations(c *gin.Context) {
 		Data:    response,
 	})
 }
+
+// GetHome 获取仪表盘首页聚合数据。
+// @Summary 获取仪表盘首页聚合数据
+// @Description 获取有效授权、已激活设备、剩余激活名额、到期提醒及最近记录
+// @Tags 仪表盘
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} models.APIResponse{data=models.DashboardHomeResponse} "仪表盘首页数据"
+// @Failure 401 {object} models.ErrorResponse "未认证"
+// @Failure 500 {object} models.ErrorResponse "服务器内部错误"
+// @Router /api/v1/dashboard/home [get]
+func (h *DashboardHandler) GetHome(c *gin.Context) {
+	ctx := middleware.WithLanguage(c.Request.Context(), c)
+	response, err := h.dashboardService.GetHome(ctx)
+	if err != nil {
+		respondDashboardError(c, err)
+		return
+	}
+	respondDashboardSuccess(c, response)
+}
+
+// GetBusinessTrends 获取仪表盘双业务趋势。
+// @Summary 获取仪表盘业务趋势
+// @Description 获取授权码创建趋势和许可证激活趋势
+// @Tags 仪表盘
+// @Produce json
+// @Security BearerAuth
+// @Param period query string false "时间范围，默认30d" Enums(7d,30d,custom)
+// @Param start_date query string false "自定义开始日期(YYYY-MM-DD)"
+// @Param end_date query string false "自定义结束日期(YYYY-MM-DD)"
+// @Param timezone query string false "浏览器IANA时区"
+// @Success 200 {object} models.APIResponse{data=models.DashboardBusinessTrendsResponse} "仪表盘趋势数据"
+// @Failure 400 {object} models.ErrorResponse "请求参数错误"
+// @Failure 401 {object} models.ErrorResponse "未认证"
+// @Failure 500 {object} models.ErrorResponse "服务器内部错误"
+// @Router /api/v1/dashboard/trends [get]
+func (h *DashboardHandler) GetBusinessTrends(c *gin.Context) {
+	var req models.DashboardBusinessTrendsRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
+		lang := middleware.GetLanguage(c)
+		status, errCode, message := i18n.NewI18nErrorResponse("900001", lang)
+		c.JSON(status, models.ErrorResponse{Code: errCode, Message: message + ": " + err.Error(), Timestamp: time.Now().Format(time.RFC3339)})
+		return
+	}
+	ctx := middleware.WithLanguage(c.Request.Context(), c)
+	response, err := h.dashboardService.GetBusinessTrends(ctx, &req)
+	if err != nil {
+		respondDashboardError(c, err)
+		return
+	}
+	respondDashboardSuccess(c, response)
+}
+
+func respondDashboardSuccess(c *gin.Context, data interface{}) {
+	lang := middleware.GetLanguage(c)
+	c.JSON(http.StatusOK, models.APIResponse{Code: "000000", Message: i18n.GetErrorMessage("000000", lang), Data: data})
+}
+
+func respondDashboardError(c *gin.Context, err error) {
+	var i18nErr *i18n.I18nError
+	if errors.As(err, &i18nErr) {
+		c.JSON(i18nErr.HttpCode, models.ErrorResponse{Code: i18nErr.Code, Message: i18nErr.Message, Timestamp: time.Now().Format(time.RFC3339)})
+		return
+	}
+	lang := middleware.GetLanguage(c)
+	status, errCode, message := i18n.NewI18nErrorResponse("900004", lang)
+	c.JSON(status, models.ErrorResponse{Code: errCode, Message: message, Timestamp: time.Now().Format(time.RFC3339)})
+}

@@ -52,9 +52,8 @@
   },
   "dashboard": {
     "title": "ダッシュボード",
-    "eyebrow": "コミュニティ版概要",
     "heading": "ライセンス概要",
-    "description": "コミュニティ版の既存ライセンス数、傾向、最近の記録を確認します。",
+    "description": "認可容量、デバイス有効化、期限リスク、業務推移を確認します。",
     "cloudPromo": {
       "eyebrow": "クラウド運用",
       "title": "雪松ライセンスクラウド",
@@ -65,16 +64,31 @@
     "updatedAt": "{time} に更新",
     "refresh": "更新",
     "overviewTitle": "ライセンス統計",
-    "noData": "データを利用できません",
-    "trendTitle": "認可の推移",
-    "trendDescription": "直近7日間、30日間、または指定期間の認可数の変化を確認します。",
-    "trendSummary": {
-      "title": "期間サマリー",
-      "total": "期間末の認可総数",
-      "new": "期間内の新規",
-      "expired": "期間内の期限切れ",
-      "growth": "期間成長率"
+    "overview": {
+      "validAuthorizations": "有効な認可",
+      "validBreakdown": "有効化済み {activated} · 未有効化 {notActivated}",
+      "activatedDevices": "有効化済みデバイス",
+      "activatedDevicesHelp": "現在アクティブなデバイス",
+      "remainingSlots": "残り有効化枠",
+      "remainingSlotsHelp": "有効な認可で利用可能な有効化枠"
     },
+    "expiry": {
+      "title": "期限通知",
+      "description": "重複しない3期間で認可コードと影響する有効化済みデバイスを集計します。",
+      "due7": "7日以内に期限切れ",
+      "due8To30": "8〜30日以内に期限切れ",
+      "expired": "期限切れ",
+      "affectedDevices": "有効化済みデバイス {n} 台に影響"
+    },
+    "noData": "データを利用できません",
+    "trendTitle": "業務推移",
+    "trendDescription": "認可コード作成数とライセンス有効化数を個別に確認します。",
+    "trends": {
+      "authorizationCreation": "認可コード作成推移",
+      "activation": "ライセンス有効化推移"
+    },
+    "period7d": "直近7日",
+    "period30d": "直近30日",
     "customRange": "期間指定",
     "to": "から",
     "startDate": "開始日",
@@ -82,25 +96,19 @@
     "retry": "再試行",
     "loadFailed": "データの読み込みに失敗しました",
     "noTrendData": "この期間の推移データはありません",
-    "recentDescription": "最近作成された認可記録です。",
     "viewAll": "すべて表示",
-    "noRecentData": "最近の認可はありません",
-    "stats": {
-      "totalAuthCodes": "認可コード総数",
-      "activeLicenses": "アクティブライセンス",
-      "todayNewLicenses": "本日の新規",
-      "expiringIn7Days": "7日以内に期限切れ",
-      "expiringIn30Days": "30日以内に期限切れ",
-      "abnormalAlerts": "異常アラート",
-      "subText": {
-        "monthNew": "今月 {n} 件追加",
-        "vsLastMonth": "先月比 {rate}%",
-        "yesterday": "昨日 {n} 件",
-        "urgent": "緊急対応が必要",
-        "heartbeatTimeout": "ハートビートタイムアウト",
-        "noRisk": "緊急の期限切れはありません",
-        "expiryReminder": "期限切れ予定を確認"
-      }
+    "noCustomer": "顧客未設定",
+    "noRecentAuthorizations": "最近の認可はありません",
+    "noRecentActivations": "最近の有効化はありません",
+    "recentAuthorizations": { "title": "最近の認可" },
+    "recentActivations": { "title": "最近の有効化" },
+    "columns": {
+      "customerName": "顧客名",
+      "description": "説明",
+      "activationUsage": "有効化済み / 枠",
+      "device": "デバイス指紋",
+      "activationTime": "有効化日時",
+      "expiryTime": "有効期限"
     },
     "recentLicenses": {
       "title": "最近のライセンス",

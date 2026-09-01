@@ -128,13 +128,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.CustomerListResponse"
+                                            "$ref": "#/definitions/models.CustomerListResponse"
                                         }
                                     }
                                 }
@@ -144,19 +144,19 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -185,7 +185,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.CustomerCreateRequest"
+                            "$ref": "#/definitions/models.CustomerCreateRequest"
                         }
                     }
                 ],
@@ -195,13 +195,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.Customer"
+                                            "$ref": "#/definitions/models.Customer"
                                         }
                                     }
                                 }
@@ -211,25 +211,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "客户已存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -268,13 +268,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.Customer"
+                                            "$ref": "#/definitions/models.Customer"
                                         }
                                     }
                                 }
@@ -284,25 +284,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "客户不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -338,7 +338,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.CustomerUpdateRequest"
+                            "$ref": "#/definitions/models.CustomerUpdateRequest"
                         }
                     }
                 ],
@@ -348,13 +348,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.Customer"
+                                            "$ref": "#/definitions/models.Customer"
                                         }
                                     }
                                 }
@@ -364,25 +364,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "客户不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -417,37 +417,37 @@ const docTemplate = `{
                     "200": {
                         "description": "删除成功",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                            "$ref": "#/definitions/models.APIResponse"
                         }
                     },
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "客户不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "客户仍有授权，无法删除",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -485,7 +485,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.CustomerStatusUpdateRequest"
+                            "$ref": "#/definitions/models.CustomerStatusUpdateRequest"
                         }
                     }
                 ],
@@ -495,13 +495,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.Customer"
+                                            "$ref": "#/definitions/models.Customer"
                                         }
                                     }
                                 }
@@ -511,25 +511,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "客户不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -559,13 +559,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.EnumListResponse"
+                                            "$ref": "#/definitions/models.EnumListResponse"
                                         }
                                     }
                                 }
@@ -575,13 +575,13 @@ const docTemplate = `{
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -626,13 +626,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.EnumTypeResponse"
+                                            "$ref": "#/definitions/models.EnumTypeResponse"
                                         }
                                     }
                                 }
@@ -642,19 +642,19 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -680,7 +680,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ActivateRequest"
+                            "$ref": "#/definitions/models.ActivateRequest"
                         }
                     }
                 ],
@@ -690,13 +690,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.ActivateResponse"
+                                            "$ref": "#/definitions/models.ActivateResponse"
                                         }
                                     }
                                 }
@@ -706,31 +706,31 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "授权码已锁定或已过期",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "429": {
                         "description": "激活数量已达上限",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -758,19 +758,19 @@ const docTemplate = `{
                     "200": {
                         "description": "系统信息",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                            "$ref": "#/definitions/models.APIResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "权限不足",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -798,19 +798,19 @@ const docTemplate = `{
                     "200": {
                         "description": "刷新成功",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                            "$ref": "#/definitions/models.APIResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -913,13 +913,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCodeListResponse"
+                                            "$ref": "#/definitions/models.AuthorizationCodeListResponse"
                                         }
                                     }
                                 }
@@ -929,19 +929,19 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -970,7 +970,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCodeCreateRequest"
+                            "$ref": "#/definitions/models.AuthorizationCodeCreateRequest"
                         }
                     }
                 ],
@@ -980,13 +980,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCodeCreateResponse"
+                                            "$ref": "#/definitions/models.AuthorizationCodeCreateResponse"
                                         }
                                     }
                                 }
@@ -996,31 +996,31 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "客户不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "授权码已存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -1059,13 +1059,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCode"
+                                            "$ref": "#/definitions/models.AuthorizationCode"
                                         }
                                     }
                                 }
@@ -1075,25 +1075,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -1129,7 +1129,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCodeUpdateRequest"
+                            "$ref": "#/definitions/models.AuthorizationCodeUpdateRequest"
                         }
                     }
                 ],
@@ -1139,13 +1139,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCode"
+                                            "$ref": "#/definitions/models.AuthorizationCode"
                                         }
                                     }
                                 }
@@ -1155,25 +1155,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -1208,31 +1208,31 @@ const docTemplate = `{
                     "200": {
                         "description": "删除成功",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                            "$ref": "#/definitions/models.APIResponse"
                         }
                     },
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -1330,13 +1330,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationChangeListResponse"
+                                            "$ref": "#/definitions/models.AuthorizationChangeListResponse"
                                         }
                                     }
                                 }
@@ -1346,25 +1346,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -1407,31 +1407,31 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "授权码不可用",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -1469,7 +1469,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCodeLockRequest"
+                            "$ref": "#/definitions/models.AuthorizationCodeLockRequest"
                         }
                     }
                 ],
@@ -1479,13 +1479,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCode"
+                                            "$ref": "#/definitions/models.AuthorizationCode"
                                         }
                                     }
                                 }
@@ -1495,25 +1495,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -1575,13 +1575,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.DashboardAuthorizationTrendResponse"
+                                            "$ref": "#/definitions/models.DashboardAuthorizationTrendResponse"
                                         }
                                     }
                                 }
@@ -1591,25 +1591,74 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "权限不足",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/dashboard/home": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "获取有效授权、已激活设备、剩余激活名额、到期提醒及最近记录",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "仪表盘"
+                ],
+                "summary": "获取仪表盘首页聚合数据",
+                "responses": {
+                    "200": {
+                        "description": "仪表盘首页数据",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.APIResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.DashboardHomeResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未认证",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -1664,13 +1713,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.DashboardRecentAuthorizationsResponse"
+                                            "$ref": "#/definitions/models.DashboardRecentAuthorizationsResponse"
                                         }
                                     }
                                 }
@@ -1680,25 +1729,111 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "权限不足",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/dashboard/trends": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "获取授权码创建趋势和许可证激活趋势",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "仪表盘"
+                ],
+                "summary": "获取仪表盘业务趋势",
+                "parameters": [
+                    {
+                        "enum": [
+                            "7d",
+                            "30d",
+                            "custom"
+                        ],
+                        "type": "string",
+                        "description": "时间范围，默认30d",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "自定义开始日期(YYYY-MM-DD)",
+                        "name": "start_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "自定义结束日期(YYYY-MM-DD)",
+                        "name": "end_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "浏览器IANA时区",
+                        "name": "timezone",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "仪表盘趋势数据",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.APIResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.DashboardBusinessTrendsResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "未认证",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -1724,7 +1859,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.HeartbeatRequest"
+                            "$ref": "#/definitions/models.HeartbeatRequest"
                         }
                     }
                 ],
@@ -1734,13 +1869,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.HeartbeatResponse"
+                                            "$ref": "#/definitions/models.HeartbeatResponse"
                                         }
                                     }
                                 }
@@ -1750,25 +1885,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "许可证不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "许可证已被撤销",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -1866,13 +2001,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.LicenseListResponse"
+                                            "$ref": "#/definitions/models.LicenseListResponse"
                                         }
                                     }
                                 }
@@ -1882,19 +2017,19 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -1923,7 +2058,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.LicenseCreateRequest"
+                            "$ref": "#/definitions/models.LicenseCreateRequest"
                         }
                     }
                 ],
@@ -1933,13 +2068,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.License"
+                                            "$ref": "#/definitions/models.License"
                                         }
                                     }
                                 }
@@ -1949,25 +2084,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "授权码不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -2006,13 +2141,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.LicenseDetailResponse"
+                                            "$ref": "#/definitions/models.LicenseDetailResponse"
                                         }
                                     }
                                 }
@@ -2022,25 +2157,25 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "许可证不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -2083,31 +2218,31 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "许可证不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "许可证已被撤销",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -2145,7 +2280,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.LicenseRevokeRequest"
+                            "$ref": "#/definitions/models.LicenseRevokeRequest"
                         }
                     }
                 ],
@@ -2155,13 +2290,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.License"
+                                            "$ref": "#/definitions/models.License"
                                         }
                                     }
                                 }
@@ -2171,31 +2306,31 @@ const docTemplate = `{
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "许可证不存在",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "许可证已被撤销",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -2221,7 +2356,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.LoginRequest"
+                            "$ref": "#/definitions/models.LoginRequest"
                         }
                     }
                 ],
@@ -2229,25 +2364,25 @@ const docTemplate = `{
                     "200": {
                         "description": "登录成功",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.LoginResponse"
+                            "$ref": "#/definitions/models.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "请求参数无效",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "用户名或密码错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -2275,13 +2410,13 @@ const docTemplate = `{
                     "200": {
                         "description": "登出成功",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                            "$ref": "#/definitions/models.APIResponse"
                         }
                     },
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -2311,13 +2446,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/license-manager_internal_models.APIResponse"
+                                    "$ref": "#/definitions/models.APIResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/license-manager_internal_models.StatsOverviewResponse"
+                                            "$ref": "#/definitions/models.StatsOverviewResponse"
                                         }
                                     }
                                 }
@@ -2327,13 +2462,13 @@ const docTemplate = `{
                     "401": {
                         "description": "未认证",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "服务器内部错误",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -2356,7 +2491,7 @@ const docTemplate = `{
                     "200": {
                         "description": "健康状态",
                         "schema": {
-                            "$ref": "#/definitions/license-manager_internal_models.HealthResponse"
+                            "$ref": "#/definitions/models.HealthResponse"
                         }
                     }
                 }
@@ -2364,7 +2499,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "license-manager_internal_models.APIResponse": {
+        "models.APIResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2379,7 +2514,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.ActivateRequest": {
+        "models.ActivateRequest": {
             "type": "object",
             "required": [
                 "authorization_code",
@@ -2405,7 +2540,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.ActivateResponse": {
+        "models.ActivateResponse": {
             "type": "object",
             "properties": {
                 "heartbeat_interval": {
@@ -2422,7 +2557,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.AuthorizationChangeListItem": {
+        "models.AuthorizationChangeListItem": {
             "type": "object",
             "properties": {
                 "change_type": {
@@ -2455,14 +2590,14 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.AuthorizationChangeListResponse": {
+        "models.AuthorizationChangeListResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "description": "变更历史列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/license-manager_internal_models.AuthorizationChangeListItem"
+                        "$ref": "#/definitions/models.AuthorizationChangeListItem"
                     }
                 },
                 "page": {
@@ -2483,7 +2618,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.AuthorizationCode": {
+        "models.AuthorizationCode": {
             "type": "object",
             "properties": {
                 "activated_licenses_count": {
@@ -2511,14 +2646,14 @@ const docTemplate = `{
                     "type": "object"
                 },
                 "customer_id": {
-                    "description": "客户ID",
+                    "description": "客户ID，NULL表示无客户",
                     "type": "string"
                 },
                 "customer_info": {
                     "description": "客户信息（仅在详情接口返回）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/license-manager_internal_models.CustomerInfoForAuthCode"
+                            "$ref": "#/definitions/models.CustomerInfoForAuthCode"
                         }
                     ]
                 },
@@ -2612,10 +2747,9 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.AuthorizationCodeCreateRequest": {
+        "models.AuthorizationCodeCreateRequest": {
             "type": "object",
             "required": [
-                "customer_id",
                 "deployment_type",
                 "max_activations",
                 "validity_days"
@@ -2625,7 +2759,7 @@ const docTemplate = `{
                     "description": "自定义参数（JSON对象）"
                 },
                 "customer_id": {
-                    "description": "客户ID",
+                    "description": "客户ID，可选",
                     "type": "string"
                 },
                 "deployment_type": {
@@ -2677,7 +2811,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.AuthorizationCodeCreateResponse": {
+        "models.AuthorizationCodeCreateResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2690,7 +2824,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.AuthorizationCodeListItem": {
+        "models.AuthorizationCodeListItem": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2706,7 +2840,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "customer_id": {
-                    "description": "客户ID",
+                    "description": "客户ID，NULL表示无客户",
                     "type": "string"
                 },
                 "customer_name": {
@@ -2759,14 +2893,14 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.AuthorizationCodeListResponse": {
+        "models.AuthorizationCodeListResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "description": "授权码列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/license-manager_internal_models.AuthorizationCodeListItem"
+                        "$ref": "#/definitions/models.AuthorizationCodeListItem"
                     }
                 },
                 "page": {
@@ -2787,7 +2921,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.AuthorizationCodeLockRequest": {
+        "models.AuthorizationCodeLockRequest": {
             "type": "object",
             "properties": {
                 "is_locked": {
@@ -2806,7 +2940,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.AuthorizationCodeUpdateRequest": {
+        "models.AuthorizationCodeUpdateRequest": {
             "type": "object",
             "required": [
                 "change_type"
@@ -2888,7 +3022,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.AuthorizationStats": {
+        "models.AuthorizationStats": {
             "type": "object",
             "properties": {
                 "active_licenses": {
@@ -2921,7 +3055,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.Customer": {
+        "models.Customer": {
             "type": "object",
             "properties": {
                 "address": {
@@ -2931,7 +3065,7 @@ const docTemplate = `{
                     "description": "授权统计信息（仅在详情接口返回）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationStats"
+                            "$ref": "#/definitions/models.AuthorizationStats"
                         }
                     ]
                 },
@@ -2997,7 +3131,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.CustomerCreateRequest": {
+        "models.CustomerCreateRequest": {
             "type": "object",
             "required": [
                 "contact_person",
@@ -3070,7 +3204,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.CustomerInfoForAuthCode": {
+        "models.CustomerInfoForAuthCode": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -3107,7 +3241,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.CustomerListItem": {
+        "models.CustomerListItem": {
             "type": "object",
             "properties": {
                 "contact_person": {
@@ -3148,13 +3282,13 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.CustomerListResponse": {
+        "models.CustomerListResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/license-manager_internal_models.CustomerListItem"
+                        "$ref": "#/definitions/models.CustomerListItem"
                     }
                 },
                 "page": {
@@ -3171,7 +3305,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.CustomerStatusUpdateRequest": {
+        "models.CustomerStatusUpdateRequest": {
             "type": "object",
             "required": [
                 "status"
@@ -3187,7 +3321,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.CustomerUpdateRequest": {
+        "models.CustomerUpdateRequest": {
             "type": "object",
             "properties": {
                 "address": {
@@ -3253,14 +3387,22 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.DashboardAuthorizationTrendResponse": {
+        "models.DashboardActivatedDevices": {
+            "type": "object",
+            "properties": {
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.DashboardAuthorizationTrendResponse": {
             "type": "object",
             "properties": {
                 "period": {
                     "description": "时间段信息",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/license-manager_internal_models.TrendPeriod"
+                            "$ref": "#/definitions/models.TrendPeriod"
                         }
                     ]
                 },
@@ -3268,7 +3410,7 @@ const docTemplate = `{
                     "description": "汇总信息",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/license-manager_internal_models.TrendSummary"
+                            "$ref": "#/definitions/models.TrendSummary"
                         }
                     ]
                 },
@@ -3276,19 +3418,144 @@ const docTemplate = `{
                     "description": "趋势数据",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/license-manager_internal_models.TrendData"
+                        "$ref": "#/definitions/models.TrendData"
                     }
                 }
             }
         },
-        "license-manager_internal_models.DashboardRecentAuthorizationsResponse": {
+        "models.DashboardBusinessTrendPeriod": {
+            "type": "object",
+            "properties": {
+                "end_date": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DashboardBusinessTrendsResponse": {
+            "type": "object",
+            "properties": {
+                "activation_trend": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DashboardTrendPoint"
+                    }
+                },
+                "authorization_creation_trend": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DashboardTrendPoint"
+                    }
+                },
+                "period": {
+                    "$ref": "#/definitions/models.DashboardBusinessTrendPeriod"
+                }
+            }
+        },
+        "models.DashboardExpiryReminder": {
+            "type": "object",
+            "properties": {
+                "affected_device_count": {
+                    "type": "integer"
+                },
+                "authorization_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.DashboardExpiryReminders": {
+            "type": "object",
+            "properties": {
+                "due_7_days": {
+                    "$ref": "#/definitions/models.DashboardExpiryReminder"
+                },
+                "due_8_to_30_days": {
+                    "$ref": "#/definitions/models.DashboardExpiryReminder"
+                },
+                "expired": {
+                    "$ref": "#/definitions/models.DashboardExpiryReminder"
+                }
+            }
+        },
+        "models.DashboardHomeResponse": {
+            "type": "object",
+            "properties": {
+                "expiry_reminders": {
+                    "$ref": "#/definitions/models.DashboardExpiryReminders"
+                },
+                "generated_at": {
+                    "type": "string"
+                },
+                "overview": {
+                    "$ref": "#/definitions/models.DashboardOverview"
+                },
+                "recent_activations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DashboardRecentActivation"
+                    }
+                },
+                "recent_authorizations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RecentAuthorization"
+                    }
+                }
+            }
+        },
+        "models.DashboardOverview": {
+            "type": "object",
+            "properties": {
+                "activated_devices": {
+                    "$ref": "#/definitions/models.DashboardActivatedDevices"
+                },
+                "remaining_activation_slots": {
+                    "type": "integer"
+                },
+                "valid_authorizations": {
+                    "$ref": "#/definitions/models.DashboardValidAuthorizations"
+                }
+            }
+        },
+        "models.DashboardRecentActivation": {
+            "type": "object",
+            "properties": {
+                "activated_at": {
+                    "type": "string"
+                },
+                "authorization_code_id": {
+                    "type": "string"
+                },
+                "customer_name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "hardware_fingerprint": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DashboardRecentAuthorizationsResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "description": "授权列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/license-manager_internal_models.RecentAuthorization"
+                        "$ref": "#/definitions/models.RecentAuthorization"
                     }
                 },
                 "total": {
@@ -3297,7 +3564,32 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.EnumItem": {
+        "models.DashboardTrendPoint": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DashboardValidAuthorizations": {
+            "type": "object",
+            "properties": {
+                "activated": {
+                    "type": "integer"
+                },
+                "not_activated": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.EnumItem": {
             "type": "object",
             "properties": {
                 "display": {
@@ -3310,26 +3602,26 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.EnumListResponse": {
+        "models.EnumListResponse": {
             "type": "object",
             "properties": {
                 "enums": {
                     "description": "所有枚举类型",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/license-manager_internal_models.EnumTypeResponse"
+                        "$ref": "#/definitions/models.EnumTypeResponse"
                     }
                 }
             }
         },
-        "license-manager_internal_models.EnumTypeResponse": {
+        "models.EnumTypeResponse": {
             "type": "object",
             "properties": {
                 "items": {
                     "description": "枚举项列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/license-manager_internal_models.EnumItem"
+                        "$ref": "#/definitions/models.EnumItem"
                     }
                 },
                 "type": {
@@ -3338,7 +3630,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.ErrorResponse": {
+        "models.ErrorResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -3355,7 +3647,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.GrowthRate": {
+        "models.GrowthRate": {
             "type": "object",
             "properties": {
                 "auth_codes_mom": {
@@ -3368,7 +3660,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.HealthResponse": {
+        "models.HealthResponse": {
             "type": "object",
             "properties": {
                 "services": {
@@ -3381,7 +3673,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "system": {
-                    "$ref": "#/definitions/license-manager_internal_models.SystemInfo"
+                    "$ref": "#/definitions/models.SystemInfo"
                 },
                 "timestamp": {
                     "type": "string"
@@ -3394,7 +3686,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.HeartbeatRequest": {
+        "models.HeartbeatRequest": {
             "type": "object",
             "required": [
                 "hardware_fingerprint",
@@ -3424,7 +3716,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.HeartbeatResponse": {
+        "models.HeartbeatResponse": {
             "type": "object",
             "properties": {
                 "config_updated": {
@@ -3445,7 +3737,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.License": {
+        "models.License": {
             "type": "object",
             "properties": {
                 "activated_at": {
@@ -3458,7 +3750,7 @@ const docTemplate = `{
                     "description": "关联字段（用于查询时的JOIN）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/license-manager_internal_models.AuthorizationCode"
+                            "$ref": "#/definitions/models.AuthorizationCode"
                         }
                     ]
                 },
@@ -3472,7 +3764,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "customer": {
-                    "$ref": "#/definitions/license-manager_internal_models.Customer"
+                    "$ref": "#/definitions/models.Customer"
                 },
                 "customer_id": {
                     "type": "string"
@@ -3515,7 +3807,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.LicenseCreateRequest": {
+        "models.LicenseCreateRequest": {
             "type": "object",
             "required": [
                 "authorization_code_id",
@@ -3541,7 +3833,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.LicenseDetailResponse": {
+        "models.LicenseDetailResponse": {
             "type": "object",
             "properties": {
                 "activated_at": {
@@ -3569,7 +3861,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "customer_id": {
-                    "description": "客户ID",
+                    "description": "客户ID，NULL表示无客户",
                     "type": "string"
                 },
                 "customer_name": {
@@ -3628,7 +3920,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.LicenseListItem": {
+        "models.LicenseListItem": {
             "type": "object",
             "properties": {
                 "activated_at": {
@@ -3689,13 +3981,13 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.LicenseListResponse": {
+        "models.LicenseListResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/license-manager_internal_models.LicenseListItem"
+                        "$ref": "#/definitions/models.LicenseListItem"
                     }
                 },
                 "page": {
@@ -3712,7 +4004,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.LicenseRevokeRequest": {
+        "models.LicenseRevokeRequest": {
             "type": "object",
             "properties": {
                 "reason": {
@@ -3722,7 +4014,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.LoginRequest": {
+        "models.LoginRequest": {
             "type": "object",
             "required": [
                 "password",
@@ -3739,7 +4031,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.LoginResponse": {
+        "models.LoginResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -3755,7 +4047,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.RecentAuthorization": {
+        "models.RecentAuthorization": {
             "type": "object",
             "properties": {
                 "code": {
@@ -3771,7 +4063,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "customer_id": {
-                    "description": "客户ID",
+                    "description": "客户ID，NULL表示无客户",
                     "type": "string"
                 },
                 "customer_name": {
@@ -3812,7 +4104,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.StatsOverviewResponse": {
+        "models.StatsOverviewResponse": {
             "type": "object",
             "properties": {
                 "abnormal_alerts": {
@@ -3835,7 +4127,7 @@ const docTemplate = `{
                     "description": "Growth rates shown as sub-text, not standalone cards",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/license-manager_internal_models.GrowthRate"
+                            "$ref": "#/definitions/models.GrowthRate"
                         }
                     ]
                 },
@@ -3857,7 +4149,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.SystemInfo": {
+        "models.SystemInfo": {
             "type": "object",
             "properties": {
                 "arch": {
@@ -3877,7 +4169,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.TrendData": {
+        "models.TrendData": {
             "type": "object",
             "properties": {
                 "date": {
@@ -3898,7 +4190,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.TrendPeriod": {
+        "models.TrendPeriod": {
             "type": "object",
             "properties": {
                 "description_display": {
@@ -3919,7 +4211,7 @@ const docTemplate = `{
                 }
             }
         },
-        "license-manager_internal_models.TrendSummary": {
+        "models.TrendSummary": {
             "type": "object",
             "properties": {
                 "expired_count": {

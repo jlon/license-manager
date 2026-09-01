@@ -123,6 +123,8 @@ func SetupRouter() *gin.Engine {
 			auth.GET("/v1/stats/overview", licenseHandler.GetStatsOverview)
 
 			// 仪表盘接口
+			auth.GET("/v1/dashboard/home", dashboardHandler.GetHome)
+			auth.GET("/v1/dashboard/trends", dashboardHandler.GetBusinessTrends)
 			auth.GET("/v1/dashboard/authorization-trend", dashboardHandler.GetAuthorizationTrend)
 			auth.GET("/v1/dashboard/recent-authorizations", dashboardHandler.GetRecentAuthorizations)
 		}

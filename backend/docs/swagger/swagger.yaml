@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  license-manager_internal_models.APIResponse:
+  models.APIResponse:
     properties:
       code:
         type: string
@@ -10,7 +10,7 @@ definitions:
       timestamp:
         type: string
     type: object
-  license-manager_internal_models.ActivateRequest:
+  models.ActivateRequest:
     properties:
       authorization_code:
         description: 授权码，必填
@@ -29,7 +29,7 @@ definitions:
     - authorization_code
     - hardware_fingerprint
     type: object
-  license-manager_internal_models.ActivateResponse:
+  models.ActivateResponse:
     properties:
       heartbeat_interval:
         description: 心跳间隔(秒)
@@ -41,7 +41,7 @@ definitions:
         description: 许可证密钥
         type: string
     type: object
-  license-manager_internal_models.AuthorizationChangeListItem:
+  models.AuthorizationChangeListItem:
     properties:
       change_type:
         description: 变更类型
@@ -65,12 +65,12 @@ definitions:
         description: 变更原因
         type: string
     type: object
-  license-manager_internal_models.AuthorizationChangeListResponse:
+  models.AuthorizationChangeListResponse:
     properties:
       list:
         description: 变更历史列表
         items:
-          $ref: '#/definitions/license-manager_internal_models.AuthorizationChangeListItem'
+          $ref: '#/definitions/models.AuthorizationChangeListItem'
         type: array
       page:
         description: 当前页码
@@ -85,7 +85,7 @@ definitions:
         description: 总页数
         type: integer
     type: object
-  license-manager_internal_models.AuthorizationCode:
+  models.AuthorizationCode:
     properties:
       activated_licenses_count:
         description: 该授权码下已激活的许可证数量
@@ -106,11 +106,11 @@ definitions:
         description: 自定义参数（JSON对象）
         type: object
       customer_id:
-        description: 客户ID
+        description: 客户ID，NULL表示无客户
         type: string
       customer_info:
         allOf:
-        - $ref: '#/definitions/license-manager_internal_models.CustomerInfoForAuthCode'
+        - $ref: '#/definitions/models.CustomerInfoForAuthCode'
         description: 客户信息（仅在详情接口返回）
       customer_name:
         description: 客户名称
@@ -179,12 +179,12 @@ definitions:
         description: 使用限制（JSON对象）
         type: object
     type: object
-  license-manager_internal_models.AuthorizationCodeCreateRequest:
+  models.AuthorizationCodeCreateRequest:
     properties:
       custom_parameters:
         description: 自定义参数（JSON对象）
       customer_id:
-        description: 客户ID
+        description: 客户ID，可选
         type: string
       deployment_type:
         description: 部署类型：standalone/cloud/hybrid
@@ -223,12 +223,11 @@ definitions:
         minimum: 1
         type: integer
     required:
-    - customer_id
     - deployment_type
     - max_activations
     - validity_days
     type: object
-  license-manager_internal_models.AuthorizationCodeCreateResponse:
+  models.AuthorizationCodeCreateResponse:
     properties:
       code:
         description: 授权码
@@ -237,7 +236,7 @@ definitions:
         description: 授权码ID
         type: string
     type: object
-  license-manager_internal_models.AuthorizationCodeListItem:
+  models.AuthorizationCodeListItem:
     properties:
       code:
         description: 授权码
@@ -249,7 +248,7 @@ definitions:
         description: 当前激活次数
         type: integer
       customer_id:
-        description: 客户ID
+        description: 客户ID，NULL表示无客户
         type: string
       customer_name:
         description: 客户名称
@@ -288,12 +287,12 @@ definitions:
         description: 状态显示（多语言）
         type: string
     type: object
-  license-manager_internal_models.AuthorizationCodeListResponse:
+  models.AuthorizationCodeListResponse:
     properties:
       list:
         description: 授权码列表
         items:
-          $ref: '#/definitions/license-manager_internal_models.AuthorizationCodeListItem'
+          $ref: '#/definitions/models.AuthorizationCodeListItem'
         type: array
       page:
         description: 当前页码
@@ -308,7 +307,7 @@ definitions:
         description: 总页数
         type: integer
     type: object
-  license-manager_internal_models.AuthorizationCodeLockRequest:
+  models.AuthorizationCodeLockRequest:
     properties:
       is_locked:
         description: true-锁定，false-解锁
@@ -322,7 +321,7 @@ definitions:
         maxLength: 500
         type: string
     type: object
-  license-manager_internal_models.AuthorizationCodeUpdateRequest:
+  models.AuthorizationCodeUpdateRequest:
     properties:
       change_type:
         description: 变更类型：renewal/upgrade/limit_change/feature_toggle/lock/unlock/other
@@ -384,7 +383,7 @@ definitions:
     required:
     - change_type
     type: object
-  license-manager_internal_models.AuthorizationStats:
+  models.AuthorizationStats:
     properties:
       active_licenses:
         description: 已激活许可证数量
@@ -408,13 +407,13 @@ definitions:
         description: 总许可证数量
         type: integer
     type: object
-  license-manager_internal_models.Customer:
+  models.Customer:
     properties:
       address:
         type: string
       authorization_stats:
         allOf:
-        - $ref: '#/definitions/license-manager_internal_models.AuthorizationStats'
+        - $ref: '#/definitions/models.AuthorizationStats'
         description: 授权统计信息（仅在详情接口返回）
       company_size:
         type: string
@@ -457,7 +456,7 @@ definitions:
       updated_by:
         type: string
     type: object
-  license-manager_internal_models.CustomerCreateRequest:
+  models.CustomerCreateRequest:
     properties:
       address:
         description: 地址，可选
@@ -514,7 +513,7 @@ definitions:
     - customer_type
     - status
     type: object
-  license-manager_internal_models.CustomerInfoForAuthCode:
+  models.CustomerInfoForAuthCode:
     properties:
       created_at:
         description: 客户创建时间
@@ -541,7 +540,7 @@ definitions:
         description: 客户状态显示（多语言）
         type: string
     type: object
-  license-manager_internal_models.CustomerListItem:
+  models.CustomerListItem:
     properties:
       contact_person:
         type: string
@@ -568,11 +567,11 @@ definitions:
       status_display:
         type: string
     type: object
-  license-manager_internal_models.CustomerListResponse:
+  models.CustomerListResponse:
     properties:
       list:
         items:
-          $ref: '#/definitions/license-manager_internal_models.CustomerListItem'
+          $ref: '#/definitions/models.CustomerListItem'
         type: array
       page:
         type: integer
@@ -583,7 +582,7 @@ definitions:
       total_pages:
         type: integer
     type: object
-  license-manager_internal_models.CustomerStatusUpdateRequest:
+  models.CustomerStatusUpdateRequest:
     properties:
       status:
         description: 状态，必填
@@ -594,7 +593,7 @@ definitions:
     required:
     - status
     type: object
-  license-manager_internal_models.CustomerUpdateRequest:
+  models.CustomerUpdateRequest:
     properties:
       address:
         description: 地址，可选
@@ -645,34 +644,136 @@ definitions:
         - disabled
         type: string
     type: object
-  license-manager_internal_models.DashboardAuthorizationTrendResponse:
+  models.DashboardActivatedDevices:
+    properties:
+      total:
+        type: integer
+    type: object
+  models.DashboardAuthorizationTrendResponse:
     properties:
       period:
         allOf:
-        - $ref: '#/definitions/license-manager_internal_models.TrendPeriod'
+        - $ref: '#/definitions/models.TrendPeriod'
         description: 时间段信息
       summary:
         allOf:
-        - $ref: '#/definitions/license-manager_internal_models.TrendSummary'
+        - $ref: '#/definitions/models.TrendSummary'
         description: 汇总信息
       trend_data:
         description: 趋势数据
         items:
-          $ref: '#/definitions/license-manager_internal_models.TrendData'
+          $ref: '#/definitions/models.TrendData'
         type: array
     type: object
-  license-manager_internal_models.DashboardRecentAuthorizationsResponse:
+  models.DashboardBusinessTrendPeriod:
+    properties:
+      end_date:
+        type: string
+      start_date:
+        type: string
+      type:
+        type: string
+    type: object
+  models.DashboardBusinessTrendsResponse:
+    properties:
+      activation_trend:
+        items:
+          $ref: '#/definitions/models.DashboardTrendPoint'
+        type: array
+      authorization_creation_trend:
+        items:
+          $ref: '#/definitions/models.DashboardTrendPoint'
+        type: array
+      period:
+        $ref: '#/definitions/models.DashboardBusinessTrendPeriod'
+    type: object
+  models.DashboardExpiryReminder:
+    properties:
+      affected_device_count:
+        type: integer
+      authorization_count:
+        type: integer
+    type: object
+  models.DashboardExpiryReminders:
+    properties:
+      due_7_days:
+        $ref: '#/definitions/models.DashboardExpiryReminder'
+      due_8_to_30_days:
+        $ref: '#/definitions/models.DashboardExpiryReminder'
+      expired:
+        $ref: '#/definitions/models.DashboardExpiryReminder'
+    type: object
+  models.DashboardHomeResponse:
+    properties:
+      expiry_reminders:
+        $ref: '#/definitions/models.DashboardExpiryReminders'
+      generated_at:
+        type: string
+      overview:
+        $ref: '#/definitions/models.DashboardOverview'
+      recent_activations:
+        items:
+          $ref: '#/definitions/models.DashboardRecentActivation'
+        type: array
+      recent_authorizations:
+        items:
+          $ref: '#/definitions/models.RecentAuthorization'
+        type: array
+    type: object
+  models.DashboardOverview:
+    properties:
+      activated_devices:
+        $ref: '#/definitions/models.DashboardActivatedDevices'
+      remaining_activation_slots:
+        type: integer
+      valid_authorizations:
+        $ref: '#/definitions/models.DashboardValidAuthorizations'
+    type: object
+  models.DashboardRecentActivation:
+    properties:
+      activated_at:
+        type: string
+      authorization_code_id:
+        type: string
+      customer_name:
+        type: string
+      description:
+        type: string
+      end_date:
+        type: string
+      hardware_fingerprint:
+        type: string
+      id:
+        type: string
+    type: object
+  models.DashboardRecentAuthorizationsResponse:
     properties:
       list:
         description: 授权列表
         items:
-          $ref: '#/definitions/license-manager_internal_models.RecentAuthorization'
+          $ref: '#/definitions/models.RecentAuthorization'
         type: array
       total:
         description: 符合条件的授权总数量
         type: integer
     type: object
-  license-manager_internal_models.EnumItem:
+  models.DashboardTrendPoint:
+    properties:
+      count:
+        type: integer
+      date:
+        type: string
+    type: object
+  models.DashboardValidAuthorizations:
+    properties:
+      activated:
+        type: integer
+      not_activated:
+        type: integer
+      total:
+        type: integer
+    type: object
+  models.EnumItem:
     properties:
       display:
         description: 多语言显示文本
@@ -681,26 +782,26 @@ definitions:
         description: 枚举值
         type: string
     type: object
-  license-manager_internal_models.EnumListResponse:
+  models.EnumListResponse:
     properties:
       enums:
         description: 所有枚举类型
         items:
-          $ref: '#/definitions/license-manager_internal_models.EnumTypeResponse'
+          $ref: '#/definitions/models.EnumTypeResponse'
         type: array
     type: object
-  license-manager_internal_models.EnumTypeResponse:
+  models.EnumTypeResponse:
     properties:
       items:
         description: 枚举项列表
         items:
-          $ref: '#/definitions/license-manager_internal_models.EnumItem'
+          $ref: '#/definitions/models.EnumItem'
         type: array
       type:
         description: 枚举类型名称
         type: string
     type: object
-  license-manager_internal_models.ErrorResponse:
+  models.ErrorResponse:
     properties:
       code:
         description: 业务错误码，如 "100001", "900001"
@@ -712,7 +813,7 @@ definitions:
         description: 错误发生时间
         type: string
     type: object
-  license-manager_internal_models.GrowthRate:
+  models.GrowthRate:
     properties:
       auth_codes_mom:
         description: auth codes MoM growth rate (%)
@@ -721,7 +822,7 @@ definitions:
         description: active licenses MoM growth rate (%)
         type: number
     type: object
-  license-manager_internal_models.HealthResponse:
+  models.HealthResponse:
     properties:
       services:
         additionalProperties:
@@ -730,7 +831,7 @@ definitions:
       status:
         type: string
       system:
-        $ref: '#/definitions/license-manager_internal_models.SystemInfo'
+        $ref: '#/definitions/models.SystemInfo'
       timestamp:
         type: string
       uptime:
@@ -738,7 +839,7 @@ definitions:
       version:
         type: string
     type: object
-  license-manager_internal_models.HeartbeatRequest:
+  models.HeartbeatRequest:
     properties:
       config_updated_at:
         description: 客户端配置更新时间，可选
@@ -760,7 +861,7 @@ definitions:
     - hardware_fingerprint
     - license_key
     type: object
-  license-manager_internal_models.HeartbeatResponse:
+  models.HeartbeatResponse:
     properties:
       config_updated:
         description: 配置是否有更新
@@ -775,7 +876,7 @@ definitions:
         description: 许可证状态
         type: string
     type: object
-  license-manager_internal_models.License:
+  models.License:
     properties:
       activated_at:
         type: string
@@ -783,7 +884,7 @@ definitions:
         type: string
       authorization_code:
         allOf:
-        - $ref: '#/definitions/license-manager_internal_models.AuthorizationCode'
+        - $ref: '#/definitions/models.AuthorizationCode'
         description: 关联字段（用于查询时的JOIN）
       authorization_code_id:
         type: string
@@ -792,7 +893,7 @@ definitions:
       created_at:
         type: string
       customer:
-        $ref: '#/definitions/license-manager_internal_models.Customer'
+        $ref: '#/definitions/models.Customer'
       customer_id:
         type: string
       device_info:
@@ -820,7 +921,7 @@ definitions:
       usage_data:
         type: object
     type: object
-  license-manager_internal_models.LicenseCreateRequest:
+  models.LicenseCreateRequest:
     properties:
       activation_ip:
         description: 激活IP，可选
@@ -839,7 +940,7 @@ definitions:
     - authorization_code_id
     - hardware_fingerprint
     type: object
-  license-manager_internal_models.LicenseDetailResponse:
+  models.LicenseDetailResponse:
     properties:
       activated_at:
         description: 激活时间
@@ -860,7 +961,7 @@ definitions:
         description: 创建时间
         type: string
       customer_id:
-        description: 客户ID
+        description: 客户ID，NULL表示无客户
         type: string
       customer_name:
         description: 客户名称
@@ -904,7 +1005,7 @@ definitions:
         description: 使用数据
         type: object
     type: object
-  license-manager_internal_models.LicenseListItem:
+  models.LicenseListItem:
     properties:
       activated_at:
         description: 激活时间
@@ -949,11 +1050,11 @@ definitions:
         description: 状态显示名称
         type: string
     type: object
-  license-manager_internal_models.LicenseListResponse:
+  models.LicenseListResponse:
     properties:
       list:
         items:
-          $ref: '#/definitions/license-manager_internal_models.LicenseListItem'
+          $ref: '#/definitions/models.LicenseListItem'
         type: array
       page:
         type: integer
@@ -964,14 +1065,14 @@ definitions:
       total_pages:
         type: integer
     type: object
-  license-manager_internal_models.LicenseRevokeRequest:
+  models.LicenseRevokeRequest:
     properties:
       reason:
         description: 撤销原因，可选
         maxLength: 500
         type: string
     type: object
-  license-manager_internal_models.LoginRequest:
+  models.LoginRequest:
     properties:
       password:
         description: 密码
@@ -983,7 +1084,7 @@ definitions:
     - password
     - username
     type: object
-  license-manager_internal_models.LoginResponse:
+  models.LoginResponse:
     properties:
       code:
         description: 响应代码
@@ -994,7 +1095,7 @@ definitions:
         description: 响应消息
         type: string
     type: object
-  license-manager_internal_models.RecentAuthorization:
+  models.RecentAuthorization:
     properties:
       code:
         description: 授权码
@@ -1006,7 +1107,7 @@ definitions:
         description: 当前激活数量
         type: integer
       customer_id:
-        description: 客户ID
+        description: 客户ID，NULL表示无客户
         type: string
       customer_name:
         description: 客户名称
@@ -1036,7 +1137,7 @@ definitions:
         description: 更新时间
         type: string
     type: object
-  license-manager_internal_models.StatsOverviewResponse:
+  models.StatsOverviewResponse:
     properties:
       abnormal_alerts:
         description: active licenses with heartbeat timeout
@@ -1052,7 +1153,7 @@ definitions:
         type: integer
       growth_rate:
         allOf:
-        - $ref: '#/definitions/license-manager_internal_models.GrowthRate'
+        - $ref: '#/definitions/models.GrowthRate'
         description: Growth rates shown as sub-text, not standalone cards
       month_new_auth_codes:
         description: auth codes created this calendar month
@@ -1067,7 +1168,7 @@ definitions:
         description: licenses created yesterday (for comparison)
         type: integer
     type: object
-  license-manager_internal_models.SystemInfo:
+  models.SystemInfo:
     properties:
       arch:
         type: string
@@ -1080,7 +1181,7 @@ definitions:
       version:
         type: string
     type: object
-  license-manager_internal_models.TrendData:
+  models.TrendData:
     properties:
       date:
         description: 日期 (YYYY-MM-DD)
@@ -1095,7 +1196,7 @@ definitions:
         description: 当日授权总数
         type: integer
     type: object
-  license-manager_internal_models.TrendPeriod:
+  models.TrendPeriod:
     properties:
       description_display:
         description: 多语言描述
@@ -1110,7 +1211,7 @@ definitions:
         description: 时间类型
         type: string
     type: object
-  license-manager_internal_models.TrendSummary:
+  models.TrendSummary:
     properties:
       expired_count:
         description: 期间过期授权数
@@ -1207,23 +1308,23 @@ paths:
           description: 查询成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.CustomerListResponse'
+                  $ref: '#/definitions/models.CustomerListResponse'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 查询客户列表
@@ -1239,7 +1340,7 @@ paths:
         name: customer
         required: true
         schema:
-          $ref: '#/definitions/license-manager_internal_models.CustomerCreateRequest'
+          $ref: '#/definitions/models.CustomerCreateRequest'
       produces:
       - application/json
       responses:
@@ -1247,27 +1348,27 @@ paths:
           description: 创建成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.Customer'
+                  $ref: '#/definitions/models.Customer'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "409":
           description: 客户已存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 创建客户
@@ -1290,27 +1391,27 @@ paths:
         "200":
           description: 删除成功
           schema:
-            $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            $ref: '#/definitions/models.APIResponse'
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 客户不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "409":
           description: 客户仍有授权，无法删除
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 删除客户
@@ -1333,27 +1434,27 @@ paths:
           description: 查询成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.Customer'
+                  $ref: '#/definitions/models.Customer'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 客户不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 获取客户详情
@@ -1374,7 +1475,7 @@ paths:
         name: customer
         required: true
         schema:
-          $ref: '#/definitions/license-manager_internal_models.CustomerUpdateRequest'
+          $ref: '#/definitions/models.CustomerUpdateRequest'
       produces:
       - application/json
       responses:
@@ -1382,27 +1483,27 @@ paths:
           description: 更新成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.Customer'
+                  $ref: '#/definitions/models.Customer'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 客户不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 更新客户信息
@@ -1424,7 +1525,7 @@ paths:
         name: status
         required: true
         schema:
-          $ref: '#/definitions/license-manager_internal_models.CustomerStatusUpdateRequest'
+          $ref: '#/definitions/models.CustomerStatusUpdateRequest'
       produces:
       - application/json
       responses:
@@ -1432,27 +1533,27 @@ paths:
           description: 状态更新成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.Customer'
+                  $ref: '#/definitions/models.Customer'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 客户不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 修改客户状态
@@ -1470,19 +1571,19 @@ paths:
           description: 查询成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.EnumListResponse'
+                  $ref: '#/definitions/models.EnumListResponse'
               type: object
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 获取所有枚举值
@@ -1511,23 +1612,23 @@ paths:
           description: 查询成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.EnumTypeResponse'
+                  $ref: '#/definitions/models.EnumTypeResponse'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 获取指定类型的枚举值
@@ -1544,7 +1645,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/license-manager_internal_models.ActivateRequest'
+          $ref: '#/definitions/models.ActivateRequest'
       produces:
       - application/json
       responses:
@@ -1552,31 +1653,31 @@ paths:
           description: 激活成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.ActivateResponse'
+                  $ref: '#/definitions/models.ActivateResponse'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 授权码不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "409":
           description: 授权码已锁定或已过期
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "429":
           description: 激活数量已达上限
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       summary: 激活许可证
       tags:
       - 许可证激活
@@ -1591,15 +1692,15 @@ paths:
         "200":
           description: 系统信息
           schema:
-            $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            $ref: '#/definitions/models.APIResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "403":
           description: 权限不足
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 获取系统信息
@@ -1616,15 +1717,15 @@ paths:
         "200":
           description: 刷新成功
           schema:
-            $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            $ref: '#/definitions/models.APIResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 刷新Token
@@ -1693,23 +1794,23 @@ paths:
           description: 查询成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.AuthorizationCodeListResponse'
+                  $ref: '#/definitions/models.AuthorizationCodeListResponse'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 查询授权码列表
@@ -1725,7 +1826,7 @@ paths:
         name: authorization_code
         required: true
         schema:
-          $ref: '#/definitions/license-manager_internal_models.AuthorizationCodeCreateRequest'
+          $ref: '#/definitions/models.AuthorizationCodeCreateRequest'
       produces:
       - application/json
       responses:
@@ -1733,31 +1834,31 @@ paths:
           description: 创建成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.AuthorizationCodeCreateResponse'
+                  $ref: '#/definitions/models.AuthorizationCodeCreateResponse'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 客户不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "409":
           description: 授权码已存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 创建授权码
@@ -1780,23 +1881,23 @@ paths:
         "200":
           description: 删除成功
           schema:
-            $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            $ref: '#/definitions/models.APIResponse'
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 授权码不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 删除授权码
@@ -1819,27 +1920,27 @@ paths:
           description: 查询成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.AuthorizationCode'
+                  $ref: '#/definitions/models.AuthorizationCode'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 授权码不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 获取授权码详情
@@ -1860,7 +1961,7 @@ paths:
         name: authorization_code
         required: true
         schema:
-          $ref: '#/definitions/license-manager_internal_models.AuthorizationCodeUpdateRequest'
+          $ref: '#/definitions/models.AuthorizationCodeUpdateRequest'
       produces:
       - application/json
       responses:
@@ -1868,27 +1969,27 @@ paths:
           description: 更新成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.AuthorizationCode'
+                  $ref: '#/definitions/models.AuthorizationCode'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 授权码不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 更新授权码
@@ -1953,27 +2054,27 @@ paths:
           description: 查询成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.AuthorizationChangeListResponse'
+                  $ref: '#/definitions/models.AuthorizationChangeListResponse'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 授权码不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 查询授权变更历史列表
@@ -2000,23 +2101,23 @@ paths:
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 授权码不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "409":
           description: 授权码不可用
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 下载授权文件
@@ -2038,7 +2139,7 @@ paths:
         name: lock_request
         required: true
         schema:
-          $ref: '#/definitions/license-manager_internal_models.AuthorizationCodeLockRequest'
+          $ref: '#/definitions/models.AuthorizationCodeLockRequest'
       produces:
       - application/json
       responses:
@@ -2046,27 +2147,27 @@ paths:
           description: 操作成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.AuthorizationCode'
+                  $ref: '#/definitions/models.AuthorizationCode'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 授权码不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 锁定/解锁授权码
@@ -2106,30 +2207,58 @@ paths:
           description: 授权趋势数据
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.DashboardAuthorizationTrendResponse'
+                  $ref: '#/definitions/models.DashboardAuthorizationTrendResponse'
               type: object
         "400":
           description: 请求参数错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "403":
           description: 权限不足
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 获取授权趋势数据
+      tags:
+      - 仪表盘
+  /api/v1/dashboard/home:
+    get:
+      description: 获取有效授权、已激活设备、剩余激活名额、到期提醒及最近记录
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 仪表盘首页数据
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.DashboardHomeResponse'
+              type: object
+        "401":
+          description: 未认证
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: 服务器内部错误
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: 获取仪表盘首页聚合数据
       tags:
       - 仪表盘
   /api/v1/dashboard/recent-authorizations:
@@ -2161,30 +2290,83 @@ paths:
           description: 最近授权列表
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.DashboardRecentAuthorizationsResponse'
+                  $ref: '#/definitions/models.DashboardRecentAuthorizationsResponse'
               type: object
         "400":
           description: 请求参数错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "403":
           description: 权限不足
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 获取最近授权列表
+      tags:
+      - 仪表盘
+  /api/v1/dashboard/trends:
+    get:
+      description: 获取授权码创建趋势和许可证激活趋势
+      parameters:
+      - description: 时间范围，默认30d
+        enum:
+        - 7d
+        - 30d
+        - custom
+        in: query
+        name: period
+        type: string
+      - description: 自定义开始日期(YYYY-MM-DD)
+        in: query
+        name: start_date
+        type: string
+      - description: 自定义结束日期(YYYY-MM-DD)
+        in: query
+        name: end_date
+        type: string
+      - description: 浏览器IANA时区
+        in: query
+        name: timezone
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 仪表盘趋势数据
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.DashboardBusinessTrendsResponse'
+              type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: 未认证
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: 服务器内部错误
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: 获取仪表盘业务趋势
       tags:
       - 仪表盘
   /api/v1/heartbeat:
@@ -2198,7 +2380,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/license-manager_internal_models.HeartbeatRequest'
+          $ref: '#/definitions/models.HeartbeatRequest'
       produces:
       - application/json
       responses:
@@ -2206,27 +2388,27 @@ paths:
           description: 心跳成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.HeartbeatResponse'
+                  $ref: '#/definitions/models.HeartbeatResponse'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 许可证不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "409":
           description: 许可证已被撤销
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       summary: 心跳检测
       tags:
       - 许可证激活
@@ -2290,23 +2472,23 @@ paths:
           description: 查询成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.LicenseListResponse'
+                  $ref: '#/definitions/models.LicenseListResponse'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 查询许可证列表
@@ -2322,7 +2504,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/license-manager_internal_models.LicenseCreateRequest'
+          $ref: '#/definitions/models.LicenseCreateRequest'
       produces:
       - application/json
       responses:
@@ -2330,27 +2512,27 @@ paths:
           description: 创建成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.License'
+                  $ref: '#/definitions/models.License'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 授权码不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 手动添加许可证
@@ -2374,27 +2556,27 @@ paths:
           description: 查询成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.LicenseDetailResponse'
+                  $ref: '#/definitions/models.LicenseDetailResponse'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 许可证不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 获取许可证详情
@@ -2421,23 +2603,23 @@ paths:
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 许可证不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "409":
           description: 许可证已被撤销
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 下载许可证文件
@@ -2459,7 +2641,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/license-manager_internal_models.LicenseRevokeRequest'
+          $ref: '#/definitions/models.LicenseRevokeRequest'
       produces:
       - application/json
       responses:
@@ -2467,31 +2649,31 @@ paths:
           description: 撤销成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.License'
+                  $ref: '#/definitions/models.License'
               type: object
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: 许可证不存在
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "409":
           description: 许可证已被撤销
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 撤销许可证
@@ -2508,26 +2690,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/license-manager_internal_models.LoginRequest'
+          $ref: '#/definitions/models.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: 登录成功
           schema:
-            $ref: '#/definitions/license-manager_internal_models.LoginResponse'
+            $ref: '#/definitions/models.LoginResponse'
         "400":
           description: 请求参数无效
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: 用户名或密码错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       summary: 用户登录
       tags:
       - 认证
@@ -2542,11 +2724,11 @@ paths:
         "200":
           description: 登出成功
           schema:
-            $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            $ref: '#/definitions/models.APIResponse'
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 用户登出
@@ -2564,19 +2746,19 @@ paths:
           description: 查询成功
           schema:
             allOf:
-            - $ref: '#/definitions/license-manager_internal_models.APIResponse'
+            - $ref: '#/definitions/models.APIResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/license-manager_internal_models.StatsOverviewResponse'
+                  $ref: '#/definitions/models.StatsOverviewResponse'
               type: object
         "401":
           description: 未认证
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: 服务器内部错误
           schema:
-            $ref: '#/definitions/license-manager_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 获取授权概览统计
@@ -2593,7 +2775,7 @@ paths:
         "200":
           description: 健康状态
           schema:
-            $ref: '#/definitions/license-manager_internal_models.HealthResponse'
+            $ref: '#/definitions/models.HealthResponse'
       summary: 健康检测
       tags:
       - 系统

@@ -22,6 +22,86 @@ func NewDashboardService(dashboardRepo repository.DashboardRepository) Dashboard
 	}
 }
 
+// GetHome 获取首页聚合数据。
+func (s *dashboardService) GetHome(ctx context.Context) (*models.DashboardHomeResponse, error) {
+	return s.dashboardRepo.GetHomeData(ctx, time.Now(), 5)
+}
+
+// GetBusinessTrends 获取授权码创建和许可证激活趋势。
+func (s *dashboardService) GetBusinessTrends(ctx context.Context, req *models.DashboardBusinessTrendsRequest) (*models.DashboardBusinessTrendsResponse, error) {
+	lang := pkgcontext.GetLanguageFromContext(ctx)
+	if req == nil {
+		return nil, i18n.NewI18nError("900001", lang)
+	}
+
+	periodType, startDate, endDate, err := parseDashboardBusinessTrendRange(req, time.Now())
+	if err != nil {
+		return nil, i18n.NewI18nError(err.code, lang)
+	}
+	authorizationTrend, activationTrend, repoErr := s.dashboardRepo.GetBusinessTrendData(ctx, startDate, endDate)
+	if repoErr != nil {
+		return nil, repoErr
+	}
+	return &models.DashboardBusinessTrendsResponse{
+		Period: models.DashboardBusinessTrendPeriod{
+			Type: periodType, StartDate: startDate.Format("2006-01-02"), EndDate: endDate.Format("2006-01-02"),
+		},
+		AuthorizationCreationTrend: authorizationTrend,
+		ActivationTrend:            activationTrend,
+	}, nil
+}
+
+type dashboardRangeError struct {
+	code string
+}
+
+func (e *dashboardRangeError) Error() string { return e.code }
+
+func parseDashboardBusinessTrendRange(req *models.DashboardBusinessTrendsRequest, currentTime time.Time) (string, time.Time, time.Time, *dashboardRangeError) {
+	periodType := req.Period
+	if periodType == "" {
+		periodType = "30d"
+	}
+	loc := time.Local
+	if req.Timezone != "" {
+		loadedLocation, err := time.LoadLocation(req.Timezone)
+		if err != nil {
+			return "", time.Time{}, time.Time{}, &dashboardRangeError{code: "400001"}
+		}
+		loc = loadedLocation
+	}
+	now := currentTime.In(loc)
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc)
+
+	switch periodType {
+	case "7d":
+		return periodType, today.AddDate(0, 0, -6), today, nil
+	case "30d":
+		return periodType, today.AddDate(0, 0, -29), today, nil
+	case "custom":
+		if req.StartDate == "" || req.EndDate == "" {
+			return "", time.Time{}, time.Time{}, &dashboardRangeError{code: "400002"}
+		}
+		startDate, err := time.ParseInLocation("2006-01-02", req.StartDate, loc)
+		if err != nil {
+			return "", time.Time{}, time.Time{}, &dashboardRangeError{code: "400002"}
+		}
+		endDate, err := time.ParseInLocation("2006-01-02", req.EndDate, loc)
+		if err != nil {
+			return "", time.Time{}, time.Time{}, &dashboardRangeError{code: "400003"}
+		}
+		if startDate.After(endDate) {
+			return "", time.Time{}, time.Time{}, &dashboardRangeError{code: "400005"}
+		}
+		if endDate.Sub(startDate) > 364*24*time.Hour {
+			return "", time.Time{}, time.Time{}, &dashboardRangeError{code: "400004"}
+		}
+		return periodType, startDate, endDate, nil
+	default:
+		return "", time.Time{}, time.Time{}, &dashboardRangeError{code: "400001"}
+	}
+}
+
 // GetAuthorizationTrend 获取授权趋势数据
 func (s *dashboardService) GetAuthorizationTrend(ctx context.Context, req *models.DashboardAuthorizationTrendRequest) (*models.DashboardAuthorizationTrendResponse, error) {
 	lang := pkgcontext.GetLanguageFromContext(ctx)

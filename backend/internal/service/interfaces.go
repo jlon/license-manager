@@ -64,6 +64,12 @@ type LicenseService interface {
 
 // DashboardService 仪表盘服务接口
 type DashboardService interface {
+	// 获取首页聚合数据
+	GetHome(ctx context.Context) (*models.DashboardHomeResponse, error)
+
+	// 获取授权码创建和许可证激活趋势
+	GetBusinessTrends(ctx context.Context, req *models.DashboardBusinessTrendsRequest) (*models.DashboardBusinessTrendsResponse, error)
+
 	// 获取授权趋势数据
 	GetAuthorizationTrend(ctx context.Context, req *models.DashboardAuthorizationTrendRequest) (*models.DashboardAuthorizationTrendResponse, error)
 

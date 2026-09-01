@@ -22,6 +22,193 @@ func NewDashboardRepository(db *gorm.DB) DashboardRepository {
 	}
 }
 
+// GetHomeData 获取首页概览、到期提醒和最近记录。
+func (r *dashboardRepository) GetHomeData(ctx context.Context, now time.Time, recentLimit int) (*models.DashboardHomeResponse, error) {
+	lang := pkgcontext.GetLanguageFromContext(ctx)
+	if recentLimit <= 0 {
+		recentLimit = 5
+	}
+
+	activeLicenseSubquery := `
+		SELECT authorization_code_id, COUNT(*) AS active_count
+		FROM licenses
+		WHERE status = 'active' AND deleted_at IS NULL
+		GROUP BY authorization_code_id`
+
+	type overviewResult struct {
+		ValidTotal               int64 `gorm:"column:valid_total"`
+		ValidActivated           int64 `gorm:"column:valid_activated"`
+		ActivatedDevices         int64 `gorm:"column:activated_devices"`
+		RemainingActivationSlots int64 `gorm:"column:remaining_activation_slots"`
+	}
+	var overview overviewResult
+	if err := r.db.WithContext(ctx).Table("authorization_codes ac").
+		Select(`COUNT(*) AS valid_total,
+			COALESCE(SUM(CASE WHEN COALESCE(al.active_count, 0) > 0 THEN 1 ELSE 0 END), 0) AS valid_activated,
+			(SELECT COUNT(*) FROM licenses WHERE status = 'active' AND deleted_at IS NULL) AS activated_devices,
+			COALESCE(SUM(GREATEST(ac.max_activations - COALESCE(al.active_count, 0), 0)), 0) AS remaining_activation_slots`).
+		Joins("LEFT JOIN ("+activeLicenseSubquery+") al ON al.authorization_code_id = ac.id").
+		Where("ac.is_locked = ? AND ac.end_date >= ?", false, now).
+		Scan(&overview).Error; err != nil {
+		return nil, i18n.NewI18nError("900004", lang, err.Error())
+	}
+
+	due7End := now.AddDate(0, 0, 7)
+	due30End := now.AddDate(0, 0, 30)
+	type expiryResult struct {
+		Due7Authorizations     int64 `gorm:"column:due_7_authorizations"`
+		Due7Devices            int64 `gorm:"column:due_7_devices"`
+		Due8To30Authorizations int64 `gorm:"column:due_8_to_30_authorizations"`
+		Due8To30Devices        int64 `gorm:"column:due_8_to_30_devices"`
+		ExpiredAuthorizations  int64 `gorm:"column:expired_authorizations"`
+		ExpiredDevices         int64 `gorm:"column:expired_devices"`
+	}
+	var expiry expiryResult
+	if err := r.db.WithContext(ctx).Table("authorization_codes ac").
+		Select(`COALESCE(SUM(CASE WHEN ac.end_date > ? AND ac.end_date <= ? THEN 1 ELSE 0 END), 0) AS due_7_authorizations,
+			COALESCE(SUM(CASE WHEN ac.end_date > ? AND ac.end_date <= ? THEN COALESCE(al.active_count, 0) ELSE 0 END), 0) AS due_7_devices,
+			COALESCE(SUM(CASE WHEN ac.end_date > ? AND ac.end_date <= ? THEN 1 ELSE 0 END), 0) AS due_8_to_30_authorizations,
+			COALESCE(SUM(CASE WHEN ac.end_date > ? AND ac.end_date <= ? THEN COALESCE(al.active_count, 0) ELSE 0 END), 0) AS due_8_to_30_devices,
+			COALESCE(SUM(CASE WHEN ac.end_date < ? THEN 1 ELSE 0 END), 0) AS expired_authorizations,
+			COALESCE(SUM(CASE WHEN ac.end_date < ? THEN COALESCE(al.active_count, 0) ELSE 0 END), 0) AS expired_devices`,
+			now, due7End, now, due7End, due7End, due30End, due7End, due30End, now, now).
+		Joins("LEFT JOIN ("+activeLicenseSubquery+") al ON al.authorization_code_id = ac.id").
+		Where("ac.is_locked = ?", false).
+		Scan(&expiry).Error; err != nil {
+		return nil, i18n.NewI18nError("900004", lang, err.Error())
+	}
+
+	recentAuthorizations, err := r.getHomeRecentAuthorizations(ctx, now, recentLimit)
+	if err != nil {
+		return nil, i18n.NewI18nError("900004", lang, err.Error())
+	}
+	recentActivations, err := r.getHomeRecentActivations(ctx, recentLimit)
+	if err != nil {
+		return nil, i18n.NewI18nError("900004", lang, err.Error())
+	}
+
+	return &models.DashboardHomeResponse{
+		GeneratedAt: now,
+		Overview: models.DashboardOverview{
+			ValidAuthorizations: models.DashboardValidAuthorizations{
+				Total:        overview.ValidTotal,
+				Activated:    overview.ValidActivated,
+				NotActivated: overview.ValidTotal - overview.ValidActivated,
+			},
+			ActivatedDevices:         models.DashboardActivatedDevices{Total: overview.ActivatedDevices},
+			RemainingActivationSlots: overview.RemainingActivationSlots,
+		},
+		ExpiryReminders: models.DashboardExpiryReminders{
+			Due7Days:     models.DashboardExpiryReminder{AuthorizationCount: expiry.Due7Authorizations, AffectedDeviceCount: expiry.Due7Devices},
+			Due8To30Days: models.DashboardExpiryReminder{AuthorizationCount: expiry.Due8To30Authorizations, AffectedDeviceCount: expiry.Due8To30Devices},
+			Expired:      models.DashboardExpiryReminder{AuthorizationCount: expiry.ExpiredAuthorizations, AffectedDeviceCount: expiry.ExpiredDevices},
+		},
+		RecentAuthorizations: recentAuthorizations,
+		RecentActivations:    recentActivations,
+	}, nil
+}
+
+func (r *dashboardRepository) getHomeRecentAuthorizations(ctx context.Context, now time.Time, limit int) ([]models.RecentAuthorization, error) {
+	type row struct {
+		ID                 string
+		Code               string
+		CustomerID         *string
+		CustomerName       string
+		Description        string
+		StartDate          time.Time
+		EndDate            time.Time
+		MaxActivations     int
+		CurrentActivations int
+		CreatedAt          time.Time
+		UpdatedAt          time.Time
+		IsLocked           bool
+	}
+	var rows []row
+	err := r.db.WithContext(ctx).Table("authorization_codes ac").
+		Select(`ac.id, ac.code, ac.customer_id, COALESCE(c.customer_name, '') AS customer_name,
+			COALESCE(ac.description, '') AS description, ac.start_date, ac.end_date, ac.max_activations,
+			COALESCE(al.active_count, 0) AS current_activations, ac.created_at, ac.updated_at, ac.is_locked`).
+		Joins("LEFT JOIN customers c ON c.id = ac.customer_id").
+		Joins(`LEFT JOIN (
+			SELECT authorization_code_id, COUNT(*) AS active_count
+			FROM licenses WHERE status = 'active' AND deleted_at IS NULL
+			GROUP BY authorization_code_id
+		) al ON al.authorization_code_id = ac.id`).
+		Order("ac.created_at DESC").Limit(limit).Scan(&rows).Error
+	if err != nil {
+		return nil, err
+	}
+
+	lang := pkgcontext.GetLanguageFromContext(ctx)
+	items := make([]models.RecentAuthorization, 0, len(rows))
+	for _, item := range rows {
+		status := "normal"
+		if item.IsLocked {
+			status = "locked"
+		} else if item.EndDate.Before(now) {
+			status = "expired"
+		}
+		items = append(items, models.RecentAuthorization{
+			ID: item.ID, Code: item.Code, CustomerID: item.CustomerID, CustomerName: item.CustomerName,
+			Description: item.Description, Status: status,
+			StatusDisplay: i18n.GetEnumMessage("authorization_code_status", status, lang),
+			StartDate:     item.StartDate, EndDate: item.EndDate, MaxActivations: item.MaxActivations,
+			CurrentActivations: item.CurrentActivations, CreatedAt: item.CreatedAt, UpdatedAt: item.UpdatedAt,
+		})
+	}
+	return items, nil
+}
+
+func (r *dashboardRepository) getHomeRecentActivations(ctx context.Context, limit int) ([]models.DashboardRecentActivation, error) {
+	items := make([]models.DashboardRecentActivation, 0)
+	err := r.db.WithContext(ctx).Table("licenses l").
+		Select(`l.id, l.authorization_code_id, COALESCE(c.customer_name, '') AS customer_name,
+			COALESCE(ac.description, '') AS description, l.hardware_fingerprint, l.activated_at, ac.end_date`).
+		Joins("JOIN authorization_codes ac ON ac.id = l.authorization_code_id").
+		Joins("LEFT JOIN customers c ON c.id = ac.customer_id").
+		Where("l.deleted_at IS NULL AND l.activated_at IS NOT NULL").
+		Order("l.activated_at DESC").Limit(limit).Scan(&items).Error
+	return items, err
+}
+
+// GetBusinessTrendData 获取两类业务的每日趋势。
+func (r *dashboardRepository) GetBusinessTrendData(ctx context.Context, startDate, endDate time.Time) ([]models.DashboardTrendPoint, []models.DashboardTrendPoint, error) {
+	lang := pkgcontext.GetLanguageFromContext(ctx)
+	rangeStart := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 0, 0, 0, 0, startDate.Location())
+	rangeEndExclusive := time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 0, 0, 0, 0, endDate.Location()).AddDate(0, 0, 1)
+
+	var authorizationTimes []time.Time
+	if err := r.db.WithContext(ctx).Model(&models.AuthorizationCode{}).
+		Where("created_at >= ? AND created_at < ?", rangeStart, rangeEndExclusive).
+		Pluck("created_at", &authorizationTimes).Error; err != nil {
+		return nil, nil, i18n.NewI18nError("900004", lang, err.Error())
+	}
+
+	var activationTimes []time.Time
+	if err := r.db.WithContext(ctx).Model(&models.License{}).
+		Where("activated_at IS NOT NULL AND activated_at >= ? AND activated_at < ?", rangeStart, rangeEndExclusive).
+		Pluck("activated_at", &activationTimes).Error; err != nil {
+		return nil, nil, i18n.NewI18nError("900004", lang, err.Error())
+	}
+
+	return buildDashboardTrendPoints(rangeStart, rangeEndExclusive, authorizationTimes),
+		buildDashboardTrendPoints(rangeStart, rangeEndExclusive, activationTimes), nil
+}
+
+func buildDashboardTrendPoints(startDate, endDateExclusive time.Time, eventTimes []time.Time) []models.DashboardTrendPoint {
+	counts := make(map[string]int64)
+	loc := startDate.Location()
+	for _, eventTime := range eventTimes {
+		counts[eventTime.In(loc).Format("2006-01-02")]++
+	}
+	points := make([]models.DashboardTrendPoint, 0)
+	for date := startDate; date.Before(endDateExclusive); date = date.AddDate(0, 0, 1) {
+		key := date.Format("2006-01-02")
+		points = append(points, models.DashboardTrendPoint{Date: key, Count: counts[key]})
+	}
+	return points
+}
+
 // GetAuthorizationTrendData 获取授权趋势数据
 // 使用固定次数的范围查询，避免按日期循环访问数据库。
 func (r *dashboardRepository) GetAuthorizationTrendData(ctx context.Context, startDate, endDate time.Time) ([]models.TrendData, error) {

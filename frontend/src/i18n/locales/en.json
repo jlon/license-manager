@@ -52,9 +52,8 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "eyebrow": "Community Overview",
     "heading": "License Overview",
-    "description": "Monitor the community edition's existing license volume, trends, and recent records.",
+    "description": "Monitor authorization capacity, device activations, expiry risks, and business trends.",
     "cloudPromo": {
       "eyebrow": "MANAGED CLOUD",
       "title": "Cedar License Cloud",
@@ -65,16 +64,31 @@
     "updatedAt": "Updated at {time}",
     "refresh": "Refresh",
     "overviewTitle": "License statistics",
-    "noData": "Data unavailable",
-    "trendTitle": "Authorization Trend",
-    "trendDescription": "View authorization changes over the last 7 days, 30 days, or a custom range.",
-    "trendSummary": {
-      "title": "Period summary",
-      "total": "Ending Total",
-      "new": "New in Period",
-      "expired": "Expired in Period",
-      "growth": "Period Growth"
+    "overview": {
+      "validAuthorizations": "Valid Authorizations",
+      "validBreakdown": "Activated {activated} · Not activated {notActivated}",
+      "activatedDevices": "Activated Devices",
+      "activatedDevicesHelp": "Devices currently in active status",
+      "remainingSlots": "Remaining Activation Slots",
+      "remainingSlotsHelp": "Slots still available under valid authorizations"
     },
+    "expiry": {
+      "title": "Expiry Reminders",
+      "description": "Authorization codes and affected active devices in three non-overlapping periods.",
+      "due7": "Due in 7 Days",
+      "due8To30": "Due in 8–30 Days",
+      "expired": "Expired",
+      "affectedDevices": "Affects {n} activated devices"
+    },
+    "noData": "Data unavailable",
+    "trendTitle": "Business Trends",
+    "trendDescription": "View authorization-code creation and license activation counts separately.",
+    "trends": {
+      "authorizationCreation": "Authorization Code Creation",
+      "activation": "License Activation"
+    },
+    "period7d": "Last 7 Days",
+    "period30d": "Last 30 Days",
     "customRange": "Custom",
     "to": "to",
     "startDate": "Start date",
@@ -82,25 +96,19 @@
     "retry": "Retry",
     "loadFailed": "Failed to load data",
     "noTrendData": "No trend data for this period",
-    "recentDescription": "Recently created authorization records.",
     "viewAll": "View all",
-    "noRecentData": "No recent authorizations",
-    "stats": {
-      "totalAuthCodes": "Total Auth Codes",
-      "activeLicenses": "Active Licenses",
-      "todayNewLicenses": "New Today",
-      "expiringIn7Days": "Expiring in 7 Days",
-      "expiringIn30Days": "Expiring in 30 Days",
-      "abnormalAlerts": "Abnormal Alerts",
-      "subText": {
-        "monthNew": "{n} new this month",
-        "vsLastMonth": "{rate}% vs. last month",
-        "yesterday": "{n} yesterday",
-        "urgent": "Urgent Follow-up",
-        "heartbeatTimeout": "Heartbeat Timeout",
-        "noRisk": "No urgent expirations",
-        "expiryReminder": "Review upcoming expirations"
-      }
+    "noCustomer": "No customer",
+    "noRecentAuthorizations": "No recent authorizations",
+    "noRecentActivations": "No recent activations",
+    "recentAuthorizations": { "title": "Recent Authorizations" },
+    "recentActivations": { "title": "Recent Activations" },
+    "columns": {
+      "customerName": "Customer",
+      "description": "Description",
+      "activationUsage": "Activated / Slots",
+      "device": "Device Fingerprint",
+      "activationTime": "Activated At",
+      "expiryTime": "Expires At"
     },
     "recentLicenses": {
       "title": "Recent Licenses",
