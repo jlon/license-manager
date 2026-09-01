@@ -2179,6 +2179,68 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "仅允许物理删除状态为revoked的许可证",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "许可证管理"
+                ],
+                "summary": "删除已撤销许可证",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "许可证ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "删除成功",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数无效",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "未认证",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "许可证不存在",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "许可证尚未撤销",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/licenses/{id}/download": {
@@ -2665,24 +2727,8 @@ const docTemplate = `{
                     "description": "客户名称显示（多语言）",
                     "type": "string"
                 },
-                "deployment_type": {
-                    "description": "部署类型：standalone/cloud/hybrid",
-                    "type": "string"
-                },
-                "deployment_type_display": {
-                    "description": "部署类型显示（多语言）",
-                    "type": "string"
-                },
                 "description": {
                     "description": "描述",
-                    "type": "string"
-                },
-                "encryption_type": {
-                    "description": "加密类型：standard/advanced",
-                    "type": "string"
-                },
-                "encryption_type_display": {
-                    "description": "加密类型显示（多语言）",
                     "type": "string"
                 },
                 "end_date": {
@@ -2750,7 +2796,6 @@ const docTemplate = `{
         "models.AuthorizationCodeCreateRequest": {
             "type": "object",
             "required": [
-                "deployment_type",
                 "max_activations",
                 "validity_days"
             ],
@@ -2762,27 +2807,10 @@ const docTemplate = `{
                     "description": "客户ID，可选",
                     "type": "string"
                 },
-                "deployment_type": {
-                    "description": "部署类型：standalone/cloud/hybrid",
-                    "type": "string",
-                    "enum": [
-                        "standalone",
-                        "cloud",
-                        "hybrid"
-                    ]
-                },
                 "description": {
-                    "description": "描述",
+                    "description": "描述，可选",
                     "type": "string",
-                    "maxLength": 1000
-                },
-                "encryption_type": {
-                    "description": "加密类型：standard/advanced",
-                    "type": "string",
-                    "enum": [
-                        "standard",
-                        "advanced"
-                    ]
+                    "maxLength": 500
                 },
                 "feature_config": {
                     "description": "功能配置（JSON对象）"
@@ -2849,14 +2877,6 @@ const docTemplate = `{
                 },
                 "customer_name_display": {
                     "description": "客户名称显示（多语言）",
-                    "type": "string"
-                },
-                "deployment_type": {
-                    "description": "部署类型：standalone/cloud/hybrid",
-                    "type": "string"
-                },
-                "deployment_type_display": {
-                    "description": "部署类型显示（多语言）",
                     "type": "string"
                 },
                 "description": {
@@ -2960,27 +2980,10 @@ const docTemplate = `{
                 "custom_parameters": {
                     "description": "自定义参数"
                 },
-                "deployment_type": {
-                    "description": "部署类型：standalone/cloud/hybrid",
-                    "type": "string",
-                    "enum": [
-                        "standalone",
-                        "cloud",
-                        "hybrid"
-                    ]
-                },
                 "description": {
-                    "description": "描述",
+                    "description": "描述，可选",
                     "type": "string",
-                    "maxLength": 1000
-                },
-                "encryption_type": {
-                    "description": "加密类型：standard/advanced",
-                    "type": "string",
-                    "enum": [
-                        "standard",
-                        "advanced"
-                    ]
+                    "maxLength": 500
                 },
                 "end_date": {
                     "description": "失效日期（YYYY-MM-DD）",

@@ -200,7 +200,12 @@ func (r *licenseRepository) CreateLicense(ctx context.Context, license *models.L
 
 // UpdateLicense 更新许可证信息
 func (r *licenseRepository) UpdateLicense(ctx context.Context, license *models.License) error {
-	return r.db.Save(license).Error
+	return r.db.WithContext(ctx).Save(license).Error
+}
+
+// DeleteLicensePermanently 物理删除许可证，释放授权码与硬件指纹唯一约束。
+func (r *licenseRepository) DeleteLicensePermanently(ctx context.Context, license *models.License) error {
+	return r.db.WithContext(ctx).Unscoped().Delete(license).Error
 }
 
 // CheckAuthorizationCodeExists 检查授权码是否存在

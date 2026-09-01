@@ -74,6 +74,7 @@ func getDefaultErrorMessage(code string) string {
 		"300003": "License key is required",
 		"300004": "License key already used",
 		"300011": "Authorization code has associated licenses and cannot be deleted",
+		"300012": "Only revoked licenses can be deleted",
 		"900001": "Invalid request parameters",
 		"900002": "Resource not found",
 		"900003": "Resource conflict",
@@ -108,9 +109,9 @@ func getHTTPStatusByCode(code string) int {
 		return StatusUnauthorized
 	case "100005": // 权限不足
 		return StatusForbidden
-	case "900002", "200001", "300001": // 资源不存在
+	case "900002", "200001", "300001", "300006": // 资源不存在
 		return StatusNotFound
-	case "900003", "200002", "200006", "300004": // 资源冲突
+	case "900003", "200002", "200006", "300004", "300012": // 资源冲突
 		return StatusConflict
 	case "900004": // 服务器内部错误
 		return StatusInternalServerError

@@ -37,6 +37,7 @@ errors:
     "300009": "许可证文件生成失败"
     "300010": "配置参数错误"
     "300011": "授权码存在关联的许可证，无法删除"
+    "300012": "仅允许删除已撤销的许可证"
     "300101": "授权码不存在"
     "300102": "授权码已被锁定"
   
@@ -89,14 +90,6 @@ enums:
     "medium": "中型企业"
     "large": "大型企业"
     "enterprise": "超大型企业"
-  
-  deployment_type:
-    "standalone": "单机版"
-    "cloud": "云端版"
-    "hybrid": "混合版"
-  
-  encryption_type:
-    "standard": "标准加密"
   
   authorization_status:
     "normal": "正常"

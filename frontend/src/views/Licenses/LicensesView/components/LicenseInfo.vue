@@ -158,14 +158,23 @@
             {{ t('pages.licenses.detail.licenseInfo.downloadButton') }}
           </el-button>
           <el-button
+            v-if="device.status !== 'revoked'"
             class="revoke-license-btn"
             type="danger"
             plain
             :loading="isRevoking(device.id)"
-            :disabled="device.status === 'revoked'"
             @click="handleRevokeLicense(device)"
           >
             {{ t('pages.licenses.detail.actions.revokeLicense') }}
+          </el-button>
+          <el-button
+            v-else
+            class="delete-license-btn"
+            type="danger"
+            :loading="isDeleting(device.id)"
+            @click="handleDeleteLicense(device)"
+          >
+            {{ t('pages.licenses.detail.actions.deleteLicense') }}
           </el-button>
         </div>
       </div>
@@ -187,7 +196,7 @@ import { ref, onMounted, watch, reactive, computed, nextTick } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules, type MessageBoxInputData } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import type { AuthorizationCode, LicenseDevice, LicenseDeviceCreateRequest } from '@/api/license'
-import { getLicenseDevices, getLicenseDeviceDetail, createLicenseDevice, downloadLicenseFile, revokeLicense } from '@/api/license'
+import { getLicenseDevices, getLicenseDeviceDetail, createLicenseDevice, downloadLicenseFile, revokeLicense, deleteLicenseDevice } from '@/api/license'
 import { formatDate } from '@/utils/date'
 
 interface Props {
@@ -196,6 +205,7 @@ interface Props {
 
 const emit = defineEmits<{
   (e: 'licenseRevoked'): void
+  (e: 'licenseDeleted'): void
 }>()
 
 const props = defineProps<Props>()
@@ -212,6 +222,7 @@ const addForm = reactive({
 })
 const downloadingMap = reactive<Record<string, boolean>>({})
 const revokingMap = reactive<Record<string, boolean>>({})
+const deletingMap = reactive<Record<string, boolean>>({})
 
 const authorizationCodeId = computed(() => props.licenseData?.id || '')
 const authorizationCodeValue = computed(() => props.licenseData?.code || '--')
@@ -358,6 +369,10 @@ const isRevoking = (licenseId: string) => {
   return Boolean(licenseId && revokingMap[licenseId])
 }
 
+const isDeleting = (licenseId: string) => {
+  return Boolean(licenseId && deletingMap[licenseId])
+}
+
 const extractFilename = (contentDisposition?: string) => {
   if (!contentDisposition) return ''
   const utfMatch = /filename\*=utf-8''([^;]+)/i.exec(contentDisposition)
@@ -457,6 +472,37 @@ const handleRevokeLicense = async (device: LicenseDevice) => {
     ElMessage.error(error?.message || t('pages.licenses.detail.messages.revokeError'))
   } finally {
     revokingMap[device.id] = false
+  }
+}
+
+const handleDeleteLicense = async (device: LicenseDevice) => {
+  if (!device?.id || device.status !== 'revoked') return
+
+  try {
+    await ElMessageBox.confirm(
+      t('pages.licenses.detail.messages.deleteLicenseConfirm'),
+      t('pages.licenses.detail.messages.deleteLicenseTitle'),
+      {
+        confirmButtonText: t('pages.licenses.detail.messages.deleteLicenseConfirmButton'),
+        cancelButtonText: t('pages.licenses.detail.messages.revokeCancelButton'),
+        confirmButtonClass: 'dialog-confirm-danger',
+        type: 'warning'
+      }
+    )
+  } catch {
+    return
+  }
+
+  deletingMap[device.id] = true
+  try {
+    await deleteLicenseDevice(device.id)
+    ElMessage.success(t('pages.licenses.detail.messages.deleteLicenseSuccess'))
+    await fetchDevices()
+    emit('licenseDeleted')
+  } catch (error: any) {
+    ElMessage.error(error?.backendMessage || error?.message || t('pages.licenses.detail.messages.deleteLicenseError'))
+  } finally {
+    deletingMap[device.id] = false
   }
 }
 
@@ -795,6 +841,10 @@ const submitAddLicense = async () => {
     color: #d01228;
     border-color: #d01228;
   }
+}
+
+.delete-license-btn {
+  min-width: 148px;
 }
 
 .empty-state {

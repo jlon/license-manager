@@ -117,6 +117,7 @@ func SetupRouter() *gin.Engine {
 			auth.GET("/v1/licenses/:id", licenseHandler.GetLicense)
 			auth.POST("/v1/licenses", licenseHandler.CreateLicense)
 			auth.PUT("/v1/licenses/:id/revoke", licenseHandler.RevokeLicense)
+			auth.DELETE("/v1/licenses/:id", licenseHandler.DeleteLicense)
 			auth.GET("/v1/licenses/:id/download", licenseHandler.DownloadLicenseFile)
 
 			// 统计分析

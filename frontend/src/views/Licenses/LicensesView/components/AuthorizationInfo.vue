@@ -35,14 +35,6 @@
           <div class="info-label">{{ t('pages.licenses.detail.authorizationInfo.maxActivations') }}：</div>
           <div class="info-value">{{ licenseData?.max_activations || 0 }}{{ t('pages.licenses.detail.authorizationInfo.devices') }}</div>
         </div>
-        <div class="info-row">
-          <div class="info-label">{{ t('pages.licenses.detail.authorizationInfo.deploymentType') }}：</div>
-          <div class="info-value">{{ licenseData?.deployment_type_display || '-' }}</div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">{{ t('pages.licenses.detail.authorizationInfo.encryptionType') }}：</div>
-          <div class="info-value">{{ licenseData?.encryption_type_display || t('pages.licenses.detail.authorizationInfo.standardEncryption') }}</div>
-        </div>
       </div>
     </div>
 

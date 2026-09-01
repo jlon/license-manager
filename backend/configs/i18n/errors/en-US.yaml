@@ -37,6 +37,7 @@ errors:
     "300009": "Failed to generate license file"
     "300010": "Invalid configuration parameters"
     "300011": "Authorization code has associated licenses and cannot be deleted"
+    "300012": "Only revoked licenses can be deleted"
     "300101": "Authorization code not found"
     "300102": "Authorization code is locked"
   
@@ -88,14 +89,6 @@ enums:
     "medium": "Medium"
     "large": "Large"
     "enterprise": "Enterprise"
-  
-  deployment_type:
-    "standalone": "Standalone"
-    "cloud": "Cloud"
-    "hybrid": "Hybrid"
-  
-  encryption_type:
-    "standard": "Standard"
   
   authorization_status:
     "normal": "Normal"

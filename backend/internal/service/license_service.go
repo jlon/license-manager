@@ -284,6 +284,29 @@ func (s *licenseService) RevokeLicense(ctx context.Context, id string, req *mode
 	return existingLicense, nil
 }
 
+// DeleteLicense 删除已撤销的许可证。
+func (s *licenseService) DeleteLicense(ctx context.Context, id string) error {
+	lang := pkgcontext.GetLanguageFromContext(ctx)
+	if id == "" {
+		return i18n.NewI18nError("900001", lang)
+	}
+
+	existingLicense, err := s.licenseRepo.GetLicenseByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, repository.ErrLicenseNotFound) {
+			return i18n.NewI18nError("300006", lang)
+		}
+		return i18n.NewI18nError("900004", lang, err.Error())
+	}
+	if existingLicense.Status != "revoked" {
+		return i18n.NewI18nError("300012", lang)
+	}
+	if err := s.licenseRepo.DeleteLicensePermanently(ctx, existingLicense); err != nil {
+		return i18n.NewI18nError("900004", lang, err.Error())
+	}
+	return nil
+}
+
 // GenerateLicenseFile 生成许可证文件
 func (s *licenseService) GenerateLicenseFile(ctx context.Context, id string) ([]byte, string, string, error) {
 	lang := pkgcontext.GetLanguageFromContext(ctx)
@@ -330,7 +353,6 @@ func (s *licenseService) GenerateLicenseFile(ctx context.Context, id string) ([]
 		licenseFileData["authorization_code"] = license.AuthorizationCode.Code
 		licenseFileData["start_date"] = license.AuthorizationCode.StartDate
 		licenseFileData["end_date"] = license.AuthorizationCode.EndDate
-		licenseFileData["deployment_type"] = license.AuthorizationCode.DeploymentType
 		licenseFileData["max_activations"] = license.AuthorizationCode.MaxActivations
 
 		// 包含功能配置
@@ -603,7 +625,6 @@ func (s *licenseService) generateLicenseFileContent(license *models.License, aut
 		licenseFileData["authorization_code"] = authCode.Code
 		licenseFileData["start_date"] = authCode.StartDate
 		licenseFileData["end_date"] = authCode.EndDate
-		licenseFileData["deployment_type"] = authCode.DeploymentType
 		licenseFileData["max_activations"] = authCode.MaxActivations
 
 		// 包含功能配置等

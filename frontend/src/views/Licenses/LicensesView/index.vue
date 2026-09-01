@@ -35,7 +35,7 @@
           <AuthorizationInfo :license-data="licenseData" />
         </el-tab-pane>
         <el-tab-pane :label="t('pages.licenses.detail.tabs.license')" name="license">
-          <LicenseInfo :license-data="licenseData" @license-revoked="loadLicense" />
+          <LicenseInfo :license-data="licenseData" @license-revoked="loadLicense" @license-deleted="loadLicense" />
         </el-tab-pane>
         <el-tab-pane :label="t('pages.licenses.detail.tabs.history')" name="history">
           <ChangeHistory :license-data="licenseData" />

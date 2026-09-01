@@ -385,7 +385,6 @@
           "validityPeriod": "Validity Period",
           "startDate": "Start Date",
           "endDate": "End Date",
-          "deploymentType": "Deployment Type",
           "lockStatus": "Lock Status",
           "description": "Description"
         },
@@ -427,9 +426,6 @@
           "to": "to",
           "maxActivations": "Max Activations",
           "devices": " devices",
-          "deploymentType": "Deployment Type",
-          "encryptionType": "Encryption Type",
-          "standardEncryption": "Standard Encryption",
           "authorizationCode": "Authorization Code",
           "forActivation": "(For Client Activation)",
           "code": "Authorization Code",
@@ -502,9 +498,10 @@
         "actions": {
           "copyCode": "Copy License Code",
           "updateLicense": "Update License",
-          "changeValidity": "Change Validity Period",
-          "revokeLicense": "Revoke License",
-          "downloadCertificate": "Download Authorization File",
+      "changeValidity": "Change Validity Period",
+      "revokeLicense": "Revoke License",
+      "deleteLicense": "Delete License",
+      "downloadCertificate": "Download Authorization File",
           "backToList": "Back to licenses"
         },
         "updateDialog": {
@@ -557,9 +554,14 @@
           "revokeReasonPlaceholder": "Please enter revocation reason",
           "revokeReasonRequired": "Revocation reason is required",
           "revokeReasonMax": "Revocation reason cannot exceed 500 characters",
-          "revokeSuccess": "License revoked successfully",
-          "revokeError": "Failed to revoke the license, please try again later",
-          "loadError": "Failed to load license details",
+      "revokeSuccess": "License revoked successfully",
+      "revokeError": "Failed to revoke the license, please try again later",
+      "deleteLicenseTitle": "Delete License",
+      "deleteLicenseConfirm": "Permanently delete this revoked license? The device can be bound again after deletion. This action cannot be undone.",
+      "deleteLicenseConfirmButton": "Delete",
+      "deleteLicenseSuccess": "License deleted successfully",
+      "deleteLicenseError": "Failed to delete the license, please try again later",
+      "loadError": "Failed to load license details",
           "missingId": "Missing license ID"
         }
       },
@@ -594,9 +596,7 @@
           "validityType": "Validity Type",
           "dateRange": "Date Range",
           "validityDays": "Validity Days",
-          "maxActivations": "Max Activations",
-          "deploymentType": "Deployment Type",
-          "encryptionType": "Encryption Type"
+          "maxActivations": "Max Activations"
         },
         "validityTypes": {
           "permanent": "Permanent",
@@ -607,14 +607,12 @@
           "optionalCustomer": "Select customer (optional)",
           "autoGenerateOrManual": "Auto-generated or manual input",
           "currentUser": "Current logged-in user",
-          "enterDescription": "Please enter description",
+          "enterDescription": "Enter a description (optional)",
           "selectValidityType": "Please select validity type",
           "selectDateRange": "Please select date range",
           "startDate": "Start Date",
           "endDate": "End Date",
-          "enterMaxActivations": "Please enter max activations",
-          "selectDeploymentType": "Please select deployment type",
-          "selectEncryptionType": "Please select encryption type"
+          "enterMaxActivations": "Please enter max activations"
         },
         "actions": {
           "cancel": "Cancel",
@@ -626,22 +624,17 @@
         "validation": {
           "customerRequired": "Please select customer",
           "customerInvalid": "Please select a valid customer from the dropdown list",
-          "descriptionRequired": "Please enter description",
-          "descriptionLength": "Description length should be between 1-500 characters",
+          "descriptionLength": "Description cannot exceed 500 characters",
           "validityTypeRequired": "Please select validity type",
           "dateRangeRequired": "Please select date range",
           "startDateNotPast": "Start date cannot be earlier than today",
           "endDateAfterStart": "End date must be later than start date",
           "validityPeriodTooLong": "Validity period cannot exceed 10 years",
-          "deploymentTypeRequired": "Please select deployment type",
-          "encryptionTypeRequired": "Please select encryption type",
           "maxActivationsRequired": "Please enter max activations",
           "maxActivationsRange": "Max activations must be between 1-999999",
           "maxActivationsInteger": "Max activations must be an integer"
         },
         "messages": {
-          "loadEnumError": "Failed to load enum options",
-          "loadEnumErrorRetry": "Failed to load enum options, please try again later",
           "searchCustomerError": "Failed to search customers",
           "searchCustomerErrorRetry": "Failed to search customers, please try again later",
           "loadDetailError": "Failed to load license details",

@@ -385,7 +385,6 @@
           "validityPeriod": "授权期限",
           "startDate": "开始时间",
           "endDate": "结束时间",
-          "deploymentType": "部署类型",
           "lockStatus": "锁定状态",
           "description": "备注"
         },
@@ -427,9 +426,6 @@
           "to": "至",
           "maxActivations": "最多激活设备数",
           "devices": "台",
-          "deploymentType": "部署类型",
-          "encryptionType": "加密类型",
-          "standardEncryption": "标准加密",
           "authorizationCode": "授权码",
           "forActivation": "（用于客户端激活）",
           "code": "授权码",
@@ -502,9 +498,10 @@
         "actions": {
           "copyCode": "复制授权码",
           "updateLicense": "变更授权",
-          "changeValidity": "变更授权期限",
-          "revokeLicense": "撤销许可证",
-          "downloadCertificate": "授权文件下载",
+      "changeValidity": "变更授权期限",
+      "revokeLicense": "撤销许可证",
+      "deleteLicense": "删除许可证",
+      "downloadCertificate": "授权文件下载",
           "backToList": "返回授权列表"
         },
         "updateDialog": {
@@ -557,9 +554,14 @@
           "revokeReasonPlaceholder": "请输入撤销原因",
           "revokeReasonRequired": "请填写撤销原因",
           "revokeReasonMax": "撤销原因不能超过500个字符",
-          "revokeSuccess": "许可证已成功撤销",
-          "revokeError": "撤销许可证失败，请稍后重试",
-          "loadError": "加载授权详情失败",
+      "revokeSuccess": "许可证已成功撤销",
+      "revokeError": "撤销许可证失败，请稍后重试",
+      "deleteLicenseTitle": "删除许可证",
+      "deleteLicenseConfirm": "确定要永久删除这张已撤销的许可证吗？删除后可重新绑定该设备，此操作不可恢复。",
+      "deleteLicenseConfirmButton": "确定删除",
+      "deleteLicenseSuccess": "许可证已删除",
+      "deleteLicenseError": "删除许可证失败，请稍后重试",
+      "loadError": "加载授权详情失败",
           "missingId": "缺少授权ID"
         }
       },
@@ -594,9 +596,7 @@
           "validityType": "授权期限类型",
           "dateRange": "起止时间",
           "validityDays": "有效期天数",
-          "maxActivations": "最大激活设备数",
-          "deploymentType": "部署类型",
-          "encryptionType": "加密类型"
+          "maxActivations": "最大激活设备数"
         },
         "validityTypes": {
           "permanent": "永久",
@@ -607,14 +607,12 @@
           "optionalCustomer": "选择客户（可选）",
           "autoGenerateOrManual": "自动生成或手动输入",
           "currentUser": "当前登录用户",
-          "enterDescription": "请输入备注信息",
+          "enterDescription": "请输入备注信息（可选）",
           "selectValidityType": "请选择授权期限类型",
           "selectDateRange": "请选择起止时间",
           "startDate": "开始日期",
           "endDate": "结束日期",
-          "enterMaxActivations": "请输入最大激活设备数",
-          "selectDeploymentType": "请选择部署类型",
-          "selectEncryptionType": "请选择加密类型"
+          "enterMaxActivations": "请输入最大激活设备数"
         },
         "actions": {
           "cancel": "取消",
@@ -626,22 +624,17 @@
         "validation": {
           "customerRequired": "请选择客户",
           "customerInvalid": "请从下拉列表中选择有效的客户",
-          "descriptionRequired": "请输入备注信息",
-          "descriptionLength": "备注信息长度应在1-500个字符之间",
+          "descriptionLength": "备注信息不能超过500个字符",
           "validityTypeRequired": "请选择授权期限类型",
           "dateRangeRequired": "请选择起止时间",
           "startDateNotPast": "开始日期不能早于今天",
           "endDateAfterStart": "结束日期必须晚于开始日期",
           "validityPeriodTooLong": "授权期限不能超过10年",
-          "deploymentTypeRequired": "请选择部署类型",
-          "encryptionTypeRequired": "请选择加密类型",
           "maxActivationsRequired": "请输入最大激活设备数",
           "maxActivationsRange": "最大激活设备数必须在1-999999之间",
           "maxActivationsInteger": "最大激活设备数必须为整数"
         },
         "messages": {
-          "loadEnumError": "加载枚举选项失败",
-          "loadEnumErrorRetry": "加载枚举选项失败，请稍后重试",
           "searchCustomerError": "搜索客户失败",
           "searchCustomerErrorRetry": "搜索客户失败，请稍后重试",
           "loadDetailError": "加载授权详情失败",

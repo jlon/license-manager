@@ -52,6 +52,7 @@ type LicenseService interface {
 	GetLicense(ctx context.Context, id string) (*models.LicenseDetailResponse, error)
 	CreateLicense(ctx context.Context, req *models.LicenseCreateRequest) (*models.License, error)
 	RevokeLicense(ctx context.Context, id string, req *models.LicenseRevokeRequest) (*models.License, error)
+	DeleteLicense(ctx context.Context, id string) error
 	GenerateLicenseFile(ctx context.Context, id string) ([]byte, string, string, error)
 
 	// 客户端激活和心跳接口

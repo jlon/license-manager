@@ -116,13 +116,6 @@ func (s *authorizationCodeService) CreateAuthorizationCode(ctx context.Context, 
 		customParameters = models.JSON(customParametersBytes)
 	}
 
-	// 设置默认加密类型
-	encryptionType := req.EncryptionType
-	if encryptionType == nil {
-		defaultEncryption := "standard"
-		encryptionType = &defaultEncryption
-	}
-
 	// 构建授权码实体
 	authCodeEntity := &models.AuthorizationCode{
 		ID:               uuid.New().String(), // 生成新的UUID作为主键
@@ -133,8 +126,6 @@ func (s *authorizationCodeService) CreateAuthorizationCode(ctx context.Context, 
 		Description:      req.Description,
 		StartDate:        startDate,
 		EndDate:          endDate,
-		DeploymentType:   req.DeploymentType,
-		EncryptionType:   encryptionType,
 		SoftwareVersion:  req.SoftwareVersion,
 		MaxActivations:   req.MaxActivations,
 		IsLocked:         false,
@@ -286,10 +277,6 @@ func (s *authorizationCodeService) fillAuthorizationCodeDisplayFields(authCode *
 
 	// 添加多语言显示字段
 	authCode.StatusDisplay = i18n.GetEnumMessage("authorization_status", authCode.Status, lang)
-	authCode.DeploymentTypeDisplay = i18n.GetEnumMessage("deployment_type", authCode.DeploymentType, lang)
-	if authCode.EncryptionType != nil {
-		authCode.EncryptionTypeDisplay = i18n.GetEnumMessage("encryption_type", *authCode.EncryptionType, lang)
-	}
 
 	// TODO: 统计当前激活数量
 	authCode.CurrentActivations = 0
@@ -360,12 +347,6 @@ func (s *authorizationCodeService) UpdateAuthorizationCode(ctx context.Context, 
 		endDate := startDate.AddDate(0, 0, *req.ValidityDays-1).Add(23*time.Hour + 59*time.Minute + 59*time.Second)
 		existingAuthCode.StartDate = startDate
 		existingAuthCode.EndDate = endDate
-	}
-	if req.DeploymentType != nil {
-		existingAuthCode.DeploymentType = *req.DeploymentType
-	}
-	if req.EncryptionType != nil {
-		existingAuthCode.EncryptionType = req.EncryptionType
 	}
 	if req.SoftwareVersion != nil {
 		existingAuthCode.SoftwareVersion = req.SoftwareVersion
@@ -565,8 +546,6 @@ func (s *authorizationCodeService) buildConfigSnapshot(authCode *models.Authoriz
 	config["description"] = authCode.Description
 	config["start_date"] = authCode.StartDate.Format(time.RFC3339)
 	config["end_date"] = authCode.EndDate.Format(time.RFC3339)
-	config["deployment_type"] = authCode.DeploymentType
-	config["encryption_type"] = authCode.EncryptionType
 	config["software_version"] = authCode.SoftwareVersion
 	config["max_activations"] = authCode.MaxActivations
 	config["is_locked"] = authCode.IsLocked
@@ -612,7 +591,6 @@ func (s *authorizationCodeService) fillAuthCodeDisplayFields(item *models.Author
 
 	// 添加多语言显示字段
 	item.StatusDisplay = i18n.GetEnumMessage("authorization_status", item.Status, lang)
-	item.DeploymentTypeDisplay = i18n.GetEnumMessage("deployment_type", item.DeploymentType, lang)
 	item.CustomerNameDisplay = item.CustomerName // 客户名称暂时不需要翻译
 }
 

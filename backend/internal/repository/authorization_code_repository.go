@@ -64,7 +64,7 @@ func (r *authorizationCodeRepository) GetAuthorizationCodeList(ctx context.Conte
 		Select(`ac.id, ac.code, ac.customer_id, c.customer_name, 
 				ac.start_date, ac.end_date, ac.max_activations, 
 				COALESCE(l.active_count, 0) AS current_activations,
-				ac.deployment_type, ac.is_locked, ac.description, ac.created_at,
+				ac.is_locked, ac.description, ac.created_at,
 				CASE
 					WHEN ac.is_locked = true THEN 'locked'
 					WHEN ac.end_date < NOW() THEN 'expired'
@@ -123,7 +123,6 @@ func (r *authorizationCodeRepository) GetAuthorizationCodeList(ctx context.Conte
 		EndDate            string  `json:"end_date"`
 		MaxActivations     int     `json:"max_activations"`
 		CurrentActivations int     `json:"current_activations" gorm:"column:current_activations"`
-		DeploymentType     string  `json:"deployment_type"`
 		IsLocked           bool    `json:"is_locked"`
 		Description        *string `json:"description"`
 		CreatedAt          string  `json:"created_at"`
@@ -154,7 +153,6 @@ func (r *authorizationCodeRepository) GetAuthorizationCodeList(ctx context.Conte
 			EndDate:            result.EndDate,
 			MaxActivations:     result.MaxActivations,
 			CurrentActivations: result.CurrentActivations,
-			DeploymentType:     result.DeploymentType,
 			IsLocked:           result.IsLocked,
 			Description:        result.Description,
 			CreatedAt:          result.CreatedAt,

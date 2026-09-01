@@ -299,6 +299,43 @@ func (h *LicenseHandler) RevokeLicense(c *gin.Context) {
 	})
 }
 
+// DeleteLicense 删除已撤销的许可证。
+// @Summary 删除已撤销许可证
+// @Description 仅允许物理删除状态为revoked的许可证
+// @Tags 许可证管理
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "许可证ID"
+// @Success 200 {object} models.APIResponse "删除成功"
+// @Failure 400 {object} models.ErrorResponse "请求参数无效"
+// @Failure 401 {object} models.ErrorResponse "未认证"
+// @Failure 404 {object} models.ErrorResponse "许可证不存在"
+// @Failure 409 {object} models.ErrorResponse "许可证尚未撤销"
+// @Failure 500 {object} models.ErrorResponse "服务器内部错误"
+// @Router /api/v1/licenses/{id} [delete]
+func (h *LicenseHandler) DeleteLicense(c *gin.Context) {
+	id := c.Param("id")
+	ctx := middleware.WithLanguage(c.Request.Context(), c)
+	if err := h.licenseService.DeleteLicense(ctx, id); err != nil {
+		var i18nErr *i18n.I18nError
+		if errors.As(err, &i18nErr) {
+			c.JSON(i18nErr.HttpCode, models.ErrorResponse{
+				Code: i18nErr.Code, Message: i18nErr.Message, Timestamp: time.Now().Format(time.RFC3339),
+			})
+			return
+		}
+		lang := middleware.GetLanguage(c)
+		status, errCode, message := i18n.NewI18nErrorResponse("900004", lang)
+		c.JSON(status, models.ErrorResponse{Code: errCode, Message: message, Timestamp: time.Now().Format(time.RFC3339)})
+		return
+	}
+
+	lang := middleware.GetLanguage(c)
+	c.JSON(http.StatusOK, models.APIResponse{
+		Code: "000000", Message: i18n.GetErrorMessage("000000", lang), Data: nil,
+	})
+}
+
 // DownloadLicenseFile 下载许可证文件
 // @Summary 下载许可证文件
 // @Description 下载加密的许可证文件，用于客户端软件激活

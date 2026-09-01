@@ -91,7 +91,6 @@ type LicenseFileData struct {
 	AuthorizationCode   *string                `json:"authorization_code"`
 	StartDate           *string                `json:"start_date"`
 	EndDate             *string                `json:"end_date"`
-	DeploymentType      *string                `json:"deployment_type"`
 	MaxActivations      *int                   `json:"max_activations"`
 	FeatureConfig       map[string]interface{} `json:"feature_config,omitempty"`
 	UsageLimits         map[string]interface{} `json:"usage_limits,omitempty"`

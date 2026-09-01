@@ -15,8 +15,6 @@ CREATE TABLE authorization_codes (
     -- 授权核心属性
     start_date DATETIME(3) NOT NULL COMMENT '授权开始时间',
     end_date DATETIME(3) NOT NULL COMMENT '授权结束时间',
-    deployment_type VARCHAR(20) NOT NULL DEFAULT 'standalone' COMMENT '部署类型: standalone单机版/cloud云端版/hybrid混合版',
-    encryption_type VARCHAR(20) DEFAULT 'standard' COMMENT '加密类型: standard标准加密/advanced高级加密',
     software_version VARCHAR(50) COMMENT '支持的软件版本范围',
     
     -- 激活控制属性
@@ -45,7 +43,6 @@ CREATE TABLE authorization_codes (
 CREATE INDEX idx_authorization_codes_code ON authorization_codes(code);
 CREATE INDEX idx_authorization_codes_customer_id ON authorization_codes(customer_id);
 CREATE INDEX idx_authorization_codes_software_id ON authorization_codes(software_id);
-CREATE INDEX idx_authorization_codes_deployment_type ON authorization_codes(deployment_type);
 CREATE INDEX idx_authorization_codes_start_date ON authorization_codes(start_date);
 CREATE INDEX idx_authorization_codes_end_date ON authorization_codes(end_date);
 CREATE INDEX idx_authorization_codes_created_by ON authorization_codes(created_by);
@@ -55,7 +52,6 @@ CREATE INDEX idx_authorization_codes_locked_at ON authorization_codes(locked_at)
 
 -- 复合索引用于常见查询
 CREATE INDEX idx_authorization_codes_customer_status ON authorization_codes(customer_id, start_date, end_date);
-CREATE INDEX idx_authorization_codes_software_status ON authorization_codes(software_id, deployment_type);
 
 -- 注意：时间戳由Go应用程序管理，不依赖数据库默认值
 -- 状态字段(status)是虚字段，通过应用逻辑计算得出：

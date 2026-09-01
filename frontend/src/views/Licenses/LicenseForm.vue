@@ -78,16 +78,6 @@
           <el-form-item :label="t('pages.licenses.form.fields.maxActivations')" prop="max_activations">
             <el-input-number v-model="form.max_activations" :min="1" :max="999999" controls-position="right" />
           </el-form-item>
-          <el-form-item :label="t('pages.licenses.form.fields.deploymentType')" prop="deployment_type">
-            <el-select v-model="form.deployment_type" :loading="enumLoading">
-              <el-option v-for="option in deploymentTypes" :key="option.key" :label="option.display" :value="option.key" />
-            </el-select>
-          </el-form-item>
-          <el-form-item :label="t('pages.licenses.form.fields.encryptionType')" prop="encryption_type">
-            <el-select v-model="form.encryption_type" :loading="enumLoading">
-              <el-option v-for="option in encryptionTypes" :key="option.key" :label="option.display" :value="option.key" />
-            </el-select>
-          </el-form-item>
         </div>
       </section>
 
@@ -128,7 +118,6 @@ import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'elem
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { getCustomers } from '@/api/customer'
-import { getEnumOptions, type RawEnumItem } from '@/api/enum'
 import { createLicense, type AuthorizationCodeCreateRequest } from '@/api/license'
 import JsonEditor from '@/components/common/JsonEditor.vue'
 import { getErrorMessage } from '@/utils/error'
@@ -149,8 +138,6 @@ interface LicenseFormModel {
   validity_days: number
   date_range: [string, string] | null
   max_activations: number
-  deployment_type: string
-  encryption_type: string
 }
 
 const route = useRoute()
@@ -163,10 +150,7 @@ const limitEditor = ref<InstanceType<typeof JsonEditor>>()
 const parameterEditor = ref<InstanceType<typeof JsonEditor>>()
 const submitting = ref(false)
 const customerLoading = ref(false)
-const enumLoading = ref(false)
 const customers = ref<CustomerOption[]>([])
-const deploymentTypes = ref<RawEnumItem[]>([])
-const encryptionTypes = ref<RawEnumItem[]>([])
 const featureConfig = ref<Record<string, unknown> | null>({})
 const usageLimits = ref<Record<string, unknown> | null>({})
 const customParameters = ref<Record<string, unknown> | null>({})
@@ -178,9 +162,7 @@ const form = reactive<LicenseFormModel>({
   validity_type: 'limited',
   validity_days: 365,
   date_range: null,
-  max_activations: 1,
-  deployment_type: 'standalone',
-  encryption_type: 'standard'
+  max_activations: 1
 })
 
 const validateDateRange = (_rule: unknown, value: [string, string] | null, callback: (error?: Error) => void) => {
@@ -197,18 +179,13 @@ const validateDateRange = (_rule: unknown, value: [string, string] | null, callb
 }
 
 const rules: FormRules<LicenseFormModel> = {
-  description: [
-    { required: true, message: t('pages.licenses.form.validation.descriptionRequired'), trigger: 'blur' },
-    { min: 1, max: 500, message: t('pages.licenses.form.validation.descriptionLength'), trigger: 'blur' }
-  ],
+  description: [{ max: 500, message: t('pages.licenses.form.validation.descriptionLength'), trigger: 'blur' }],
   validity_type: [{ required: true, message: t('pages.licenses.form.validation.validityTypeRequired'), trigger: 'change' }],
   date_range: [{ validator: validateDateRange, trigger: 'change' }],
   max_activations: [
     { required: true, message: t('pages.licenses.form.validation.maxActivationsRequired'), trigger: 'change' },
     { type: 'number', min: 1, max: 999999, message: t('pages.licenses.form.validation.maxActivationsRange'), trigger: 'change' }
-  ],
-  deployment_type: [{ required: true, message: t('pages.licenses.form.validation.deploymentTypeRequired'), trigger: 'change' }],
-  encryption_type: [{ required: true, message: t('pages.licenses.form.validation.encryptionTypeRequired'), trigger: 'change' }]
+  ]
 }
 
 const disablePastDate = (date: Date) => {
@@ -271,22 +248,6 @@ const searchCustomers = async (query = '') => {
   }
 }
 
-const loadEnums = async () => {
-  enumLoading.value = true
-  try {
-    const [deploymentResponse, encryptionResponse] = await Promise.all([
-      getEnumOptions('deployment_type'),
-      getEnumOptions('encryption_type')
-    ])
-    deploymentTypes.value = deploymentResponse.data.items
-    encryptionTypes.value = encryptionResponse.data.items
-  } catch (error) {
-    ElMessage.error(getErrorMessage(error, t('pages.licenses.form.messages.loadEnumErrorRetry')))
-  } finally {
-    enumLoading.value = false
-  }
-}
-
 const editorsAreValid = () => [featureEditor, limitEditor, parameterEditor]
   .every(editor => editor.value?.validate() ?? true)
 
@@ -300,10 +261,8 @@ const submitForm = async () => {
 
   const payload: AuthorizationCodeCreateRequest = {
     customer_id: form.customer_id || undefined,
-    description: form.description.trim(),
+    description: form.description.trim() || undefined,
     validity_days: form.validity_days,
-    deployment_type: form.deployment_type,
-    encryption_type: form.encryption_type,
     max_activations: form.max_activations,
     feature_config: featureConfig.value || {},
     usage_limits: JSON.stringify(usageLimits.value || {}),
@@ -348,7 +307,7 @@ const cancelCreate = async () => {
 
 onMounted(async () => {
   ensureRouteCustomer()
-  await Promise.all([searchCustomers(), loadEnums()])
+  await searchCustomers()
 })
 </script>
 

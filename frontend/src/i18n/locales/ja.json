@@ -385,7 +385,6 @@
           "validityPeriod": "有効期間",
           "startDate": "開始日",
           "endDate": "終了日",
-          "deploymentType": "デプロイメントタイプ",
           "lockStatus": "ロック状態",
           "description": "説明"
         },
@@ -427,9 +426,6 @@
           "to": "から",
           "maxActivations": "最大アクティベーション数",
           "devices": "台",
-          "deploymentType": "デプロイメントタイプ",
-          "encryptionType": "暗号化タイプ",
-          "standardEncryption": "標準暗号化",
           "authorizationCode": "認証コード",
           "forActivation": "（クライアントアクティベーション用）",
           "code": "認証コード",
@@ -502,9 +498,10 @@
         "actions": {
           "copyCode": "ライセンスコードをコピー",
           "updateLicense": "ライセンス更新",
-          "changeValidity": "有効期限を変更",
-          "revokeLicense": "ライセンス取り消し",
-          "downloadCertificate": "認証ファイルをダウンロード",
+      "changeValidity": "有効期限を変更",
+      "revokeLicense": "ライセンス取り消し",
+      "deleteLicense": "ライセンスを削除",
+      "downloadCertificate": "認証ファイルをダウンロード",
           "backToList": "ライセンス一覧に戻る"
         },
         "updateDialog": {
@@ -557,9 +554,14 @@
           "revokeReasonPlaceholder": "取り消し理由を入力してください",
           "revokeReasonRequired": "取り消し理由は必須です",
           "revokeReasonMax": "取り消し理由は500文字以内で入力してください",
-          "revokeSuccess": "ライセンスを正常に取り消しました",
-          "revokeError": "ライセンスの取り消しに失敗しました。後でもう一度お試しください",
-          "loadError": "ライセンス詳細の読み込みに失敗しました",
+      "revokeSuccess": "ライセンスを正常に取り消しました",
+      "revokeError": "ライセンスの取り消しに失敗しました。後でもう一度お試しください",
+      "deleteLicenseTitle": "ライセンスを削除",
+      "deleteLicenseConfirm": "この取り消し済みライセンスを完全に削除しますか？削除後は同じデバイスを再登録できます。この操作は元に戻せません。",
+      "deleteLicenseConfirmButton": "削除する",
+      "deleteLicenseSuccess": "ライセンスを削除しました",
+      "deleteLicenseError": "ライセンスの削除に失敗しました。後でもう一度お試しください",
+      "loadError": "ライセンス詳細の読み込みに失敗しました",
           "missingId": "ライセンスIDが不足しています"
         }
       },
@@ -594,9 +596,7 @@
           "validityType": "有効期間タイプ",
           "dateRange": "期間",
           "validityDays": "有効日数",
-          "maxActivations": "最大アクティベーション数",
-          "deploymentType": "デプロイメントタイプ",
-          "encryptionType": "暗号化タイプ"
+          "maxActivations": "最大アクティベーション数"
         },
         "validityTypes": {
           "permanent": "永続",
@@ -607,14 +607,12 @@
           "optionalCustomer": "顧客を選択（任意）",
           "autoGenerateOrManual": "自動生成または手動入力",
           "currentUser": "現在のログインユーザー",
-          "enterDescription": "備考を入力してください",
+          "enterDescription": "備考を入力してください（任意）",
           "selectValidityType": "有効期間タイプを選択してください",
           "selectDateRange": "期間を選択してください",
           "startDate": "開始日",
           "endDate": "終了日",
-          "enterMaxActivations": "最大アクティベーション数を入力してください",
-          "selectDeploymentType": "デプロイメントタイプを選択してください",
-          "selectEncryptionType": "暗号化タイプを選択してください"
+          "enterMaxActivations": "最大アクティベーション数を入力してください"
         },
         "actions": {
           "cancel": "キャンセル",
@@ -626,22 +624,17 @@
         "validation": {
           "customerRequired": "顧客を選択してください",
           "customerInvalid": "ドロップダウンリストから有効な顧客を選択してください",
-          "descriptionRequired": "備考を入力してください",
-          "descriptionLength": "備考の長さは1-500文字の間である必要があります",
+          "descriptionLength": "備考は500文字以内で入力してください",
           "validityTypeRequired": "有効期間タイプを選択してください",
           "dateRangeRequired": "期間を選択してください",
           "startDateNotPast": "開始日は今日より前にはできません",
           "endDateAfterStart": "終了日は開始日より後である必要があります",
           "validityPeriodTooLong": "有効期間は10年を超えることはできません",
-          "deploymentTypeRequired": "デプロイメントタイプを選択してください",
-          "encryptionTypeRequired": "暗号化タイプを選択してください",
           "maxActivationsRequired": "最大アクティベーション数を入力してください",
           "maxActivationsRange": "最大アクティベーション数は1-999999の間である必要があります",
           "maxActivationsInteger": "最大アクティベーション数は整数である必要があります"
         },
         "messages": {
-          "loadEnumError": "列挙オプションの読み込みに失敗しました",
-          "loadEnumErrorRetry": "列挙オプションの読み込みに失敗しました。後ほど再度お試しください",
           "searchCustomerError": "顧客検索に失敗しました",
           "searchCustomerErrorRetry": "顧客検索に失敗しました。後ほど再度お試しください",
           "loadDetailError": "ライセンス詳細の読み込みに失敗しました",

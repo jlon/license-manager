@@ -15,10 +15,6 @@ export interface AuthorizationCode {
   start_date?: string;
   created_by?: string;
   end_date?: string;
-  deployment_type: string;
-  deployment_type_display?: string;
-  encryption_type?: string;
-  encryption_type_display?: string;
   software_version?: string;
   max_activations: number;
   current_activations?: number;
@@ -79,8 +75,6 @@ export interface AuthorizationCodeCreateRequest {
   software_id?: string;
   description?: string;
   validity_days: number;
-  deployment_type: string;
-  encryption_type?: string;
   software_version?: string;
   max_activations: number;
   feature_config?: any;
@@ -95,8 +89,6 @@ export interface LicenseUpdateRequest {
   validity_days?: number;
   start_date?: string;
   end_date?: string;
-  deployment_type?: string;
-  encryption_type?: string;
   software_version?: string;
   max_activations?: number;
   feature_config?: any;
@@ -222,6 +214,13 @@ export function deactivateLicense(id: string): Promise<ApiResponse<Authorization
  */
 export function revokeLicense(id: string, reason: string): Promise<ApiResponse> {
   return Axios.put(`/api/v1/licenses/${id}/revoke`, { reason })
+}
+
+/**
+ * 删除已撤销的许可证
+ */
+export function deleteLicenseDevice(id: string): Promise<ApiResponse> {
+  return Axios.delete(`/api/v1/licenses/${id}`)
 }
 
 // 许可证设备信息类型（与后端 LicenseListItem 对应）

@@ -130,8 +130,6 @@
 | `description` | `TEXT` | ❌ | NULL | 授权码描述 |
 | `start_date` | `DATETIME(3)` | ✅ | — | 授权生效时间 |
 | `end_date` | `DATETIME(3)` | ✅ | — | 授权失效时间 |
-| `deployment_type` | `VARCHAR(20)` | ✅ | `standalone` | 部署类型：`standalone` / `cloud` / `hybrid` |
-| `encryption_type` | `VARCHAR(20)` | ❌ | `standard` | 加密类型：`standard` / `advanced` |
 | `software_version` | `VARCHAR(50)` | ❌ | NULL | 支持的软件版本范围 |
 | `max_activations` | `INT` | ✅ | `1` | 最大激活次数 |
 | `is_locked` | `BOOLEAN` | ✅ | `FALSE` | 是否被锁定 |
@@ -146,8 +144,8 @@
 
 **索引**：
 - `code` 的唯一约束以**前缀索引**实现：`UNIQUE INDEX idx_authorization_codes_code_prefix (code(255))`，避开 InnoDB 3072 字节索引长度限制。
-- 普通索引：`customer_id`、`software_id`、`deployment_type`、`start_date`、`end_date`、`created_by`、`created_at`、`is_locked`、`locked_at`。
-- 复合索引：`(customer_id, start_date, end_date)`、`(software_id, deployment_type)`。
+- 普通索引：`customer_id`、`software_id`、`start_date`、`end_date`、`created_by`、`created_at`、`is_locked`、`locked_at`。
+- 复合索引：`(customer_id, start_date, end_date)`。
 
 **外键**：`customer_id → customers(id) ON DELETE RESTRICT`。
 

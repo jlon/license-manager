@@ -66,8 +66,6 @@ LIMIT :page_size OFFSET :offset;
         "end_date": "2024-12-31T23:59:59Z",
         "max_activations": 10,
         "current_activations": 7,
-        "deployment_type": "standalone",
-        "deployment_type_display": "单机版",
         "is_locked": false,
         "description": "企业版授权",
         "created_at": "2024-01-01T10:00:00Z"
@@ -95,8 +93,6 @@ POST /api/v1/authorization-codes
   "software_id": "erp-system",
   "description": "企业版授权",
   "validity_days": 365,
-  "deployment_type": "standalone",
-  "encryption_type": "standard",
   "software_version": "1.0.0",
   "max_activations": 10,
   "feature_config": {
@@ -115,8 +111,6 @@ POST /api/v1/authorization-codes
 - `software_id`: 软件产品ID（可选）
 - `description`: 授权描述（可选）
 - `validity_days`: 有效期天数，范围1-36500天（必填）
-- `deployment_type`: 部署类型，枚举值：standalone/cloud/hybrid（必填）
-- `encryption_type`: 加密类型，枚举值：standard/advanced（可选，默认standard）
 - `software_version`: 软件版本（可选）
 - `max_activations`: 最大激活数量（必填，最小值1）
 - `feature_config`: 功能配置JSON（可选）
@@ -155,10 +149,6 @@ GET /api/v1/authorization-codes/{id}
     "end_date": "2024-12-31T23:59:59Z",
     "max_activations": 10,
     "current_activations": 7,
-    "deployment_type": "standalone",
-    "deployment_type_display": "单机版",
-    "encryption_type": "standard",
-    "encryption_type_display": "标准加密",
     "feature_config": {
       "modules": ["user_mgmt", "inventory", "finance"]
     },
@@ -536,16 +526,7 @@ GET /api/v1/authorization-codes/{id}/changes
 - `locked` - 已锁定：is_locked=true
 - `expired` - 已过期：当前时间超过end_date
 
-### 6.2 部署类型
-- `standalone` - 单机版：独立部署的软件
-- `cloud` - 云端版：基于云的SaaS服务
-- `hybrid` - 混合版：结合本地和云端的部署
-
-### 6.3 加密类型  
-- `standard` - 标准加密：基础安全级别
-- `advanced` - 高级加密：增强安全级别
-
-### 6.4 许可证状态
+### 6.2 许可证状态
 - `active` - 激活：正常使用中
 - `inactive` - 未激活：已创建但尚未激活
 - `revoked` - 已撤销：被管理员撤销或因违规被停用

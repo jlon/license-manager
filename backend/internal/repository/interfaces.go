@@ -98,6 +98,9 @@ type LicenseRepository interface {
 	// UpdateLicense 更新许可证信息
 	UpdateLicense(ctx context.Context, license *models.License) error
 
+	// DeleteLicensePermanently 物理删除许可证
+	DeleteLicensePermanently(ctx context.Context, license *models.License) error
+
 	// CheckAuthorizationCodeExists 检查授权码是否存在
 	CheckAuthorizationCodeExists(ctx context.Context, authCodeID string) (bool, error)
 

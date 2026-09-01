@@ -34,6 +34,10 @@ func AutoMigrate() error {
 		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
+	if err := removeLegacyAuthorizationCodeTypeFields(); err != nil {
+		return fmt.Errorf("failed to remove legacy authorization code type fields: %w", err)
+	}
+
 	// 初始化客户编码序列
 	if err := initCustomerCodeSequence(); err != nil {
 		return fmt.Errorf("failed to initialize customer code sequence: %w", err)
@@ -45,6 +49,31 @@ func AutoMigrate() error {
 	}
 
 	log.Println("Database auto migration completed successfully")
+	return nil
+}
+
+// removeLegacyAuthorizationCodeTypeFields 清理社区版不再使用的历史字段。
+func removeLegacyAuthorizationCodeTypeFields() error {
+	migrator := DB.Migrator()
+	for _, indexName := range []string{
+		"idx_authorization_codes_software_status",
+		"idx_authorization_codes_deployment_type",
+	} {
+		if migrator.HasIndex(&models.AuthorizationCode{}, indexName) {
+			if err := migrator.DropIndex(&models.AuthorizationCode{}, indexName); err != nil {
+				return err
+			}
+		}
+	}
+
+	for _, columnName := range []string{"deployment_type", "encryption_type"} {
+		if migrator.HasColumn(&models.AuthorizationCode{}, columnName) {
+			if err := migrator.DropColumn(&models.AuthorizationCode{}, columnName); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
