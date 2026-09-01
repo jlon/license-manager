@@ -46,18 +46,29 @@ func (s *authorizationCodeService) CreateAuthorizationCode(ctx context.Context, 
 		return nil, i18n.NewI18nError("900001", lang)
 	}
 
-	// 验证客户是否存在并检查状态
-	customer, err := s.customerRepo.GetCustomerByID(ctx, req.CustomerID)
-	if err != nil {
-		if errors.Is(err, repository.ErrCustomerNotFound) {
-			return nil, i18n.NewI18nError("200001", lang) // 客户不存在
+	// 空字符串与未传客户统一按无客户处理，避免写入无效外键值
+	if req.CustomerID != nil {
+		customerID := strings.TrimSpace(*req.CustomerID)
+		if customerID == "" {
+			req.CustomerID = nil
+		} else {
+			req.CustomerID = &customerID
 		}
-		return nil, i18n.NewI18nError("900004", lang, err.Error())
 	}
 
-	// 检查客户状态：如果客户状态为停用（disabled），不允许创建授权
-	if customer.Status == "disabled" {
-		return nil, i18n.NewI18nError("200007", lang) // 客户已停用，无法创建授权
+	// 只有填写客户时才验证客户是否存在及其状态
+	if req.CustomerID != nil && *req.CustomerID != "" {
+		customer, err := s.customerRepo.GetCustomerByID(ctx, *req.CustomerID)
+		if err != nil {
+			if errors.Is(err, repository.ErrCustomerNotFound) {
+				return nil, i18n.NewI18nError("200001", lang) // 客户不存在
+			}
+			return nil, i18n.NewI18nError("900004", lang, err.Error())
+		}
+
+		if customer.Status == "disabled" {
+			return nil, i18n.NewI18nError("200007", lang) // 客户已停用，无法创建授权
+		}
 	}
 
 	// 业务逻辑：计算开始时间和结束时间
@@ -72,7 +83,11 @@ func (s *authorizationCodeService) CreateAuthorizationCode(ctx context.Context, 
 	}
 
 	// 授权码生成规则回退/统一为旧规则（不再自包含配置）
-	authCode, err := s.generateAuthorizationCode(req.CustomerID)
+	customerID := ""
+	if req.CustomerID != nil {
+		customerID = *req.CustomerID
+	}
+	authCode, err := s.generateAuthorizationCode(customerID)
 	if err != nil {
 		return nil, i18n.NewI18nError("900004", lang, err.Error())
 	}
@@ -198,22 +213,20 @@ func (s *authorizationCodeService) GetAuthorizationCode(ctx context.Context, id 
 		return nil, i18n.NewI18nError("900004", lang, err.Error())
 	}
 
-	// 查询客户信息
-	customer, err := s.customerRepo.GetCustomerByID(ctx, authCode.CustomerID)
-	if err != nil {
-		// 如果客户不存在，不影响授权码查询，只是不填充客户信息
-		// 记录错误日志但不返回错误
-	} else {
-		// 填充客户信息
-		authCode.CustomerInfo = &models.CustomerInfoForAuthCode{
-			ID:                  customer.ID,
-			CustomerCode:        customer.CustomerCode,
-			CustomerName:        customer.CustomerName,
-			CustomerType:        customer.CustomerType,
-			CustomerTypeDisplay: i18n.GetEnumMessage("customer_type", customer.CustomerType, lang),
-			Status:              customer.Status,
-			StatusDisplay:       i18n.GetEnumMessage("customer_status", customer.Status, lang),
-			CreatedAt:           customer.CreatedAt.Format(time.RFC3339),
+	// 查询客户信息（客户可为空）
+	if authCode.CustomerID != nil && *authCode.CustomerID != "" {
+		customer, err := s.customerRepo.GetCustomerByID(ctx, *authCode.CustomerID)
+		if err == nil {
+			authCode.CustomerInfo = &models.CustomerInfoForAuthCode{
+				ID:                  customer.ID,
+				CustomerCode:        customer.CustomerCode,
+				CustomerName:        customer.CustomerName,
+				CustomerType:        customer.CustomerType,
+				CustomerTypeDisplay: i18n.GetEnumMessage("customer_type", customer.CustomerType, lang),
+				Status:              customer.Status,
+				StatusDisplay:       i18n.GetEnumMessage("customer_status", customer.Status, lang),
+				CreatedAt:           customer.CreatedAt.Format(time.RFC3339),
+			}
 		}
 	}
 
@@ -468,7 +481,7 @@ func (s *authorizationCodeService) LockUnlockAuthorizationCode(ctx context.Conte
 	return existingAuthCode, nil
 }
 
-// DeleteAuthorizationCode 删除授权码（软删除）
+// DeleteAuthorizationCode 删除授权码
 func (s *authorizationCodeService) DeleteAuthorizationCode(ctx context.Context, id string) error {
 	lang := pkgcontext.GetLanguageFromContext(ctx)
 
@@ -477,33 +490,35 @@ func (s *authorizationCodeService) DeleteAuthorizationCode(ctx context.Context, 
 		return i18n.NewI18nError("900001", lang)
 	}
 
-	// 获取当前用户ID
-	currentUserID := pkgcontext.GetUserIDFromContext(ctx)
-	if currentUserID == "" {
+	// 保持原有的用户上下文校验
+	if pkgcontext.GetUserIDFromContext(ctx) == "" {
 		return i18n.NewI18nError("100004", lang)
 	}
 
 	// 先查询现有授权码，确保存在
-	existingAuthCode, err := s.authCodeRepo.GetAuthorizationCodeByID(ctx, id)
+	_, err := s.authCodeRepo.GetAuthorizationCodeByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, repository.ErrAuthorizationCodeNotFound) {
 			return i18n.NewI18nError("300001", lang)
 		}
-		return i18n.NewI18nError("900004", lang, err.Error())
+		log.Printf("查询待删除授权码失败: %v", err)
+		return i18n.NewI18nError("900004", lang)
 	}
 
-	// 记录变更前的配置
-	oldConfig := s.buildConfigSnapshot(existingAuthCode)
+	// 有关联许可证时禁止删除，避免数据库外键错误暴露给用户
+	hasLicenses, err := s.licenseRepo.CheckAuthorizationCodeHasLicenses(ctx, id)
+	if err != nil {
+		log.Printf("检查授权码关联许可证失败: %v", err)
+		return i18n.NewI18nError("900004", lang)
+	}
+	if hasLicenses {
+		return i18n.NewI18nError("300011", lang)
+	}
 
-	// 委托给Repository层进行软删除
+	// 委托给Repository层在事务内删除变更历史和授权码
 	if err := s.authCodeRepo.DeleteAuthorizationCode(ctx, id); err != nil {
-		return i18n.NewI18nError("900004", lang, err.Error())
-	}
-
-	// 记录变更历史到 authorization_changes 表
-	emptyConfig := make(map[string]interface{})
-	if err := s.recordAuthorizationChange(ctx, id, "delete", nil, currentUserID, oldConfig, emptyConfig); err != nil {
-		log.Printf("记录授权变更历史失败: %v", err)
+		log.Printf("删除授权码失败: %v", err)
+		return i18n.NewI18nError("900004", lang)
 	}
 
 	return nil

@@ -152,7 +152,7 @@ func (r *dashboardRepository) GetRecentAuthorizations(ctx context.Context, req *
 	type queryResult struct {
 		ID                 string    `gorm:"column:id"`
 		Code               string    `gorm:"column:code"`
-		CustomerID         string    `gorm:"column:customer_id"`
+		CustomerID         *string   `gorm:"column:customer_id"`
 		CustomerName       string    `gorm:"column:customer_name"`
 		Description        string    `gorm:"column:description"`
 		StartDate          time.Time `gorm:"column:start_date"`

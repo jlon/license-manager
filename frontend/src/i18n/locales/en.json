@@ -596,6 +596,7 @@
         },
         "placeholders": {
           "selectCustomer": "Please select customer",
+          "optionalCustomer": "Select customer (optional)",
           "autoGenerateOrManual": "Auto-generated or manual input",
           "currentUser": "Current logged-in user",
           "enterDescription": "Please enter description",

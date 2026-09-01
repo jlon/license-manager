@@ -37,7 +37,7 @@ type UserInfo struct {
 type AuthorizationCode struct {
 	ID                     string                   `gorm:"type:varchar(36);primaryKey" json:"id"`                                 // 授权码ID
 	Code                   string                   `gorm:"type:varchar(1000);not null" json:"code"`                               // 授权码
-	CustomerID             string                   `gorm:"type:varchar(36);not null;index" json:"customer_id"`                    // 客户ID
+	CustomerID             *string                  `gorm:"type:varchar(36);index" json:"customer_id"`                             // 客户ID，NULL表示无客户
 	CustomerName           string                   `gorm:"-" json:"customer_name,omitempty"`                                      // 客户名称
 	CustomerNameDisplay    string                   `gorm:"-" json:"customer_name_display,omitempty"`                              // 客户名称显示（多语言）
 	CreatedBy              string                   `gorm:"type:varchar(36);not null" json:"created_by"`                           // 创建人ID
@@ -108,7 +108,7 @@ func (a *AuthorizationCode) BeforeUpdate(tx *gorm.DB) error {
 
 // AuthorizationCodeCreateRequest 创建授权码请求结构
 type AuthorizationCodeCreateRequest struct {
-	CustomerID       string      `json:"customer_id" binding:"required"`                                   // 客户ID
+	CustomerID       *string     `json:"customer_id" binding:"omitempty"`                                  // 客户ID，可选
 	SoftwareID       *string     `json:"software_id" binding:"omitempty"`                                  // 软件ID
 	Description      *string     `json:"description" binding:"omitempty,max=1000"`                         // 描述
 	ValidityDays     int         `json:"validity_days" binding:"required,min=1,max=365000"`                // 有效天数（1-365000天，365000代表永久有效）
@@ -144,7 +144,7 @@ type AuthorizationCodeListRequest struct {
 type AuthorizationCodeListItem struct {
 	ID                    string  `json:"id"`                                // 授权码ID
 	Code                  string  `json:"code"`                              // 授权码
-	CustomerID            string  `json:"customer_id"`                       // 客户ID
+	CustomerID            *string `json:"customer_id"`                       // 客户ID，NULL表示无客户
 	CustomerName          string  `json:"customer_name"`                     // 客户名称
 	CustomerNameDisplay   string  `json:"customer_name_display,omitempty"`   // 客户名称显示（多语言）
 	Status                string  `json:"status"`                            // 状态：normal/locked/expired

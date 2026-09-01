@@ -14,7 +14,7 @@ import Axios from './https/index'
 export interface RecentAuthorizationItem {
   id: string
   code: string
-  customer_id: string
+  customer_id?: string | null
   customer_name: string
   description: string
   status: 'normal' | 'locked' | 'expired'

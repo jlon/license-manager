@@ -275,3 +275,12 @@ func (r *licenseRepository) GetActiveLicenseCount(ctx context.Context, authCodeI
 		Count(&count).Error
 	return count, err
 }
+
+// CheckAuthorizationCodeHasLicenses 检查授权码是否有关联的许可证
+func (r *licenseRepository) CheckAuthorizationCodeHasLicenses(ctx context.Context, authCodeID string) (bool, error) {
+	var count int64
+	err := r.db.WithContext(ctx).Model(&models.License{}).
+		Where("authorization_code_id = ?", authCodeID).
+		Count(&count).Error
+	return count > 0, err
+}

@@ -12,7 +12,7 @@ type License struct {
 	ID                  string         `gorm:"type:varchar(36);primaryKey" json:"id"`
 	LicenseKey          string         `gorm:"type:varchar(200);uniqueIndex;not null" json:"license_key"`
 	AuthorizationCodeID string         `gorm:"type:varchar(36);not null;index" json:"authorization_code_id"`
-	CustomerID          string         `gorm:"type:varchar(36);not null;index" json:"customer_id"`
+	CustomerID          *string        `gorm:"type:varchar(36);index" json:"customer_id"`
 	HardwareFingerprint string         `gorm:"type:varchar(200);not null;index" json:"hardware_fingerprint"`
 	DeviceInfo          JSON           `gorm:"type:json" json:"device_info,omitempty" swaggertype:"object"`
 	ActivationIP        *string        `gorm:"type:varchar(45)" json:"activation_ip"`
@@ -106,7 +106,7 @@ type LicenseDetailResponse struct {
 	LicenseKey          string                 `json:"license_key"`                 // 许可证密钥
 	AuthorizationCodeID string                 `json:"authorization_code_id"`       // 授权码ID
 	AuthorizationCode   string                 `json:"authorization_code"`          // 授权码
-	CustomerID          string                 `json:"customer_id"`                 // 客户ID
+	CustomerID          *string                `json:"customer_id"`                 // 客户ID，NULL表示无客户
 	CustomerName        string                 `json:"customer_name"`               // 客户名称
 	HardwareFingerprint string                 `json:"hardware_fingerprint"`        // 硬件指纹
 	DeviceInfo          map[string]interface{} `json:"device_info,omitempty"`       // 设备信息

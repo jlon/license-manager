@@ -17,8 +17,9 @@
           <el-form-item :label="t('pages.licenses.form.fields.customerName')" prop="customer_id">
             <el-select
               v-model="form.customer_id"
-              :placeholder="t('pages.licenses.form.placeholders.selectCustomer')"
+              :placeholder="t('pages.licenses.form.placeholders.optionalCustomer')"
               :loading="customerLoading"
+              clearable
               filterable
               remote
               :remote-method="searchCustomers"
@@ -27,7 +28,7 @@
               <el-option v-for="customer in customers" :key="customer.id" :label="customer.name" :value="customer.id" />
             </el-select>
           </el-form-item>
-          <el-form-item :label="t('pages.licenses.form.fields.customerId')">
+          <el-form-item v-if="form.customer_id" :label="t('pages.licenses.form.fields.customerId')">
             <el-input v-model="form.customer_code" disabled />
           </el-form-item>
         </div>
@@ -196,7 +197,6 @@ const validateDateRange = (_rule: unknown, value: [string, string] | null, callb
 }
 
 const rules: FormRules<LicenseFormModel> = {
-  customer_id: [{ required: true, message: t('pages.licenses.form.validation.customerRequired'), trigger: 'change' }],
   description: [
     { required: true, message: t('pages.licenses.form.validation.descriptionRequired'), trigger: 'blur' },
     { min: 1, max: 500, message: t('pages.licenses.form.validation.descriptionLength'), trigger: 'blur' }
@@ -234,8 +234,8 @@ const changeValidityType = () => {
   }
 }
 
-const selectCustomer = (id: string) => {
-  form.customer_code = customers.value.find(customer => customer.id === id)?.code || id
+const selectCustomer = (id?: string | null) => {
+  form.customer_code = id ? customers.value.find(customer => customer.id === id)?.code || id : ''
 }
 
 const ensureRouteCustomer = () => {
@@ -299,7 +299,7 @@ const submitForm = async () => {
   }
 
   const payload: AuthorizationCodeCreateRequest = {
-    customer_id: form.customer_id,
+    customer_id: form.customer_id || undefined,
     description: form.description.trim(),
     validity_days: form.validity_days,
     deployment_type: form.deployment_type,
@@ -316,7 +316,9 @@ const submitForm = async () => {
     ElMessage.success(response.message || t('pages.licenses.form.messages.createSuccess'))
     await router.push({
       name: 'licenses-list',
-      query: { customerId: form.customer_id, customerName: customers.value.find(item => item.id === form.customer_id)?.name || '' }
+      query: form.customer_id
+        ? { customerId: form.customer_id, customerName: customers.value.find(item => item.id === form.customer_id)?.name || '' }
+        : undefined
     })
   } catch (error) {
     ElMessage.error(getErrorMessage(error, t('pages.licenses.form.messages.submitErrorRetry')))

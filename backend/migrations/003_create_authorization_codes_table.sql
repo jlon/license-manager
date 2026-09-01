@@ -7,7 +7,7 @@ CREATE TABLE authorization_codes (
     -- 基础信息属性
     id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
     code VARCHAR(1000) NOT NULL UNIQUE COMMENT '唯一授权码，软件身份凭证（支持自包含配置）',
-    customer_id VARCHAR(36) NOT NULL COMMENT '关联客户ID',
+    customer_id VARCHAR(36) NULL COMMENT '关联客户ID，NULL表示无客户',
     created_by VARCHAR(36) NOT NULL COMMENT '创建人ID',
     software_id VARCHAR(50) COMMENT '目标软件产品ID',
     description TEXT COMMENT '授权码描述',

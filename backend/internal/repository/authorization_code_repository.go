@@ -117,7 +117,7 @@ func (r *authorizationCodeRepository) GetAuthorizationCodeList(ctx context.Conte
 	var results []struct {
 		ID                 string  `json:"id"`
 		Code               string  `json:"code"`
-		CustomerID         string  `json:"customer_id"`
+		CustomerID         *string `json:"customer_id"`
 		CustomerName       *string `json:"customer_name"`
 		StartDate          string  `json:"start_date"`
 		EndDate            string  `json:"end_date"`
@@ -177,9 +177,14 @@ func (r *authorizationCodeRepository) UpdateAuthorizationCode(ctx context.Contex
 	return r.db.WithContext(ctx).Save(authCode).Error
 }
 
-// DeleteAuthorizationCode 删除授权码（软删除）
+// DeleteAuthorizationCode 删除授权码及其变更历史
 func (r *authorizationCodeRepository) DeleteAuthorizationCode(ctx context.Context, id string) error {
-	return r.db.WithContext(ctx).Delete(&models.AuthorizationCode{}, "id = ?", id).Error
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("authorization_code_id = ?", id).Delete(&models.AuthorizationChange{}).Error; err != nil {
+			return err
+		}
+		return tx.Delete(&models.AuthorizationCode{}, "id = ?", id).Error
+	})
 }
 
 // CheckCustomerExists 检查客户是否存在

@@ -73,6 +73,7 @@ func getDefaultErrorMessage(code string) string {
 		"300002": "License expired",
 		"300003": "License key is required",
 		"300004": "License key already used",
+		"300011": "Authorization code has associated licenses and cannot be deleted",
 		"900001": "Invalid request parameters",
 		"900002": "Resource not found",
 		"900003": "Resource conflict",

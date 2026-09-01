@@ -112,6 +112,9 @@ type LicenseRepository interface {
 
 	// GetActiveLicenseCount 获取指定授权码的激活许可证数量
 	GetActiveLicenseCount(ctx context.Context, authCodeID string) (int64, error)
+
+	// CheckAuthorizationCodeHasLicenses 检查授权码是否有关联的许可证
+	CheckAuthorizationCodeHasLicenses(ctx context.Context, authCodeID string) (bool, error)
 }
 
 // DashboardRepository 仪表盘数据访问接口

@@ -4,7 +4,7 @@ import Axios from './https'
 export interface AuthorizationCode {
   id: string;
   code: string;
-  customer_id: string;
+  customer_id?: string | null;
   customer_name?: string;
   software_id?: string;
   description?: string;
@@ -37,7 +37,7 @@ export interface AuthorizationCode {
 export interface License {
   id: string;
   license_code: string;
-  customer_id: string;
+  customer_id?: string | null;
   customer_name: string;
   description: string;
   status: 'active' | 'inactive' | 'expired';
@@ -75,7 +75,7 @@ export interface LicenseQueryRequest {
 
 // 创建授权请求参数
 export interface AuthorizationCodeCreateRequest {
-  customer_id: string;
+  customer_id?: string;
   software_id?: string;
   description?: string;
   validity_days: number;
@@ -254,7 +254,7 @@ export interface LicenseDetail {
   license_key: string
   authorization_code_id: string
   authorization_code: string
-  customer_id: string
+  customer_id?: string | null
   customer_name: string
   hardware_fingerprint: string
   device_info?: {

@@ -36,6 +36,7 @@ errors:
     "300008": "Hardware fingerprint mismatch"
     "300009": "Failed to generate license file"
     "300010": "Invalid configuration parameters"
+    "300011": "Authorization code has associated licenses and cannot be deleted"
     "300101": "Authorization code not found"
     "300102": "Authorization code is locked"
   

@@ -596,6 +596,7 @@
         },
         "placeholders": {
           "selectCustomer": "顧客を選択してください",
+          "optionalCustomer": "顧客を選択（任意）",
           "autoGenerateOrManual": "自動生成または手動入力",
           "currentUser": "現在のログインユーザー",
           "enterDescription": "備考を入力してください",

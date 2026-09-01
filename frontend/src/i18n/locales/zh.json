@@ -596,6 +596,7 @@
         },
         "placeholders": {
           "selectCustomer": "请选择客户",
+          "optionalCustomer": "选择客户（可选）",
           "autoGenerateOrManual": "自动生成或手动输入",
           "currentUser": "当前登录用户",
           "enterDescription": "请输入备注信息",

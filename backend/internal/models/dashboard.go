@@ -58,7 +58,7 @@ type DashboardRecentAuthorizationsResponse struct {
 type RecentAuthorization struct {
 	ID                 string    `json:"id"`                   // 授权码ID
 	Code               string    `json:"code"`                 // 授权码
-	CustomerID         string    `json:"customer_id"`          // 客户ID
+	CustomerID         *string   `json:"customer_id"`          // 客户ID，NULL表示无客户
 	CustomerName       string    `json:"customer_name"`        // 客户名称
 	Description        string    `json:"description"`          // 授权描述
 	Status             string    `json:"status"`               // 状态 (normal/locked/expired)

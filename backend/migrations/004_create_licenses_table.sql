@@ -8,7 +8,7 @@ CREATE TABLE licenses (
     id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
     license_key VARCHAR(200) NOT NULL UNIQUE COMMENT '许可证密钥，设备特定',
     authorization_code_id VARCHAR(36) NOT NULL COMMENT '关联的授权码ID',
-    customer_id VARCHAR(36) NOT NULL COMMENT '客户ID，冗余字段便于查询',
+    customer_id VARCHAR(36) NULL COMMENT '客户ID，冗余字段便于查询，NULL表示无客户',
     
     -- 硬件绑定属性
     hardware_fingerprint VARCHAR(200) NOT NULL COMMENT '绑定的硬件指纹',
