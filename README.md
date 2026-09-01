@@ -24,26 +24,31 @@
 
 ## 项目概述
 
-软件授权管理系统是一个完整的软件商业化解决方案，集成了软件授权管理、用户自助服务和商业化运营能力。支持B2B企业客户和B2C个人用户的双轨运营模式，提供从注册购买到授权激活的全流程数字化服务。采用在线/离线混合授权模式，结合硬件绑定和RSA数字签名确保安全性。
+软件授权管理系统是一套面向软件商业化的授权管理解决方案，提供客户管理、授权码生成、许可证管理、设备绑定以及在线/离线激活等能力，并通过硬件指纹和 RSA 数字签名保障授权安全。
 
-✨同时支持**任何开发语言**、**任何类型的软件产品**通过标准化 **HTTP API** 与**跨平台客户端 SDK** **快速集成授权能力**。
+> 社区版不包含用户自助端，专注于管理后台与授权服务能力。
 
-## Demo环境
-  <a href="http://lm.cedar-v.com">
-    <img src="https://img.shields.io/badge/Demo-Online-success?logo=googlechrome" alt="Live Demo">
+✨ 推荐使用 [**AI 原生 API 快速接入**](https://docs.lm.cedar-v.com/developer/ai-quickstart)：选择业务模板并复制协议提示词，即可让 AI 在现有软件项目中完成授权能力对接，支持任意开发语言和软件类型。
+
+## 在线演示
+  <a href="http://lm-c.cedar-v.com">
+    <img src="https://img.shields.io/badge/Demo-Online-success?logo=googlechrome" alt="社区版在线演示">
   </a>
 
-访问地址：[lm.cedar-v.com](http://lm.cedar-v.com)  
-**登录凭证：**  
+- 社区版功能演示：[http://lm-c.cedar-v.com](http://lm-c.cedar-v.com)
+- 企业版功能演示：[http://lm-e.cedar-v.com](http://lm-e.cedar-v.com)
+
+**社区版演示登录凭证：**
+
 - 用户名：`admin`  
 - 密码：`admin@123`
 
-> 💡 这是一个当前功能的演示环境，您可以体验已开发的核心特性。
+> 💡 如果您不想自行部署和维护授权服务，可以选择更省心、更划算的 [雪松授权云](https://lic.cedar-v.com)。
 
 ## 官方
 
-官方网站请访问：[https://www.cedar-v.com](https://www.cedar-v.com)
-官方文档请访问：[https://docs.cedar-v.com](https://docs.lm.cedar-v.com)
+- 官方网站：[https://cedar-v.com](https://cedar-v.com)
+- 官方文档：[https://docs.lm.cedar-v.com](https://docs.lm.cedar-v.com)
 
 ## Star收藏与关注
 
@@ -56,9 +61,15 @@
 
 如果这个项目对你有帮助，请给个star收藏，你的支持是我们最大的动力！
 
-## 客户端SDK
+## 对接授权能力
 
-客户端SDK请访问：[https://github.com/cedar-v/license-manager-sdk](https://github.com/cedar-v/license-manage-sdk-go)
+### AI 一键对接（推荐）
+
+新项目推荐优先使用 [AI 原生 API 快速接入](https://docs.lm.cedar-v.com/developer/ai-quickstart)。将完整协议提示词和适合业务的模板交给 AI，让 AI 直接在您的项目中实现激活、本地验签、到期检查、心跳校验等授权流程。
+
+### SDK 与 HTTP API（可选）
+
+需要手动集成时，也可以使用 [客户端 SDK](https://github.com/cedar-v/license-manager-sdk-go) 或按照 [开发者中心](https://docs.lm.cedar-v.com/developer/) 的接口文档对接 HTTP API。
 
 ## 商业咨询与合作
 
@@ -80,28 +91,6 @@
 
 客户管理模块提供完整的客户信息管理功能，包括客户信息的增删改查、状态管理、授权关联等核心功能。
 
-## 用户端自助服务
-
-平台提供完整的用户端自助服务，支持 **B2B+B2C双轨运营**：
-
-### B2B企业客户服务
-- **企业用户注册**：支持手机号注册，企业管理员可管理成员账户
-- **产品套餐购买**：提供试用版、基础版、专业版三种套餐，支持批量许可购买
-- **授权码管理**：在线购买授权码，支持离线激活和授权码分享
-- **设备管理**：企业用户可查看和管理所有激活设备，支持设备解绑
-- **订单管理**：完整的订单历史查询和状态跟踪
-
-### B2C个人客户服务
-- **个人用户注册**：手机号快速注册，简化的个人账户管理
-- **灵活购买**：支持单个或少量许可购买，满足个人用户需求
-- **便捷激活**：支持在线激活和离线激活两种模式
-- **设备监控**：个人用户可实时查看设备状态和使用情况
-
-### 统一支付体验
-- **支付宝集成**：支持支付宝扫码支付，安全可靠的支付体验
-- **支付状态跟踪**：实时支付状态查询和回调通知
-- **多环境支持**：沙箱环境测试和生产环境切换
-
 ## 核心功能
 
 - 🔧 **客户管理**：完整的客户信息管理和状态控制
@@ -111,7 +100,7 @@
 - 🌐 **API服务**：提供验证、激活、心跳监控等RESTful API
 - ⚙️ **系统管理**：管理员认证和监控仪表盘
 - 🛠️ **跨平台工具**：多平台硬件信息获取工具
-- 👥 **用户端自助服务**：B2B+B2C双轨运营，支持企业客户和个人用户自助操作
+- 🤖 **AI 一键对接**：提供 AI 可执行的协议提示词与业务模板，推荐用于新项目快速接入
 
 ## 技术栈
 
@@ -233,4 +222,4 @@ https://www.gnu.org/licenses/gpl-3.0.html
 如有技术问题或Bug报告，请通过以下方式联系我们：
 - 提交GitHub Issue（推荐）
 - 在QQ群中反馈
-- 发送邮件给项目维护者 
+- 发送邮件给项目维护者
