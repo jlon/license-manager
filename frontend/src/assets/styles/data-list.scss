@@ -186,12 +186,64 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 6px;
   white-space: nowrap;
 }
 
 .data-list-actions .el-button + .el-button {
-  margin-left: 4px;
+  margin-left: 0;
+}
+
+.data-list-actions .el-button {
+  min-width: 48px;
+  height: 28px;
+  padding: 0 10px;
+  border-color: color-mix(in srgb, currentColor 34%, var(--list-border));
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: none;
+  transform: none;
+  transition: none;
+}
+
+.data-list-actions .el-button--primary {
+  --data-list-action-color: var(--el-color-primary);
+}
+
+.data-list-actions .el-button--success {
+  --data-list-action-color: var(--el-color-success);
+}
+
+.data-list-actions .el-button--warning {
+  --data-list-action-color: var(--el-color-warning);
+}
+
+.data-list-actions .el-button--danger {
+  --data-list-action-color: var(--el-color-danger);
+}
+
+.data-list-actions .el-button[class*='el-button--'] {
+  color: var(--data-list-action-color);
+}
+
+.data-list-actions .el-button[class*='el-button--']:hover,
+.data-list-actions .el-button[class*='el-button--']:focus-visible,
+.data-list-actions .el-button[class*='el-button--']:active {
+  border-color: color-mix(in srgb, var(--data-list-action-color) 34%, var(--list-border));
+  background: transparent;
+  color: var(--data-list-action-color);
+  box-shadow: none;
+  transform: none;
+}
+
+.data-list-actions .el-button[class*='el-button--']:focus-visible {
+  outline: none;
+}
+
+.data-list-actions .el-button.is-disabled {
+  border-color: var(--list-border);
+  background: var(--list-surface-soft);
 }
 
 .data-list-more-button {

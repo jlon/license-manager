@@ -130,18 +130,19 @@
         <el-table-column :label="t('pages.licenses.list.table.operation')" width="240" fixed="right" align="center">
           <template #default="{ row }">
             <div class="row-actions data-list-actions">
-              <el-button link type="primary" @click="openDetail(row)">
+              <el-button plain size="small" type="primary" @click="openDetail(row)">
                 {{ t('pages.licenses.list.actions.detail') }}
               </el-button>
               <el-button
-                link
+                plain
+                size="small"
                 :type="isLocked(row) ? 'success' : 'warning'"
                 :loading="actionId === row.id"
                 @click="toggleLock(row)"
               >
                 {{ t(isLocked(row) ? 'pages.licenses.list.actions.unlock' : 'pages.licenses.list.actions.lock') }}
               </el-button>
-              <el-button link type="danger" :disabled="actionId === row.id" @click="removeLicense(row)">
+              <el-button plain size="small" type="danger" :disabled="actionId === row.id" @click="removeLicense(row)">
                 {{ t('pages.licenses.list.actions.delete') }}
               </el-button>
             </div>

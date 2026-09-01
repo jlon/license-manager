@@ -56,11 +56,11 @@
     "heading": "授权概览",
     "description": "集中查看社区版现有授权规模、趋势和近期记录。",
     "cloudPromo": {
-      "eyebrow": "云端托管",
+      "eyebrow": "云端托管 · 免费版",
       "title": "雪松授权云",
-      "description": "免部署、免运维，通过 AI 原生 API 快速接入授权能力。",
-      "learnMore": "了解云版",
-      "tryFree": "免费试用"
+      "description": "免部署、免运维，统一管理授权发放、设备激活与续期运营，支持 AI 一键接入。",
+      "learnMore": "查看产品介绍",
+      "tryFree": "免费开始使用"
     },
     "updatedAt": "更新于 {time}",
     "refresh": "刷新",
