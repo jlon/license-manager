@@ -1,6 +1,6 @@
 # 管理端数据库表设计文档
 
-> 本文档梳理 License Manager 社区版管理端业务所涉及的数据库表结构，覆盖客户、授权码、许可证、线索和管理员用户。
+> 本文档梳理 License Manager 社区版管理端业务所涉及的数据库表结构，覆盖客户、授权码、许可证和管理员用户。
 >
 > 文档内容基于：
 > - `backend/migrations/*.sql`（表结构、索引、外键）
@@ -19,7 +19,6 @@
 | 4 | `authorization_codes` | 授权码表 | 客户授权的"业务配置容器" | `003_create_authorization_codes_table.sql`、`009_update_authorization_codes_code_length.sql` |
 | 5 | `authorization_changes` | 授权变更历史表 | 授权码续费/升级/锁定等操作的审计日志 | `005_create_authorization_changes_table.sql` |
 | 6 | `licenses` | 许可证表 | 设备激活凭证、心跳、硬件绑定 | `004_create_licenses_table.sql` |
-| 7 | `leads` | 企业线索表 | 售前线索收集与跟进 | `014_create_leads_table.sql` |
 
 > 仪表盘（`dashboard`）相关数据由 `authorization_codes` 与 `licenses` 派生统计而来，不存在独立表。
 
@@ -226,37 +225,6 @@
 ---
 
 
-### 3.7 leads — 企业线索表
-
-管理售前线索收集，无需登录即可由访客提交，管理端跟进与转化。
-
-| 字段 | 类型 | 必填 | 默认值 | 说明 |
-| --- | --- | --- | --- | --- |
-| `id` | `VARCHAR(36)` | ✅ | UUID | 主键 |
-| `lead_no` | `VARCHAR(50)` | ✅ | — | 线索编号，系统生成，唯一 |
-| `company_name` | `VARCHAR(200)` | ✅ | — | 企业/机构名称 |
-| `contact_name` | `VARCHAR(100)` | ✅ | — | 联系人 |
-| `contact_phone` | `VARCHAR(20)` | ✅ | — | 联系电话 |
-| `contact_email` | `VARCHAR(100)` | ❌ | NULL | 邮箱 |
-| `requirement` | `TEXT` | ✅ | — | 需求描述 |
-| `extra_info` | `TEXT` | ❌ | NULL | 补充信息 |
-| `status` | `VARCHAR(20)` | ✅ | `pending` | 状态：`pending` / `contacted` / `converted` / `invalid` |
-| `follow_up_date` | `DATETIME` | ❌ | NULL | 跟进日期 |
-| `follow_up_record` | `TEXT` | ❌ | NULL | 跟进记录 |
-| `internal_note` | `TEXT` | ❌ | NULL | 内部备注 |
-| `created_at` | `DATETIME` | ✅ | — | 创建时间 |
-| `updated_at` | `DATETIME` | ✅ | — | 更新时间 |
-
-**索引**：`lead_no`（唯一）、`status`、`created_at`。
-
-**线索编号生成**：应用层 `BeforeCreate` 钩子生成，格式 `LEAD + yyyyMMddHHmmss + 6 位随机字符`。
-
-**业务规则**：
-- 公开接口 `POST /api/leads` 提交线索，无需鉴权。
-- 管理端负责跟进与状态流转。
-
----
-
 ## 4. 表关系图
 
 ```
@@ -265,7 +233,6 @@ customers ──< authorization_codes ──< licenses
                     └──< authorization_changes
 
 users
-leads
 ```
 
 ## 5. 关键设计要点

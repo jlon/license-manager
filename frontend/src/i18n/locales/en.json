@@ -122,7 +122,6 @@
     "menu": {
       "dashboard": "Dashboard",
       "customers": "Customer Management",
-      "enterpriseLeads": "Enterprise Leads",
       "licenses": "License Management"
     },
     "toggleSidebar": "Toggle Sidebar",
@@ -145,7 +144,6 @@
     "breadcrumb": {
       "dashboard": "Dashboard",
       "customers": "Customer Management",
-      "enterpriseLeads": "Enterprise Leads",
       "licenses": "License Management",
       "licenseList": "License List",
       "createLicense": "Create License",
@@ -157,88 +155,6 @@
       "unknown": "Unknown Page"
     }
   },
-
-  "enterpriseLeads": {
-    "title": "Enterprise Leads",
-    "description": "Review and follow up enterprise inquiries with a clear, traceable conversion workflow.",
-    "stats": {
-      "total": "Total Leads",
-      "pending": "Pending",
-      "contacting": "Contacted",
-      "completed": "Converted",
-      "rejected": "Rejected"
-    },
-    "filter": {
-      "searchPlaceholder": "Search by keywords",
-      "search": "Search",
-      "statusPlaceholder": "All Status",
-      "allStatus": "All Status"
-    },
-    "table": {
-      "title": "Enterprise Leads List",
-      "id": "Lead ID",
-      "company": "Company Name",
-      "contact": "Contact",
-      "phone": "Phone",
-      "submittedAt": "Submitted At",
-      "status": "Status",
-      "actions": "Actions",
-      "empty": "No lead data",
-      "unit": "leads"
-    },
-    "status": {
-      "pending": "Pending",
-      "contacting": "Contacted",
-      "completed": "Converted",
-      "rejected": "Rejected"
-    },
-    "actions": {
-      "view": "View",
-      "edit": "Edit",
-      "delete": "Delete",
-      "refresh": "Refresh",
-      "query": "Search",
-      "reset": "Reset",
-      "retry": "Reload",
-      "more": "More"
-    },
-    "detail": {
-      "title": "Enterprise Lead - {company}",
-      "basicInfo": "Company Information",
-      "requirementInfo": "Requirements",
-      "followUpInfo": "Follow-up",
-      "email": "Email",
-      "description": "Requirement Details",
-      "otherInfo": "Additional Information",
-      "followUpDate": "Follow-up Date",
-      "followUpRecord": "Follow-up Record",
-      "internalRemark": "Internal Notes"
-    },
-    "edit": {
-      "title": "Edit Enterprise Lead - {company}",
-      "save": "Save Changes",
-      "datePlaceholder": "Select date",
-      "recordPlaceholder": "Record communication, feedback, and next steps...",
-      "remarkPlaceholder": "Internal notes, not visible to customers",
-      "statusRequired": "Please select a status"
-    },
-    "validation": {
-      "nameRequired": "Please enter the company name",
-      "contactRequired": "Please enter the contact name"
-    },
-    "messages": {
-      "fetchError": "Failed to load leads",
-      "fetchDetailError": "Failed to load lead details",
-      "updateSuccess": "Updated successfully",
-      "updateError": "Failed to update",
-      "deleteSuccess": "Deleted successfully",
-      "deleteError": "Failed to delete",
-      "deleteConfirm": "Delete this lead? This action cannot be undone."
-    }
-  },
-
-
-
   "common": {
     "cancel": "Cancel",
     "confirm": "Confirm"
@@ -357,20 +273,20 @@
       },
       "search": {
         "placeholder": "Search license code, customer name, description",
-      "selectCustomer": "Select Customer",
-      "allCustomers": "All Customers",
-      "title": "Find Licenses by Customer",
-      "description": "Select a customer to review existing licenses or start creating one.",
-      "customerLabel": "Customer",
-      "customerHint": "Only active customers are shown.",
-      "selectedCustomer": "Selected:",
-      "queryTitle": "Review Existing Licenses",
-      "queryDescription": "Check license status, activation usage, and validity for the selected customer.",
-      "createTitle": "Create a License",
-      "createDescription": "Open the creation page and continue configuring the customer and license.",
-      "loadError": "Failed to load customers",
-      "retry": "Reload",
-      "dateRange": "Select Date Range",
+        "selectCustomer": "Select Customer",
+        "allCustomers": "All Customers",
+        "title": "Find Licenses by Customer",
+        "description": "Select a customer to review existing licenses or start creating one.",
+        "customerLabel": "Customer",
+        "customerHint": "Only active customers are shown.",
+        "selectedCustomer": "Selected:",
+        "queryTitle": "Review Existing Licenses",
+        "queryDescription": "Check license status, activation usage, and validity for the selected customer.",
+        "createTitle": "Create a License",
+        "createDescription": "Open the creation page and continue configuring the customer and license.",
+        "loadError": "Failed to load customers",
+        "retry": "Reload",
+        "dateRange": "Select Date Range",
         "startDate": "Start Date",
         "endDate": "End Date"
       },

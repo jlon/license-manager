@@ -41,7 +41,6 @@ func SetupRouter() *gin.Engine {
 	authCodeRepo := repository.NewAuthorizationCodeRepository(db)
 	licenseRepo := repository.NewLicenseRepository(db)
 	dashboardRepo := repository.NewDashboardRepository(db)
-	leadRepo := repository.NewLeadRepository(db)
 
 	// 获取logger实例
 	log := logger.GetLogger()
@@ -63,8 +62,6 @@ func SetupRouter() *gin.Engine {
 	authCodeHandler := handlers.NewAuthorizationCodeHandler(authCodeService)
 	licenseHandler := handlers.NewLicenseHandler(licenseService)
 	dashboardHandler := handlers.NewDashboardHandler(dashboardService)
-	leadService := service.NewLeadService(leadRepo, db)
-	leadHandler := handlers.NewLeadHandler(leadService)
 
 	// 健康检测接口（无需认证）
 	router.GET("/health", systemHandler.HealthCheck)
@@ -83,9 +80,6 @@ func SetupRouter() *gin.Engine {
 			// 许可证激活接口（客户端软件使用）
 			public.POST("/v1/activate", licenseHandler.ActivateLicense)
 			public.POST("/v1/heartbeat", licenseHandler.Heartbeat)
-
-			// 线索收集（无需鉴权）
-			public.POST("/leads", leadHandler.CreateLead)
 		}
 
 		// 需要认证的接口
@@ -131,14 +125,6 @@ func SetupRouter() *gin.Engine {
 			// 仪表盘接口
 			auth.GET("/v1/dashboard/authorization-trend", dashboardHandler.GetAuthorizationTrend)
 			auth.GET("/v1/dashboard/recent-authorizations", dashboardHandler.GetRecentAuthorizations)
-
-			// 线索管理（管理员）
-			auth.GET("/leads", leadHandler.GetLeads)
-			auth.GET("/leads/summary", leadHandler.GetLeadSummary)
-			auth.GET("/leads/:id", leadHandler.GetLead)
-			auth.PUT("/leads/:id", leadHandler.UpdateLead)
-			auth.PUT("/leads/:id/status", leadHandler.UpdateLeadStatus)
-			auth.DELETE("/leads/:id", leadHandler.DeleteLead)
 		}
 
 		// 管理员接口

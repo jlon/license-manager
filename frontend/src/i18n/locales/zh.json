@@ -122,7 +122,6 @@
     "menu": {
       "dashboard": "仪表盘",
       "customers": "客户管理",
-      "enterpriseLeads": "企业线索",
       "licenses": "授权管理"
     },
     "toggleSidebar": "切换侧边栏",
@@ -145,7 +144,6 @@
     "breadcrumb": {
       "dashboard": "仪表盘",
       "customers": "客户管理",
-      "enterpriseLeads": "企业线索",
       "licenses": "授权管理",
       "licenseList": "授权列表",
       "createLicense": "创建授权",
@@ -157,88 +155,6 @@
       "unknown": "未知页面"
     }
   },
-
-  "enterpriseLeads": {
-    "title": "企业线索",
-    "description": "集中查看并跟进企业咨询线索，让销售转化过程清晰可追踪。",
-    "stats": {
-      "total": "线索总数",
-      "pending": "待联系",
-      "contacting": "已联系",
-      "completed": "已成交",
-      "rejected": "已失效"
-    },
-    "filter": {
-      "searchPlaceholder": "请输入关键词搜索",
-      "search": "搜索",
-      "statusPlaceholder": "全部状态",
-      "allStatus": "全部状态"
-    },
-    "table": {
-      "title": "企业线索列表",
-      "id": "线索ID",
-      "company": "企业名称",
-      "contact": "联系人",
-      "phone": "联系电话",
-      "submittedAt": "提交时间",
-      "status": "状态",
-      "actions": "操作",
-      "empty": "暂无线索数据",
-      "unit": "条线索"
-    },
-    "status": {
-      "pending": "待联系",
-      "contacting": "已联系",
-      "completed": "已成交",
-      "rejected": "已失效"
-    },
-    "actions": {
-      "view": "查看",
-      "edit": "编辑",
-      "delete": "删除",
-      "refresh": "刷新",
-      "query": "查询",
-      "reset": "重置",
-      "retry": "重新加载",
-      "more": "更多"
-    },
-    "detail": {
-      "title": "企业线索详情 - {company}",
-      "basicInfo": "企业基本信息",
-      "requirementInfo": "需求信息",
-      "followUpInfo": "跟进信息",
-      "email": "邮箱地址",
-      "description": "具体需求描述",
-      "otherInfo": "其他补充信息",
-      "followUpDate": "跟进日期",
-      "followUpRecord": "跟进记录",
-      "internalRemark": "内部备注"
-    },
-    "edit": {
-      "title": "编辑企业线索 - {company}",
-      "save": "保存更改",
-      "datePlaceholder": "选择日期",
-      "recordPlaceholder": "记录与客户的沟通情况，反馈，下一步计划...",
-      "remarkPlaceholder": "内部使用的备注信息，客户不可见",
-      "statusRequired": "请选择状态"
-    },
-    "validation": {
-      "nameRequired": "请输入企业名称",
-      "contactRequired": "请输入联系人"
-    },
-    "messages": {
-      "fetchError": "获取列表失败",
-      "fetchDetailError": "获取详情失败",
-      "updateSuccess": "更新成功",
-      "updateError": "更新失败",
-      "deleteSuccess": "删除成功",
-      "deleteError": "删除失败",
-      "deleteConfirm": "确认删除该线索吗？此操作不可撤销。"
-    }
-  },
-
-
-
   "common": {
     "cancel": "取消",
     "confirm": "确定"
@@ -357,20 +273,20 @@
       },
       "search": {
         "placeholder": "搜索授权码、客户名称、描述",
-      "selectCustomer": "下拉选择客户",
-      "allCustomers": "全部客户",
-      "title": "按客户查找授权",
-      "description": "选择客户后查看已有授权，或者进入创建流程。",
-      "customerLabel": "客户",
-      "customerHint": "仅显示当前启用的客户。",
-      "selectedCustomer": "当前选择：",
-      "queryTitle": "查看已有授权",
-      "queryDescription": "检查所选客户的授权状态、激活用量和有效期。",
-      "createTitle": "创建新授权",
-      "createDescription": "进入授权创建页，可继续调整客户和授权配置。",
-      "loadError": "加载客户列表失败",
-      "retry": "重新加载",
-      "dateRange": "选择日期范围",
+        "selectCustomer": "下拉选择客户",
+        "allCustomers": "全部客户",
+        "title": "按客户查找授权",
+        "description": "选择客户后查看已有授权，或者进入创建流程。",
+        "customerLabel": "客户",
+        "customerHint": "仅显示当前启用的客户。",
+        "selectedCustomer": "当前选择：",
+        "queryTitle": "查看已有授权",
+        "queryDescription": "检查所选客户的授权状态、激活用量和有效期。",
+        "createTitle": "创建新授权",
+        "createDescription": "进入授权创建页，可继续调整客户和授权配置。",
+        "loadError": "加载客户列表失败",
+        "retry": "重新加载",
+        "dateRange": "选择日期范围",
         "startDate": "开始日期",
         "endDate": "结束日期"
       },
