@@ -9,58 +9,59 @@
         <h1>{{ pageTitle }}</h1>
         <p>{{ t('pages.licenses.list.description') }}</p>
       </div>
-      <el-button type="primary" :icon="Plus" @click="openCreate">
-        {{ t('pages.licenses.list.createLicense') }}
-      </el-button>
     </header>
 
     <section class="data-list-workspace">
-      <div class="filter-card data-list-filter">
-      <div class="filter-grid data-list-filter__grid">
-      <el-input
-        v-model="filters.code"
-        class="filter-control code-filter"
-        :placeholder="t('pages.licenses.list.filter.codePlaceholder')"
-        clearable
-        @keyup.enter="queryLicenses"
-      />
-      <el-select
-        v-model="filters.customerId"
-        class="filter-control customer-filter"
-        :placeholder="t('pages.licenses.list.filter.customerPlaceholder')"
-        :loading="customerLoading"
-        clearable
-        filterable
-      >
-        <el-option
-          v-for="customer in customerOptions"
-          :key="customer.id"
-          :label="customer.name"
-          :value="customer.id"
-        />
-      </el-select>
-      <el-select
-        v-model="filters.status"
-        class="filter-control status-filter"
-        :placeholder="t('pages.licenses.list.filter.statusPlaceholder')"
-        clearable
-      >
-        <el-option
-          v-for="option in statusOptions"
-          :key="option.key"
-          :label="option.display"
-          :value="option.key"
-        />
-      </el-select>
-      <div class="filter-actions data-list-filter__actions">
-        <el-button type="primary" :loading="isUpdating" @click="queryLicenses">
-          {{ t('pages.licenses.list.filter.query') }}
+      <div class="data-list-toolbar">
+        <el-button type="primary" :icon="Plus" @click="openCreate">
+          {{ t('pages.licenses.list.createLicense') }}
         </el-button>
-        <el-button @click="resetFilters">
-          {{ t('pages.licenses.list.filter.reset') }}
-        </el-button>
-      </div>
-      </div>
+        <span class="data-list-toolbar__divider" aria-hidden="true"></span>
+        <div class="filter-grid data-list-filter__grid data-list-toolbar__filters">
+          <el-input
+            v-model="filters.code"
+            class="filter-control code-filter"
+            :placeholder="t('pages.licenses.list.filter.codePlaceholder')"
+            clearable
+            @keyup.enter="queryLicenses"
+          />
+          <el-select
+            v-model="filters.customerId"
+            class="filter-control customer-filter"
+            :placeholder="t('pages.licenses.list.filter.customerPlaceholder')"
+            :loading="customerLoading"
+            clearable
+            filterable
+          >
+            <el-option
+              v-for="customer in customerOptions"
+              :key="customer.id"
+              :label="customer.name"
+              :value="customer.id"
+            />
+          </el-select>
+          <el-select
+            v-model="filters.status"
+            class="filter-control status-filter"
+            :placeholder="t('pages.licenses.list.filter.statusPlaceholder')"
+            clearable
+          >
+            <el-option
+              v-for="option in statusOptions"
+              :key="option.key"
+              :label="option.display"
+              :value="option.key"
+            />
+          </el-select>
+          <div class="filter-actions data-list-filter__actions">
+            <el-button plain type="primary" :loading="isUpdating" @click="queryLicenses">
+              {{ t('pages.licenses.list.filter.query') }}
+            </el-button>
+            <el-button @click="resetFilters">
+              {{ t('pages.licenses.list.filter.reset') }}
+            </el-button>
+          </div>
+        </div>
       </div>
 
       <div class="list-card data-list-table">
@@ -80,7 +81,7 @@
         :element-loading-text="t('pages.licenses.list.table.loading')"
         empty-text=" "
       >
-        <el-table-column prop="code" :label="t('pages.licenses.list.table.code')" min-width="210">
+        <el-table-column prop="code" :label="t('pages.licenses.list.table.code')" width="280">
           <template #default="{ row }">
             <div class="license-code-cell">
               <button class="code-link" type="button" @click="openDetail(row)">
@@ -99,19 +100,14 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="t('pages.licenses.list.table.customer')" min-width="150" show-overflow-tooltip>
-          <template #default="{ row }">
-            {{ row.customer_name || row.customer_info?.customer_name || '-' }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('pages.licenses.list.table.status')" width="100" align="center">
+        <el-table-column :label="t('pages.licenses.list.table.status')" width="96" align="center">
           <template #default="{ row }">
             <el-tag :type="statusTagType(row.status)" effect="light">
               {{ statusText(row) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="t('pages.licenses.list.table.activationProgress')" min-width="170">
+        <el-table-column :label="t('pages.licenses.list.table.activationProgress')" width="260">
           <template #default="{ row }">
             <div class="activation-cell">
               <span>{{ activatedCount(row) }}/{{ row.max_activations }}</span>
@@ -119,15 +115,20 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="t('pages.licenses.list.table.endDate')" width="170">
+        <el-table-column :label="t('pages.licenses.list.table.endDate')" width="176">
           <template #default="{ row }">
             {{ row.end_date ? formatDate(row.end_date) : '-' }}
           </template>
         </el-table-column>
-        <el-table-column prop="description" :label="t('pages.licenses.list.table.description')" min-width="150" show-overflow-tooltip>
+        <el-table-column :label="t('pages.licenses.list.table.customer')" width="180" show-overflow-tooltip>
+          <template #default="{ row }">
+            {{ row.customer_name || row.customer_info?.customer_name || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="description" :label="t('pages.licenses.list.table.description')" min-width="220" show-overflow-tooltip>
           <template #default="{ row }">{{ row.description || '-' }}</template>
         </el-table-column>
-        <el-table-column :label="t('pages.licenses.list.table.operation')" width="240" fixed="right" align="center">
+        <el-table-column :label="t('pages.licenses.list.table.operation')" width="220" fixed="right" align="center">
           <template #default="{ row }">
             <div class="row-actions data-list-actions">
               <el-button plain size="small" type="primary" @click="openDetail(row)">

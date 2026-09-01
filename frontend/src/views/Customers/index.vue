@@ -6,48 +6,51 @@
           <h1>{{ t('customers.title') }}</h1>
           <p>{{ t('customers.description') }}</p>
         </div>
-        <el-button type="primary" :icon="Plus" @click="openCreate">
-          {{ t('customers.actions.add') }}
-        </el-button>
       </header>
 
       <section class="data-list-workspace">
-        <div class="data-list-filter">
-        <el-alert v-if="enumError" :title="enumError" type="warning" show-icon :closable="false" class="enum-alert">
-          <template #default>
-            <el-button link type="primary" @click="loadEnums">
-              {{ t('customers.actions.retry') }}
-            </el-button>
-          </template>
-        </el-alert>
+        <div class="data-list-toolbar">
+          <el-button type="primary" :icon="Plus" @click="openCreate">
+            {{ t('customers.actions.add') }}
+          </el-button>
+          <span class="data-list-toolbar__divider" aria-hidden="true"></span>
+          <div class="customer-toolbar-content data-list-toolbar__filters">
+            <el-alert v-if="enumError" :title="enumError" type="warning" show-icon :closable="false" class="enum-alert">
+              <template #default>
+                <el-button link type="primary" @click="loadEnums">
+                  {{ t('customers.actions.retry') }}
+                </el-button>
+              </template>
+            </el-alert>
 
-        <div class="filter-grid data-list-filter__grid">
-          <el-input
-            v-model="filters.keyword"
-            :placeholder="t('customers.search.placeholder')"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-          <el-select v-model="filters.customerType" :placeholder="t('customers.filter.customerType')" clearable>
-            <el-option v-for="option in customerTypeOptions" :key="option.key" :label="option.display" :value="option.key" />
-          </el-select>
-          <el-select v-model="filters.customerLevel" :placeholder="t('customers.filter.customerLevel')" clearable>
-            <template #label="{ label, value }">
-              <el-rate v-if="value" :model-value="Number(label) || 0" disabled class="customer-level-rate" />
-              <span v-else>{{ label }}</span>
-            </template>
-            <el-option v-for="option in customerLevelOptions" :key="option.key" :label="option.display" :value="option.key">
-              <el-rate :model-value="Number(option.display) || 0" disabled class="customer-level-rate" />
-            </el-option>
-          </el-select>
-          <el-select v-model="filters.status" :placeholder="t('customers.filter.status')" clearable>
-            <el-option v-for="option in statusOptions" :key="option.key" :label="option.display" :value="option.key" />
-          </el-select>
-          <div class="filter-actions data-list-filter__actions">
-            <el-button type="primary" :loading="isUpdating" @click="handleQuery">{{ t('customers.actions.query') }}</el-button>
-            <el-button @click="handleReset">{{ t('customers.actions.reset') }}</el-button>
+            <div class="filter-grid data-list-filter__grid">
+              <el-input
+                v-model="filters.keyword"
+                :placeholder="t('customers.search.placeholder')"
+                clearable
+                @keyup.enter="handleQuery"
+              />
+              <el-select v-model="filters.customerType" :placeholder="t('customers.filter.customerType')" clearable>
+                <el-option v-for="option in customerTypeOptions" :key="option.key" :label="option.display" :value="option.key" />
+              </el-select>
+              <el-select v-model="filters.customerLevel" :placeholder="t('customers.filter.customerLevel')" clearable>
+                <template #label="{ label, value }">
+                  <el-rate v-if="value" :model-value="Number(label) || 0" disabled class="customer-level-rate" />
+                  <span v-else>{{ label }}</span>
+                </template>
+                <el-option v-for="option in customerLevelOptions" :key="option.key" :label="option.display" :value="option.key">
+                  <el-rate :model-value="Number(option.display) || 0" disabled class="customer-level-rate" />
+                </el-option>
+              </el-select>
+              <el-select v-model="filters.status" :placeholder="t('customers.filter.status')" clearable>
+                <el-option v-for="option in statusOptions" :key="option.key" :label="option.display" :value="option.key" />
+              </el-select>
+              <div class="filter-actions data-list-filter__actions">
+                <el-button plain type="primary" :loading="isUpdating" @click="handleQuery">{{ t('customers.actions.query') }}</el-button>
+                <el-button @click="handleReset">{{ t('customers.actions.reset') }}</el-button>
+              </div>
+            </div>
           </div>
-        </div>
         </div>
 
         <div class="table-card data-list-table">
