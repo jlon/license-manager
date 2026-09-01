@@ -99,6 +99,10 @@ import { useUserStore } from '@/store/modules/user'
 import { changeLanguage, type SupportedLocale } from '@/utils/language'
 
 const REMEMBER_KEY = 'loginInfo'
+const DEFAULT_COMMUNITY_LOGIN = {
+  username: 'admin',
+  password: 'admin@123'
+}
 const { t, locale } = useI18n()
 const router = useRouter()
 const userStore = useUserStore()
@@ -107,7 +111,7 @@ const loading = ref(false)
 const rememberMe = ref(false)
 const currentLanguage = ref(locale.value as SupportedLocale)
 const currentYear = new Date().getFullYear()
-const loginForm = reactive({ username: '', password: '' })
+const loginForm = reactive({ ...DEFAULT_COMMUNITY_LOGIN })
 const loginRules: FormRules = {
   username: [
     { required: true, message: () => t('login.error.usernameRequired'), trigger: 'blur' },
@@ -131,6 +135,7 @@ const loadRememberedUsername = () => {
     const value = JSON.parse(saved) as { username?: string; password?: string }
     if (value.username) {
       loginForm.username = value.username
+      loginForm.password = ''
       rememberMe.value = true
       localStorage.setItem(REMEMBER_KEY, JSON.stringify({ username: value.username }))
     } else {
