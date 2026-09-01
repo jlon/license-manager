@@ -15,15 +15,30 @@
         </div>
         <section v-else class="overview-grid" :aria-label="t('dashboard.overviewTitle')">
           <article v-for="card in overviewCards" :key="card.key" class="metric-card" :class="`metric-card--${card.tone}`">
-            <el-icon class="metric-icon"><component :is="card.icon" /></el-icon>
-            <div class="metric-content">
+            <div class="metric-card__header">
               <span class="metric-label">{{ card.label }}</span>
-              <el-skeleton v-if="homeSkeletonVisible" :rows="1" />
-              <strong v-else class="metric-value">{{ home ? card.value : '--' }}</strong>
-              <span class="metric-help">{{ home ? card.help : homeError || t('dashboard.noData') }}</span>
+              <el-icon class="metric-icon"><component :is="card.icon" /></el-icon>
             </div>
+            <el-skeleton v-if="homeSkeletonVisible" :rows="1" class="metric-skeleton" />
+            <strong v-else class="metric-value">{{ home ? card.value : '--' }}</strong>
+            <span class="metric-help">{{ home ? card.help : homeError || t('dashboard.noData') }}</span>
           </article>
         </section>
+      </section>
+
+      <section class="cloud-promo" :aria-label="t('dashboard.cloudPromo.title')">
+        <div class="cloud-promo__copy">
+          <div class="cloud-promo__badge">
+            <el-icon><Cloudy /></el-icon>
+            <span>{{ t('dashboard.cloudPromo.eyebrow') }}</span>
+          </div>
+          <strong>{{ t('dashboard.cloudPromo.title') }}</strong>
+          <p>{{ t('dashboard.cloudPromo.description') }}</p>
+        </div>
+        <div class="cloud-promo__actions">
+          <a href="https://cedar-v.com/products/cedar-license-cloud/index.html" target="_blank" rel="noopener noreferrer">{{ t('dashboard.cloudPromo.learnMore') }}</a>
+          <a class="cloud-promo__primary" href="https://lic.cedar-v.com" target="_blank" rel="noopener noreferrer">{{ t('dashboard.cloudPromo.tryFree') }}</a>
+        </div>
       </section>
 
       <section class="panel expiry-panel">
@@ -33,14 +48,6 @@
             <div class="expiry-card__top"><span>{{ item.label }}</span><el-skeleton v-if="homeSkeletonVisible" :rows="1" /><strong v-else>{{ home ? item.value : '--' }}</strong></div>
             <p>{{ home ? item.help : homeError || t('dashboard.noData') }}</p>
           </article>
-        </div>
-      </section>
-
-      <section class="cloud-promo" :aria-label="t('dashboard.cloudPromo.title')">
-        <div class="cloud-promo__copy"><span>{{ t('dashboard.cloudPromo.eyebrow') }}</span><strong>{{ t('dashboard.cloudPromo.title') }}</strong><p>{{ t('dashboard.cloudPromo.description') }}</p></div>
-        <div class="cloud-promo__actions">
-          <a href="https://cedar-v.com/products/cedar-license-cloud/index.html" target="_blank" rel="noopener noreferrer">{{ t('dashboard.cloudPromo.learnMore') }}</a>
-          <a class="cloud-promo__primary" href="https://lic.cedar-v.com" target="_blank" rel="noopener noreferrer">{{ t('dashboard.cloudPromo.tryFree') }}</a>
         </div>
       </section>
 
@@ -89,6 +96,7 @@
           </div>
         </article>
       </section>
+
     </div>
   </Layout>
 </template>
@@ -97,7 +105,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { Coin, Document, Monitor, Refresh, WarningFilled } from '@element-plus/icons-vue'
+import { Cloudy, Coin, Document, Monitor, Refresh, WarningFilled } from '@element-plus/icons-vue'
 import Layout from '@/components/common/layout/Layout.vue'
 import DashboardTrendChart from '@/components/dashboard/DashboardTrendChart.vue'
 import { getDashboardBusinessTrends, getDashboardHome, type DashboardBusinessTrendsData, type DashboardHomeData, type DashboardTrendPoint, type RecentActivationItem, type RecentAuthorizationItem } from '@/api/dashboard'
@@ -133,7 +141,7 @@ const expiryCards = computed(() => {
   return [
     { key: 'due7', label: t('dashboard.expiry.due7'), value: reminders?.due_7_days.authorization_count ?? 0, help: t('dashboard.expiry.affectedDevices', { n: reminders?.due_7_days.affected_device_count ?? 0 }), tone: 'danger' },
     { key: 'due30', label: t('dashboard.expiry.due8To30'), value: reminders?.due_8_to_30_days.authorization_count ?? 0, help: t('dashboard.expiry.affectedDevices', { n: reminders?.due_8_to_30_days.affected_device_count ?? 0 }), tone: 'warning' },
-    { key: 'expired', label: t('dashboard.expiry.expired'), value: reminders?.expired.authorization_count ?? 0, help: t('dashboard.expiry.affectedDevices', { n: reminders?.expired.affected_device_count ?? 0 }), tone: 'neutral' }
+    { key: 'expired', label: t('dashboard.expiry.expired'), value: reminders?.expired.authorization_count ?? 0, help: t('dashboard.expiry.affectedDevices', { n: reminders?.expired.affected_device_count ?? 0 }), tone: 'expired' }
   ]
 })
 const errorText = (error: any) => error?.backendMessage || error?.response?.data?.message || t('dashboard.loadFailed')
@@ -160,19 +168,20 @@ onMounted(refreshAll)
 </script>
 
 <style lang="scss" scoped>
-.dashboard-page { --dashboard-border:#cfe0d9; --dashboard-surface:#fff; --dashboard-text:var(--app-text-primary); --dashboard-regular:#40574e; --dashboard-secondary:#6f827a; min-height:calc(100vh - var(--layout-header-height)); padding:24px; display:flex; flex-direction:column; gap:18px; background:var(--app-bg-color); }
-.overview-panel,.panel { overflow:hidden; background:var(--dashboard-surface); border:1px solid var(--dashboard-border); border-radius:0; box-shadow:var(--app-card-shadow); }
+.dashboard-page { --dashboard-border:#dce9e4; --dashboard-surface:#fff; --dashboard-text:var(--app-text-primary); --dashboard-regular:#40574e; --dashboard-secondary:#6f827a; min-height:calc(100vh - var(--layout-header-height)); padding:24px; display:flex; flex-direction:column; gap:24px; background:var(--app-bg-color); }
+.overview-panel,.panel { overflow:hidden; background:var(--dashboard-surface); border:0; border-radius:0; box-shadow:0 8px 24px rgba(18,67,52,.06); }
 .page-header,.panel-header { min-height:64px; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; border-bottom:1px solid var(--dashboard-border); }
-.page-header h1,.panel-header h2 { margin:0; color:var(--dashboard-text); }.page-header h1 { font-size:20px; }.panel-header h2 { font-size:17px; }
-.page-header p,.panel-header p { margin:4px 0 0; color:var(--dashboard-secondary); font-size:12px; }.header-actions { display:flex; align-items:center; gap:12px; flex-shrink:0; }.updated-at { color:var(--dashboard-secondary); font-size:12px; }
-.overview-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }.metric-card { --metric:#183129; min-height:118px; padding:18px 22px; display:flex; align-items:center; gap:18px; border-right:1px solid var(--dashboard-border); }.metric-card:last-child { border-right:0; }
-.metric-card--brand { --metric:#008c70; border-top:3px solid #00a98b; }.metric-card--info { --metric:#3f7df1; border-top:3px solid #4c86f7; }.metric-card--warning { --metric:#c67d0a; border-top:3px solid #e59a17; }
-.metric-icon { color:var(--metric); font-size:29px; flex-shrink:0; }.metric-content { min-width:0; display:flex; flex:1; flex-direction:column; gap:3px; }.metric-label { color:var(--dashboard-secondary); font-size:13px; }.metric-value { color:var(--metric); font-size:31px; line-height:1.15; font-variant-numeric:tabular-nums; }.metric-help { overflow:hidden; color:var(--dashboard-secondary); font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
-.panel-header--stacked { justify-content:flex-start; }.expiry-grid { padding:12px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }.expiry-card { --expiry:#718096; padding:14px 15px; background:color-mix(in srgb,var(--dashboard-surface) 94%,var(--expiry)); border:1px solid var(--dashboard-border); border-left:3px solid var(--expiry); }.expiry-card--danger { --expiry:#df5252; }.expiry-card--warning { --expiry:#e59a17; }.expiry-card--neutral { --expiry:#718096; }.expiry-card__top { display:flex; align-items:center; justify-content:space-between; gap:12px; color:var(--dashboard-regular); font-size:13px; }.expiry-card__top strong { color:var(--expiry); font-size:23px; font-variant-numeric:tabular-nums; }.expiry-card p { margin:5px 0 0; color:var(--dashboard-secondary); font-size:12px; }
-.cloud-promo { min-height:76px; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:24px; background:linear-gradient(100deg,#075f50,#087b67); color:#fff; box-shadow:var(--app-card-shadow); }.cloud-promo__copy { min-width:0; display:grid; grid-template-columns:auto auto minmax(0,1fr); align-items:baseline; gap:8px 14px; }.cloud-promo__copy>span { color:#8debcf; font-size:11px; font-weight:700; letter-spacing:.1em; }.cloud-promo__copy strong { font-size:17px; }.cloud-promo__copy p { margin:0; overflow:hidden; color:rgba(255,255,255,.72); font-size:13px; text-overflow:ellipsis; white-space:nowrap; }.cloud-promo__actions { display:flex; gap:8px; flex-shrink:0; }.cloud-promo__actions a { min-height:34px; padding:0 13px; display:inline-flex; align-items:center; border:1px solid rgba(255,255,255,.36); color:#fff; font-size:13px; text-decoration:none; }.cloud-promo__actions a:hover { border-color:#fff; background:rgba(255,255,255,.08); }.cloud-promo__actions .cloud-promo__primary { border-color:#fff; background:#fff; color:#076451; font-weight:600; }
-.trend-header { align-items:flex-start; }.trend-controls { display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; }.panel-body { min-height:120px; }.chart-body { min-height:285px; }.trend-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }.trend-card { min-width:0; padding:16px 18px 8px; }.trend-card+.trend-card { border-left:1px solid var(--dashboard-border); }.trend-card h3 { margin:0 0 4px; color:var(--dashboard-regular); font-size:14px; }
-.recent-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }.recent-panel { min-width:0; }.table-wrap { padding:0 14px 10px; overflow-x:auto; }.table-wrap :deep(.el-table__row) { cursor:pointer; }.table-wrap :deep(.el-table__header th.el-table__cell) { background:color-mix(in srgb,var(--dashboard-surface) 82%,#cdeee1); color:var(--dashboard-regular); }.state-block { min-height:260px; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--dashboard-secondary); }.state-block--compact { min-height:118px; }
-.dashboard-page :deep(.el-button),.dashboard-page :deep(.el-input__wrapper),.dashboard-page :deep(.el-radio-button__inner),.dashboard-page :deep(.el-loading-mask) { border-radius:0; }:global([data-theme="dark"]) .dashboard-page { --dashboard-border:var(--app-border-color); --dashboard-surface:var(--app-content-bg); --dashboard-regular:#c1d0ca; --dashboard-secondary:#93a69e; }:global([data-theme="dark"]) .metric-card { --metric:#f0f5f3; }
+.page-header h1,.panel-header h2 { margin:0; color:var(--dashboard-text); line-height:1.35; }.page-header h1 { font-size:22px; font-weight:700; }.panel-header h2 { font-size:18px; font-weight:650; }
+.page-header p,.panel-header p { margin:5px 0 0; color:var(--dashboard-secondary); font-size:13px; line-height:1.55; }.header-actions { display:flex; align-items:center; gap:12px; flex-shrink:0; }.updated-at { color:var(--dashboard-secondary); font-size:13px; }
+.overview-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }.metric-card { --metric:#087765; min-width:0; min-height:142px; padding:18px 22px 20px; display:flex; flex-direction:column; border-right:1px solid var(--dashboard-border); }.metric-card:last-child { border-right:0; }
+.metric-card--brand,.metric-card--info,.metric-card--warning { --metric:#087765; }
+.metric-card__header { min-height:36px; display:flex; align-items:center; justify-content:space-between; gap:16px; }.metric-icon { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; flex:0 0 36px; background:#edf8f4; color:var(--metric); font-size:20px; }.metric-label { color:var(--dashboard-regular); font-size:14px; font-weight:600; }.metric-value { margin-top:8px; color:var(--metric); font-size:34px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums; }.metric-help { margin-top:9px; overflow:hidden; color:var(--dashboard-secondary); font-size:13px; line-height:1.5; text-overflow:ellipsis; white-space:nowrap; }.metric-skeleton { width:48%; margin-top:8px; }
+.panel-header--stacked { justify-content:flex-start; }.expiry-grid { padding:14px 16px 16px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }.expiry-card { --expiry:#d84d4d; --expiry-bg:#fff7f5; min-width:0; min-height:96px; padding:15px 18px; display:flex; justify-content:center; flex-direction:column; box-sizing:border-box; background:var(--expiry-bg); }.expiry-card--danger { --expiry:#d84d4d; --expiry-bg:#fff7f5; }.expiry-card--warning { --expiry:#bd7600; --expiry-bg:#fffaf0; }.expiry-card--expired { --expiry:#b83232; --expiry-bg:#feeeeb; }.expiry-card__top { display:flex; align-items:center; justify-content:space-between; gap:16px; color:var(--dashboard-regular); font-size:14px; }.expiry-card__top>span { font-weight:600; }.expiry-card__top strong { color:var(--expiry); font-size:28px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums; }.expiry-card--expired .expiry-card__top strong { min-width:46px; height:46px; display:inline-flex; align-items:center; justify-content:center; background:var(--expiry); color:#fff; font-size:24px; }.expiry-card p { margin:9px 0 0; color:var(--dashboard-secondary); font-size:13px; line-height:1.5; }
+.cloud-promo { min-height:76px; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:24px; background:linear-gradient(100deg,#075f50,#087b67); color:#fff; box-shadow:var(--app-card-shadow); }.cloud-promo__copy { min-width:0; display:grid; grid-template-columns:auto auto minmax(0,1fr); align-items:center; gap:8px 14px; }.cloud-promo__badge { display:inline-flex; align-items:center; gap:8px; color:#8debcf; font-size:11px; font-weight:700; letter-spacing:.1em; white-space:nowrap; }.cloud-promo__badge .el-icon { flex:0 0 auto; color:#b9f5e3; font-size:20px; transition:transform .18s ease,color .18s ease; }.cloud-promo:hover .cloud-promo__badge .el-icon { transform:translateY(-2px); color:#fff; }.cloud-promo__copy strong { font-size:17px; }.cloud-promo__copy p { margin:0; overflow:hidden; color:rgba(255,255,255,.72); font-size:13px; text-overflow:ellipsis; white-space:nowrap; }.cloud-promo__actions { display:flex; gap:8px; flex-shrink:0; }.cloud-promo__actions a { min-height:34px; padding:0 13px; display:inline-flex; align-items:center; border:1px solid rgba(255,255,255,.36); color:#fff; font-size:13px; text-decoration:none; }.cloud-promo__actions a:hover { border-color:#fff; background:rgba(255,255,255,.08); }.cloud-promo__actions a:focus-visible { outline:2px solid #fff; outline-offset:3px; }.cloud-promo__actions .cloud-promo__primary { border-color:#fff; background:#fff; color:#076451; font-weight:600; }
+.trend-header { align-items:flex-start; }.trend-controls { display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; }.panel-body { min-height:120px; }.chart-body { min-height:285px; }.trend-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }.trend-card { min-width:0; padding:16px 18px 8px; }.trend-card+.trend-card { border-left:1px solid var(--dashboard-border); }.trend-card h3 { margin:0 0 6px; color:var(--dashboard-regular); font-size:15px; font-weight:600; line-height:1.45; }
+.recent-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }.recent-panel { min-width:0; }.table-wrap { padding:0 14px 10px; overflow-x:auto; }.table-wrap :deep(.el-table) { font-size:14px; }.table-wrap :deep(.el-table__row) { cursor:pointer; }.table-wrap :deep(.el-table__header th.el-table__cell) { background:color-mix(in srgb,var(--dashboard-surface) 82%,#cdeee1); color:var(--dashboard-regular); font-weight:600; }.state-block { min-height:260px; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--dashboard-secondary); }.state-block--compact { min-height:118px; }
+.dashboard-page :deep(.el-button),.dashboard-page :deep(.el-input__wrapper),.dashboard-page :deep(.el-radio-button__inner),.dashboard-page :deep(.el-loading-mask) { border-radius:0; }:global([data-theme="dark"]) .dashboard-page { --dashboard-border:var(--app-border-color); --dashboard-surface:var(--app-content-bg); --dashboard-regular:#c1d0ca; --dashboard-secondary:#93a69e; }:global([data-theme="dark"]) .metric-icon { background:color-mix(in srgb,var(--app-content-bg) 76%,#087765); }:global([data-theme="dark"]) .expiry-card--danger { --expiry-bg:color-mix(in srgb,var(--app-content-bg) 88%,#d84d4d); }:global([data-theme="dark"]) .expiry-card--warning { --expiry-bg:color-mix(in srgb,var(--app-content-bg) 88%,#bd7600); }:global([data-theme="dark"]) .expiry-card--expired { --expiry-bg:color-mix(in srgb,var(--app-content-bg) 82%,#b83232); }
 @media (max-width:1023px) { .recent-grid,.trend-grid { grid-template-columns:1fr; }.trend-card+.trend-card { border-top:1px solid var(--dashboard-border); border-left:0; } }
 @media (max-width:767px) { .dashboard-page { padding:14px; }.page-header,.trend-header { align-items:flex-start; flex-direction:column; }.header-actions,.trend-controls { width:100%; justify-content:space-between; }.overview-grid,.expiry-grid { grid-template-columns:1fr; }.metric-card { border-right:0; border-bottom:1px solid var(--dashboard-border); }.metric-card:last-child { border-bottom:0; }.cloud-promo { align-items:flex-start; flex-direction:column; gap:12px; }.cloud-promo__copy { grid-template-columns:1fr; gap:3px; }.cloud-promo__copy p { white-space:normal; }.cloud-promo__actions { width:100%; }.cloud-promo__actions a { flex:1; justify-content:center; }.trend-controls :deep(.el-date-editor) { width:100%; }.recent-grid { gap:14px; } }
+@media (prefers-reduced-motion:reduce) { .cloud-promo__badge .el-icon { transition:none; }.cloud-promo:hover .cloud-promo__badge .el-icon { transform:none; } }
 </style>

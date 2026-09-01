@@ -71,15 +71,15 @@
             :element-loading-text="t('customers.table.loading')"
             row-key="id"
           >
-            <el-table-column prop="customer_code" :label="t('customers.table.customerCode')" min-width="140" show-overflow-tooltip>
+            <el-table-column prop="customer_code" :label="t('customers.table.customerCode')" width="190" show-overflow-tooltip>
               <template #default="{ row }">
                 <el-button link type="primary" @click="openDetail(row)">{{ row.customer_code }}</el-button>
               </template>
             </el-table-column>
-            <el-table-column prop="customer_name" :label="t('customers.table.customerName')" min-width="180" show-overflow-tooltip />
-            <el-table-column prop="customer_type_display" :label="t('customers.table.customerType')" min-width="120" />
-            <el-table-column prop="contact_person" :label="t('customers.table.contactPerson')" min-width="120" show-overflow-tooltip />
-            <el-table-column prop="customer_level_display" :label="t('customers.table.customerLevel')" min-width="140" align="center">
+            <el-table-column prop="customer_name" :label="t('customers.table.customerName')" min-width="220" show-overflow-tooltip />
+            <el-table-column prop="customer_type_display" :label="t('customers.table.customerType')" width="150" align="center" />
+            <el-table-column prop="contact_person" :label="t('customers.table.contactPerson')" min-width="220" show-overflow-tooltip />
+            <el-table-column prop="customer_level_display" :label="t('customers.table.customerLevel')" width="150" align="center">
               <template #default="{ row }">
                 <el-rate :model-value="Number(row.customer_level_display) || 0" disabled class="customer-level-rate" />
               </template>
@@ -89,10 +89,10 @@
                 <el-tag :type="row.status === 'active' ? 'success' : 'info'" effect="light">{{ row.status_display }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column :label="t('customers.table.createTime')" width="130" align="center">
+            <el-table-column :label="t('customers.table.createTime')" width="150" align="center">
               <template #default="{ row }">{{ formatDateShort(row.created_at) }}</template>
             </el-table-column>
-            <el-table-column :label="t('customers.table.operation')" fixed="right" width="310" align="center" class-name="operation-column">
+            <el-table-column :label="t('customers.table.operation')" fixed="right" width="300" align="center" class-name="operation-column">
               <template #default="{ row }">
                 <div class="data-list-actions">
                   <el-button plain size="small" type="primary" @click="openLicenses(row)">{{ t('customers.actions.viewLicense') }}</el-button>
