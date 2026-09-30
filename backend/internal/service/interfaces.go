@@ -57,6 +57,7 @@ type LicenseService interface {
 
 	// 客户端激活和心跳接口
 	ActivateLicense(ctx context.Context, req *models.ActivateRequest, clientIP string) (*models.ActivateResponse, error)
+	IssueStellarTrial(ctx context.Context, req *models.StellarTrialRequest, clientIP string) (*models.ActivateResponse, error)
 	Heartbeat(ctx context.Context, req *models.HeartbeatRequest, clientIP string) (*models.HeartbeatResponse, error)
 
 	// 统计接口

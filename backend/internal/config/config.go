@@ -70,9 +70,10 @@ type LicenseConfig struct {
 	// RSA非对称加密配置
 	RSA RSAConfig `mapstructure:"rsa"`
 
-	HeartbeatTimeout int `mapstructure:"heartbeat_timeout"` // 心跳超时时间(秒)
-	OfflineTimeout   int `mapstructure:"offline_timeout"`   // 离线超时时间(分钟)
-	ExpiringDays     int `mapstructure:"expiring_days"`     // 即将过期天数
+	HeartbeatTimeout       int    `mapstructure:"heartbeat_timeout"`         // 心跳超时时间(秒)
+	OfflineTimeout         int    `mapstructure:"offline_timeout"`           // 离线超时时间(分钟)
+	ExpiringDays           int    `mapstructure:"expiring_days"`             // 即将过期天数
+	StellarTrialHMACSecret string `mapstructure:"stellar_trial_hmac_secret"` // Stellar 试用授权内部幂等密钥
 }
 
 type RSAConfig struct {
@@ -162,6 +163,7 @@ func setDefaults() {
 	viper.SetDefault("license.heartbeat_timeout", 300)
 	viper.SetDefault("license.offline_timeout", 1440)
 	viper.SetDefault("license.expiring_days", 30)
+	viper.SetDefault("license.stellar_trial_hmac_secret", "")
 
 }
 

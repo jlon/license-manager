@@ -152,6 +152,14 @@ type ActivateResponse struct {
 	HeartbeatInterval int    `json:"heartbeat_interval"` // 心跳间隔(秒)
 }
 
+// StellarTrialRequest Stellar 首次启动时自动领取试用许可证的请求。
+// hardware_fingerprint 是 Stellar 本地计算的 SHA-256 值，不能上传原始 MAC。
+type StellarTrialRequest struct {
+	HardwareFingerprint string                 `json:"hardware_fingerprint" binding:"required"`
+	DeviceInfo          map[string]interface{} `json:"device_info,omitempty"`
+	SoftwareVersion     *string                `json:"software_version,omitempty"`
+}
+
 // HeartbeatRequest 心跳检测请求结构
 type HeartbeatRequest struct {
 	LicenseKey          string                 `json:"license_key" binding:"required"`          // 许可证密钥，必填

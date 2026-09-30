@@ -1,0 +1,57 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: license_manager
+      MYSQL_USER: license_user
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+    secrets:
+      - mysql_password
+      - mysql_root_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks: [license]
+
+  api:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.backend
+    image: johndockerhub/license-manager:stellar-latest
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:18888:18888"
+    volumes:
+      - ./runtime/config.yaml:/app/backend/cmd/config.yaml:ro
+      - ./runtime/rsa_private_key.pem:/app/backend/configs/rsa_private_key.pem:ro
+      - ./runtime/rsa_public_key.pem:/app/backend/configs/rsa_public_key.pem:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:18888/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+    networks: [license]
+
+secrets:
+  mysql_password:
+    file: ./runtime/mysql_password
+  mysql_root_password:
+    file: ./runtime/mysql_root_password
+
+volumes:
+  mysql_data:
+
+networks:
+  license:
+    internal: true

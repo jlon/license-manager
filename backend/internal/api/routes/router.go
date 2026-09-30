@@ -79,6 +79,7 @@ func SetupRouter() *gin.Engine {
 
 			// 许可证激活接口（客户端软件使用）
 			public.POST("/v1/activate", licenseHandler.ActivateLicense)
+			public.POST("/v1/stellar/trial", licenseHandler.IssueStellarTrial)
 			public.POST("/v1/heartbeat", licenseHandler.Heartbeat)
 		}
 

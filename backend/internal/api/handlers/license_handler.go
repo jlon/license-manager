@@ -550,6 +550,61 @@ func (h *LicenseHandler) ActivateLicense(c *gin.Context) {
 	})
 }
 
+// IssueStellarTrial issues one fingerprint-bound 30-day Stellar trial without exposing an authorization code.
+// @Summary 领取 Stellar 试用许可证
+// @Description Stellar 客户端按硬件指纹自动领取一次 30 天试用许可证
+// @Tags 许可证激活
+// @Accept json
+// @Produce json
+// @Param request body models.StellarTrialRequest true "Stellar 试用请求"
+// @Success 200 {object} models.APIResponse{data=models.ActivateResponse} "领取成功"
+// @Failure 400 {object} models.ErrorResponse "请求参数无效"
+// @Failure 500 {object} models.ErrorResponse "服务器内部错误"
+// @Router /api/v1/stellar/trial [post]
+func (h *LicenseHandler) IssueStellarTrial(c *gin.Context) {
+	var req models.StellarTrialRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		lang := middleware.GetLanguage(c)
+		status, errCode, message := i18n.NewI18nErrorResponse("900001", lang)
+		c.JSON(status, models.ErrorResponse{
+			Code:      errCode,
+			Message:   message + ": " + err.Error(),
+			Timestamp: time.Now().Format(time.RFC3339),
+		})
+		return
+	}
+
+	ctx := middleware.WithLanguage(c.Request.Context(), c)
+	data, err := h.licenseService.IssueStellarTrial(ctx, &req, c.ClientIP())
+	if err != nil {
+		var i18nErr *i18n.I18nError
+		if errors.As(err, &i18nErr) {
+			c.JSON(i18nErr.HttpCode, models.ErrorResponse{
+				Code:      i18nErr.Code,
+				Message:   i18nErr.Message,
+				Timestamp: time.Now().Format(time.RFC3339),
+			})
+			return
+		}
+
+		lang := middleware.GetLanguage(c)
+		status, errCode, message := i18n.NewI18nErrorResponse("900004", lang)
+		c.JSON(status, models.ErrorResponse{
+			Code:      errCode,
+			Message:   message,
+			Timestamp: time.Now().Format(time.RFC3339),
+		})
+		return
+	}
+
+	lang := middleware.GetLanguage(c)
+	c.JSON(http.StatusOK, models.APIResponse{
+		Code:    "000000",
+		Message: i18n.GetErrorMessage("000000", lang),
+		Data:    data,
+	})
+}
+
 // Heartbeat 心跳检测
 // @Summary 心跳检测
 // @Description 客户端定期发送心跳，更新在线状态和使用数据

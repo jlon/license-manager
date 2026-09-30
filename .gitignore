@@ -25,3 +25,4 @@ frontend/test
 *.sln
 *.sw?
 .env
+deploy/stellar/runtime/

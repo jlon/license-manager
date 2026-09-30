@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"crypto/hmac"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -20,6 +22,12 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
+)
+
+const (
+	stellarProductID             = "stellar"
+	stellarTrialValidityDays     = 30
+	stellarTrialServiceCreatedBy = "stellar-trial-service"
 )
 
 type licenseService struct {
@@ -540,6 +548,177 @@ func (s *licenseService) ActivateLicense(ctx context.Context, req *models.Activa
 	return response, nil
 }
 
+// IssueStellarTrial creates or returns the one trial license deterministically assigned to a Stellar fingerprint.
+func (s *licenseService) IssueStellarTrial(ctx context.Context, req *models.StellarTrialRequest, clientIP string) (*models.ActivateResponse, error) {
+	lang := pkgcontext.GetLanguageFromContext(ctx)
+	if req == nil || !isSHA256Hex(req.HardwareFingerprint) {
+		return nil, i18n.NewI18nError("900001", lang)
+	}
+
+	cfg := config.GetConfig()
+	if cfg == nil || len(cfg.License.StellarTrialHMACSecret) < 32 {
+		return nil, i18n.NewI18nError("900004", lang, "stellar trial HMAC secret is not configured")
+	}
+
+	trialCode := stellarTrialAuthorizationCode(cfg.License.StellarTrialHMACSecret, req.HardwareFingerprint)
+	response, err := s.issueStellarTrial(ctx, trialCode, req, clientIP)
+	if err == nil {
+		return response, nil
+	}
+
+	// A unique-code conflict means another request created the same trial first.
+	if !isDuplicateKeyError(err) {
+		return nil, i18n.NewI18nError("900004", lang, err.Error())
+	}
+
+	response, err = s.loadStellarTrial(ctx, trialCode, req.HardwareFingerprint)
+	if err != nil {
+		return nil, i18n.NewI18nError("900004", lang, err.Error())
+	}
+	return response, nil
+}
+
+func (s *licenseService) issueStellarTrial(
+	ctx context.Context,
+	trialCode string,
+	req *models.StellarTrialRequest,
+	clientIP string,
+) (*models.ActivateResponse, error) {
+	var response *models.ActivateResponse
+
+	err := s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		var authCode models.AuthorizationCode
+		err := tx.Where("code = ?", trialCode).First(&authCode).Error
+		if err == nil {
+			return s.issueExistingStellarTrial(tx, &authCode, req.HardwareFingerprint, &response)
+		}
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+
+		now := time.Now()
+		softwareID := stellarProductID
+		description := "Stellar automatic 30-day trial"
+		version := req.SoftwareVersion
+		customParameters, err := json.Marshal(map[string]string{
+			"product_id":   stellarProductID,
+			"license_kind": "trial",
+		})
+		if err != nil {
+			return err
+		}
+
+		authCode = models.AuthorizationCode{
+			Code:             trialCode,
+			CreatedBy:        stellarTrialServiceCreatedBy,
+			SoftwareID:       &softwareID,
+			Description:      &description,
+			StartDate:        now,
+			EndDate:          now.AddDate(0, 0, stellarTrialValidityDays),
+			SoftwareVersion:  version,
+			MaxActivations:   1,
+			CustomParameters: models.JSON(customParameters),
+		}
+		if err := tx.Create(&authCode).Error; err != nil {
+			return err
+		}
+
+		licenseKey, err := s.generateLicenseKey()
+		if err != nil {
+			return err
+		}
+		license := models.License{
+			LicenseKey:          licenseKey,
+			AuthorizationCodeID: authCode.ID,
+			HardwareFingerprint: req.HardwareFingerprint,
+			ActivationIP:        &clientIP,
+			Status:              "active",
+			ActivatedAt:         &now,
+			LastHeartbeat:       &now,
+			LastOnlineIP:        &clientIP,
+		}
+		if req.DeviceInfo != nil {
+			deviceInfo, err := json.Marshal(req.DeviceInfo)
+			if err != nil {
+				return err
+			}
+			license.DeviceInfo = models.JSON(deviceInfo)
+		}
+		if err := tx.Create(&license).Error; err != nil {
+			return err
+		}
+
+		licenseFile, err := s.generateLicenseFileContent(&license, &authCode)
+		if err != nil {
+			return err
+		}
+		response = &models.ActivateResponse{
+			LicenseKey:        license.LicenseKey,
+			LicenseFile:       licenseFile,
+			HeartbeatInterval: 300,
+		}
+		return nil
+	})
+
+	return response, err
+}
+
+func (s *licenseService) issueExistingStellarTrial(
+	tx *gorm.DB,
+	authCode *models.AuthorizationCode,
+	fingerprint string,
+	response **models.ActivateResponse,
+) error {
+	if authCode.SoftwareID == nil || *authCode.SoftwareID != stellarProductID {
+		return errors.New("trial authorization code is not assigned to Stellar")
+	}
+
+	var license models.License
+	if err := tx.Where("authorization_code_id = ? AND hardware_fingerprint = ?", authCode.ID, fingerprint).
+		First(&license).Error; err != nil {
+		return err
+	}
+
+	licenseFile, err := s.generateLicenseFileContent(&license, authCode)
+	if err != nil {
+		return err
+	}
+	*response = &models.ActivateResponse{
+		LicenseKey:        license.LicenseKey,
+		LicenseFile:       licenseFile,
+		HeartbeatInterval: 300,
+	}
+	return nil
+}
+
+func (s *licenseService) loadStellarTrial(
+	ctx context.Context,
+	trialCode string,
+	fingerprint string,
+) (*models.ActivateResponse, error) {
+	authCode, err := s.licenseRepo.GetAuthorizationCodeByCode(ctx, trialCode)
+	if err != nil {
+		return nil, err
+	}
+
+	var license models.License
+	if err := s.db.WithContext(ctx).
+		Where("authorization_code_id = ? AND hardware_fingerprint = ?", authCode.ID, fingerprint).
+		First(&license).Error; err != nil {
+		return nil, err
+	}
+
+	licenseFile, err := s.generateLicenseFileContent(&license, authCode)
+	if err != nil {
+		return nil, err
+	}
+	return &models.ActivateResponse{
+		LicenseKey:        license.LicenseKey,
+		LicenseFile:       licenseFile,
+		HeartbeatInterval: 300,
+	}, nil
+}
+
 // Heartbeat 心跳检测
 func (s *licenseService) Heartbeat(ctx context.Context, req *models.HeartbeatRequest, clientIP string) (*models.HeartbeatResponse, error) {
 	lang := pkgcontext.GetLanguageFromContext(ctx)
@@ -561,6 +740,9 @@ func (s *licenseService) Heartbeat(ctx context.Context, req *models.HeartbeatReq
 	// 检查许可证状态
 	if license.Status == "revoked" {
 		return nil, i18n.NewI18nError("300007", lang) // 许可证已被撤销
+	}
+	if !hmac.Equal([]byte(license.HardwareFingerprint), []byte(req.HardwareFingerprint)) {
+		return nil, i18n.NewI18nError("300006", lang) // 不暴露许可证是否存在
 	}
 
 	// 更新心跳时间和使用数据
@@ -735,6 +917,25 @@ func parseJSONField(raw models.JSON) map[string]interface{} {
 		return nil
 	}
 	return result
+}
+
+func stellarTrialAuthorizationCode(secret, fingerprint string) string {
+	mac := hmac.New(sha256.New, []byte(secret))
+	_, _ = mac.Write([]byte(fingerprint))
+	return "STELLAR-TRIAL-" + strings.ToUpper(hex.EncodeToString(mac.Sum(nil)))
+}
+
+func isSHA256Hex(value string) bool {
+	if len(value) != sha256.Size*2 {
+		return false
+	}
+	_, err := hex.DecodeString(value)
+	return err == nil
+}
+
+func isDuplicateKeyError(err error) bool {
+	message := strings.ToLower(err.Error())
+	return strings.Contains(message, "duplicate") || strings.Contains(message, "unique")
 }
 
 // GetStatsOverview returns dashboard overview statistics

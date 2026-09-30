@@ -1,0 +1,48 @@
+server:
+  host: "0.0.0.0"
+  port: 18888
+  mode: "release"
+
+database:
+  driver: "mysql"
+  host: "mysql"
+  port: 3306
+  username: "license_user"
+  password: "REPLACE_WITH_THE_SERVER_SIDE_MYSQL_PASSWORD"
+  database: "license_manager"
+  charset: "utf8mb4"
+  parse_time: true
+  loc: "UTC"
+  max_idle_conns: 10
+  max_open_conns: 50
+  conn_max_lifetime: 3600
+  auto_migrate: true
+
+auth:
+  jwt:
+    secret: "REPLACE_WITH_A_RANDOM_JWT_SECRET"
+    expire_hours: 1
+    refresh_threshold_minutes: 30
+  security:
+    max_login_attempts: 5
+    lockout_duration_minutes: 15
+
+log:
+  level: "info"
+  format: "json"
+
+i18n:
+  enable: true
+  default_lang: "zh-CN"
+  config_path: "../configs/i18n/errors"
+  support_langs: ["zh-CN", "en-US", "ja-JP"]
+
+license:
+  rsa:
+    private_key_path: "../configs/rsa_private_key.pem"
+    public_key_path: "../configs/rsa_public_key.pem"
+    key_size: 4096
+  heartbeat_timeout: 300
+  offline_timeout: 1440
+  expiring_days: 30
+  stellar_trial_hmac_secret: "REPLACE_WITH_A_RANDOM_32_BYTE_MINIMUM_SECRET"
