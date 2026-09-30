@@ -13,7 +13,7 @@ docker run --rm -v "$PWD:/src" -v "$PWD/deploy/stellar/runtime:/keys" \
 Build and start the isolated API and database:
 
 ```bash
-docker compose -f deploy/stellar/docker-compose.yml up -d --build
+docker compose -f deploy/stellar/docker-compose.yml up -d
 curl --fail http://127.0.0.1:18888/health
 ```
 

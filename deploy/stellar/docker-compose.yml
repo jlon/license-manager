@@ -21,10 +21,8 @@ services:
     networks: [license]
 
   api:
-    build:
-      context: ../..
-      dockerfile: Dockerfile.backend
     image: johndockerhub/license-manager:stellar-latest
+    pull_policy: always
     restart: unless-stopped
     depends_on:
       mysql:
