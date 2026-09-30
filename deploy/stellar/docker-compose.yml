@@ -21,7 +21,7 @@ services:
     networks: [license]
 
   api:
-    image: docker.io/johndockerhub/license-manager:stellar-latest
+    image: docker.io/johndockerhub/license-manager:stellar-79e79a3
     pull_policy: always
     restart: unless-stopped
     depends_on:
@@ -42,7 +42,7 @@ services:
     networks: [license]
 
   frontend:
-    image: docker.io/johndockerhub/license-manager:frontend-latest
+    image: docker.io/johndockerhub/license-manager:frontend-4041935
     pull_policy: always
     restart: unless-stopped
     ports:
