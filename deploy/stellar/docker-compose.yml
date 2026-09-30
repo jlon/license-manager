@@ -41,6 +41,14 @@ services:
       start_period: 30s
     networks: [license]
 
+  frontend:
+    image: docker.io/johndockerhub/license-manager:frontend-latest
+    pull_policy: always
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:18080:80"
+    networks: [license]
+
 secrets:
   mysql_password:
     file: ./runtime/mysql_password

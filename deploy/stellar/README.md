@@ -19,4 +19,4 @@ curl --fail http://127.0.0.1:18888/health
 
 For Podman deployments, install `stellar-license.service` at `/etc/systemd/system/stellar-license.service`, then run `systemctl daemon-reload && systemctl enable --now stellar-license`.
 
-Merge `nginx.conf.snippet` into the existing `www.xclaw.live` Nginx configuration, test it with `nginx -t`, then reload Nginx. The public API path is `https://www.xclaw.live/license/api/v1/stellar/trial`.
+Merge `nginx.conf.snippet` into the existing `www.xclaw.live` Nginx configuration, test it with `nginx -t`, then reload Nginx. The management login is `https://www.xclaw.live/license/`; the public trial API is `https://www.xclaw.live/license/api/v1/stellar/trial`.
