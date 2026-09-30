@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mysql:8.0
+    image: docker.io/library/mysql:8.0
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: license_manager
@@ -21,7 +21,7 @@ services:
     networks: [license]
 
   api:
-    image: johndockerhub/license-manager:stellar-latest
+    image: docker.io/johndockerhub/license-manager:stellar-latest
     pull_policy: always
     restart: unless-stopped
     depends_on:
