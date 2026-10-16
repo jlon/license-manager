@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net"
 	"strings"
 	"time"
 
@@ -448,6 +449,7 @@ func (s *licenseService) ActivateLicense(ctx context.Context, req *models.Activa
 
 	// 使用事务确保并发安全
 	var response *models.ActivateResponse
+	sourceIP := preferredDeviceSourceIP(req.DeviceInfo, clientIP)
 	err = s.db.Transaction(func(tx *gorm.DB) error {
 		// 检查当前激活数量
 		count, err := s.licenseRepo.GetActiveLicenseCount(ctx, authCode.ID)
@@ -463,11 +465,11 @@ func (s *licenseService) ActivateLicense(ctx context.Context, req *models.Activa
 		if err == nil {
 			// 已存在，直接激活
 			existingLicense.Status = "active"
-			existingLicense.ActivationIP = &clientIP
+			existingLicense.ActivationIP = &sourceIP
 			now := time.Now()
 			existingLicense.ActivatedAt = &now
 			existingLicense.LastHeartbeat = &now
-			existingLicense.LastOnlineIP = &clientIP
+			existingLicense.LastOnlineIP = &sourceIP
 
 			if err := tx.Save(&existingLicense).Error; err != nil {
 				return err
@@ -505,11 +507,11 @@ func (s *licenseService) ActivateLicense(ctx context.Context, req *models.Activa
 			AuthorizationCodeID: authCode.ID,
 			CustomerID:          authCode.CustomerID,
 			HardwareFingerprint: req.HardwareFingerprint,
-			ActivationIP:        &clientIP,
+			ActivationIP:        &sourceIP,
 			Status:              "active",
 			ActivatedAt:         &now,
 			LastHeartbeat:       &now,
-			LastOnlineIP:        &clientIP,
+			LastOnlineIP:        &sourceIP,
 		}
 
 		// 设置设备信息
@@ -586,6 +588,7 @@ func (s *licenseService) issueStellarTrial(
 ) (*models.ActivateResponse, error) {
 	var response *models.ActivateResponse
 
+	sourceIP := preferredDeviceSourceIP(req.DeviceInfo, clientIP)
 	err := s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var authCode models.AuthorizationCode
 		err := tx.Where("code = ?", trialCode).First(&authCode).Error
@@ -631,11 +634,11 @@ func (s *licenseService) issueStellarTrial(
 			LicenseKey:          licenseKey,
 			AuthorizationCodeID: authCode.ID,
 			HardwareFingerprint: req.HardwareFingerprint,
-			ActivationIP:        &clientIP,
+			ActivationIP:        &sourceIP,
 			Status:              "active",
 			ActivatedAt:         &now,
 			LastHeartbeat:       &now,
-			LastOnlineIP:        &clientIP,
+			LastOnlineIP:        &sourceIP,
 		}
 		if req.DeviceInfo != nil {
 			deviceInfo, err := json.Marshal(req.DeviceInfo)
@@ -747,8 +750,9 @@ func (s *licenseService) Heartbeat(ctx context.Context, req *models.HeartbeatReq
 
 	// 更新心跳时间和使用数据
 	now := time.Now()
+	sourceIP := preferredDeviceSourceIP(req.DeviceInfo, clientIP)
 	license.LastHeartbeat = &now
-	license.LastOnlineIP = &clientIP
+	license.LastOnlineIP = &sourceIP
 
 	// 更新使用数据
 	if req.UsageData != nil {
@@ -788,6 +792,22 @@ func (s *licenseService) Heartbeat(ctx context.Context, req *models.HeartbeatReq
 	}
 
 	return response, nil
+}
+
+// preferredDeviceSourceIP 心跳与激活可能经由本机回环停靠（客户端与授权服务
+// 同机部署）或前置代理，此时连接来源退化为 127.0.0.1；客户端在 device_info
+// 里上报的本机网卡 IP（local_ip，与机器指纹同一套物理网卡筛选）仅在合法且
+// 非回环时采信，否则退回连接来源，身份判定仍只依赖硬件指纹。
+func preferredDeviceSourceIP(deviceInfo map[string]interface{}, clientIP string) string {
+	reported, ok := deviceInfo["local_ip"].(string)
+	if !ok {
+		return clientIP
+	}
+	ip := net.ParseIP(strings.TrimSpace(reported))
+	if ip == nil || ip.IsLoopback() || ip.IsUnspecified() || !ip.IsGlobalUnicast() {
+		return clientIP
+	}
+	return ip.String()
 }
 
 // generateLicenseFileContent 生成许可证文件内容

@@ -134,3 +134,15 @@ func TestDeleteLicenseOnlyAllowsRevokedStatus(t *testing.T) {
 		})
 	}
 }
+
+func TestPreferredDeviceSourceIPPrefersReportedRealNICAddress(t *testing.T) {
+	clientIP := "127.0.0.1"
+	if got := preferredDeviceSourceIP(map[string]interface{}{"local_ip": "10.0.0.8"}, clientIP); got != "10.0.0.8" {
+		t.Fatalf("expected the reported real NIC address, got %q", got)
+	}
+	for _, untrusted := range []map[string]interface{}{{"local_ip": "127.0.0.5"}, {"local_ip": "not-an-ip"}, {}} {
+		if got := preferredDeviceSourceIP(untrusted, clientIP); got != clientIP {
+			t.Fatalf("expected fallback to connection ip %q, got %q", clientIP, got)
+		}
+	}
+}
