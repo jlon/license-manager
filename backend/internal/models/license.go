@@ -164,6 +164,7 @@ type StellarTrialRequest struct {
 type HeartbeatRequest struct {
 	LicenseKey          string                 `json:"license_key" binding:"required"`          // 许可证密钥，必填
 	HardwareFingerprint string                 `json:"hardware_fingerprint" binding:"required"` // 硬件指纹，必填
+	DeviceInfo          map[string]interface{} `json:"device_info,omitempty"`                   // 客户端元数据，可选
 	ConfigUpdatedAt     *string                `json:"config_updated_at,omitempty"`             // 客户端配置更新时间，可选
 	UsageData           map[string]interface{} `json:"usage_data,omitempty"`                    // 使用数据，可选
 	SoftwareVersion     *string                `json:"software_version,omitempty"`              // 软件版本，可选
