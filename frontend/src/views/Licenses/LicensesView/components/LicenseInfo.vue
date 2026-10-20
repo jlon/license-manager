@@ -196,9 +196,15 @@
                   <template v-if="device.usage_data?.frontend_nodes != null">
                     {{ device.usage_data.frontend_nodes }}
                   </template>
-                  <span v-else class="scale-unavailable">
-                    {{ t('pages.licenses.detail.licenseInfo.scaleUnavailable') }}
-                  </span>
+                  <el-tooltip
+                    v-else
+                    :content="t('pages.licenses.detail.licenseInfo.scaleUnavailableHint')"
+                    placement="top"
+                  >
+                    <span class="scale-unavailable">
+                      {{ t('pages.licenses.detail.licenseInfo.scaleUnavailable') }}
+                    </span>
+                  </el-tooltip>
                 </div>
               </div>
               <div class="info-row">
@@ -497,9 +503,10 @@ const handleCopyAuthorizationCode = async () => {
 
 /// 客户端是否上报过集群规模。1.0.3 之前的客户端不带 usage_data，
 /// 这种情况要提示升级，而不是渲染成"0 个集群 / 0 个节点"。
+/// 只有 cluster_count 是数字才认为上报过；空对象或字段缺失都按"未上报"处理，
+/// 避免渲染出一张全是横线的表。
 const scaleReported = (device: LicenseDevice) => {
-  const usage = device.usage_data
-  return usage != null && typeof usage.cluster_count === 'number'
+  return typeof device.usage_data?.cluster_count === 'number'
 }
 
 /// 采集时间是 RFC3339（客户端本地时钟），统一转成本地可读格式。
