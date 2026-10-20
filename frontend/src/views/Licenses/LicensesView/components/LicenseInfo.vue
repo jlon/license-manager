@@ -90,6 +90,10 @@
                 {{ device.last_online_ip || device.activation_ip || '-' }}
               </span>
               <span class="device-info-item">
+                {{ t('pages.licenses.detail.licenseInfo.activationTime') }}：
+                {{ formatDateTime(device.activated_at || '') }}
+              </span>
+              <span class="device-info-item">
                 {{ t('pages.licenses.detail.licenseInfo.lastActiveTime') }}：
                 {{ formatDateTime(device.last_heartbeat || '') }}
               </span>
@@ -111,9 +115,120 @@
               <div class="info-label">
                 {{ t('pages.licenses.detail.licenseInfo.hardwareFingerprint') }}
               </div>
-              <div class="info-value">{{ device.hardware_fingerprint || '-' }}</div>
+              <div class="info-value fingerprint-value">
+                <span>{{ device.hardware_fingerprint || '-' }}</span>
+                <el-tooltip :content="t('pages.licenses.detail.licenseInfo.copyHardwareFingerprint')" placement="top">
+                  <el-button
+                    v-if="device.hardware_fingerprint"
+                    link
+                    type="primary"
+                    :icon="CopyDocument"
+                    class="copy-fingerprint-button"
+                    :aria-label="t('pages.licenses.detail.licenseInfo.copyHardwareFingerprint')"
+                    @click="copyHardwareFingerprint(device.hardware_fingerprint)"
+                  />
+                </el-tooltip>
+              </div>
             </div>
           </div>
+        </div>
+
+        <!-- 集群规模（客户端心跳上报的 usage_data） -->
+        <div class="info-section scale-section">
+          <div class="section-header">
+            <span class="section-title">
+              {{ t('pages.licenses.detail.licenseInfo.scaleSectionTitle') }}
+            </span>
+            <span class="section-subtitle">
+              {{ t('pages.licenses.detail.licenseInfo.scaleSectionSubtitle') }}
+            </span>
+          </div>
+
+          <!-- 老版本客户端不报 usage_data：明确说明原因，不显示成"0 个集群" -->
+          <el-alert
+            v-if="!scaleReported(device)"
+            type="info"
+            :closable="false"
+            show-icon
+            class="scale-pending"
+            :title="t('pages.licenses.detail.licenseInfo.scalePendingHint')"
+          />
+
+          <template v-else>
+            <div class="info-grid">
+              <div class="info-row">
+                <div class="info-label">
+                  {{ t('pages.licenses.detail.licenseInfo.scaleClusterCount') }}
+                </div>
+                <div class="info-value">{{ device.usage_data?.cluster_count ?? '-' }}</div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">
+                  {{ t('pages.licenses.detail.licenseInfo.scaleActiveCluster') }}
+                </div>
+                <div class="info-value">{{ device.usage_data?.active_cluster_count ?? '-' }}</div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">
+                  {{ t('pages.licenses.detail.licenseInfo.scaleComputeNodes') }}
+                </div>
+                <!-- null 表示客户端尚无监控快照，不能渲染成 0 -->
+                <div class="info-value">
+                  <template v-if="device.usage_data?.compute_nodes != null">
+                    {{ device.usage_data.compute_nodes }}
+                  </template>
+                  <el-tooltip
+                    v-else
+                    :content="t('pages.licenses.detail.licenseInfo.scaleUnavailableHint')"
+                    placement="top"
+                  >
+                    <span class="scale-unavailable">
+                      {{ t('pages.licenses.detail.licenseInfo.scaleUnavailable') }}
+                    </span>
+                  </el-tooltip>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">
+                  {{ t('pages.licenses.detail.licenseInfo.scaleFrontendNodes') }}
+                </div>
+                <div class="info-value">
+                  <template v-if="device.usage_data?.frontend_nodes != null">
+                    {{ device.usage_data.frontend_nodes }}
+                  </template>
+                  <span v-else class="scale-unavailable">
+                    {{ t('pages.licenses.detail.licenseInfo.scaleUnavailable') }}
+                  </span>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">
+                  {{ t('pages.licenses.detail.licenseInfo.scaleDeploymentModes') }}
+                </div>
+                <div class="info-value">
+                  <template v-if="device.usage_data?.deployment_modes?.length">
+                    <el-tag
+                      v-for="mode in device.usage_data.deployment_modes"
+                      :key="mode.mode"
+                      size="small"
+                      class="scale-mode-tag"
+                    >
+                      {{ mode.mode }} × {{ mode.count }}
+                    </el-tag>
+                  </template>
+                  <span v-else>-</span>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">
+                  {{ t('pages.licenses.detail.licenseInfo.scaleSampledAt') }}
+                </div>
+                <div class="info-value">
+                  {{ formatScaleTime(device.usage_data?.sampled_at) }}
+                </div>
+              </div>
+            </div>
+          </template>
         </div>
 
         <!-- 软件许可证 -->
@@ -143,6 +258,24 @@
                   t('pages.licenses.detail.licenseInfo.statusDescription')
                 }}
               </div>
+            </div>
+            <div class="license-row">
+              <div class="license-label">
+                {{ t('pages.licenses.detail.licenseInfo.clientName') }}
+              </div>
+              <div class="license-value">{{ device.device_info?.client_name || '-' }}</div>
+            </div>
+            <div class="license-row">
+              <div class="license-label">
+                {{ t('pages.licenses.detail.licenseInfo.clientVersion') }}
+              </div>
+              <div class="license-value">{{ device.device_info?.client_version || '-' }}</div>
+            </div>
+            <div class="license-row">
+              <div class="license-label">
+                {{ t('pages.licenses.detail.licenseInfo.deployment') }}
+              </div>
+              <div class="license-value">{{ device.device_info?.deployment || '-' }}</div>
             </div>
           </div>
         </div>
@@ -194,6 +327,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, reactive, computed, nextTick } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules, type MessageBoxInputData } from 'element-plus'
+import { CopyDocument } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import type { AuthorizationCode, LicenseDevice, LicenseDeviceCreateRequest } from '@/api/license'
 import { getLicenseDevices, getLicenseDeviceDetail, createLicenseDevice, downloadLicenseFile, revokeLicense, deleteLicenseDevice } from '@/api/license'
@@ -358,6 +492,30 @@ const handleCopyAuthorizationCode = async () => {
   } catch (error) {
     console.error('复制授权码失败:', error)
     ElMessage.error(t('pages.licenses.detail.licenseModal.messages.copyError'))
+  }
+}
+
+/// 客户端是否上报过集群规模。1.0.3 之前的客户端不带 usage_data，
+/// 这种情况要提示升级，而不是渲染成"0 个集群 / 0 个节点"。
+const scaleReported = (device: LicenseDevice) => {
+  const usage = device.usage_data
+  return usage != null && typeof usage.cluster_count === 'number'
+}
+
+/// 采集时间是 RFC3339（客户端本地时钟），统一转成本地可读格式。
+const formatScaleTime = (value?: string | null) => {
+  if (!value) return '-'
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return value
+  return parsed.toLocaleString()
+}
+
+const copyHardwareFingerprint = async (fingerprint: string) => {
+  try {
+    await navigator.clipboard.writeText(fingerprint)
+    ElMessage.success(t('pages.licenses.detail.licenseInfo.messages.copyHardwareFingerprintSuccess'))
+  } catch {
+    ElMessage.error(t('pages.licenses.detail.licenseInfo.messages.copyHardwareFingerprintError'))
   }
 }
 
@@ -727,7 +885,9 @@ const submitAddLicense = async () => {
   }
 }
 
-.hardware-section {
+/* 集群规模复用硬件信息的行式布局（标签左、值右），避免两处样式漂移 */
+.hardware-section,
+.scale-section {
   .info-grid {
     display: flex;
     flex-direction: column;
@@ -759,6 +919,24 @@ const submitAddLicense = async () => {
         background: rgba(136, 165, 209, 0.2);
         border-radius: 0;
         word-break: break-all;
+
+        &.fingerprint-value {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+
+          span {
+            min-width: 0;
+            flex: 1;
+          }
+        }
+
+        .copy-fingerprint-button {
+          flex: 0 0 auto;
+          min-width: 26px;
+          min-height: 26px;
+          padding: 0;
+        }
       }
     }
   }
@@ -898,6 +1076,23 @@ const submitAddLicense = async () => {
         }
       }
     }
+  }
+}
+
+/* 集群规模：节点数缺失时用弱化文字标注"未上报"，避免被读成 0 */
+.scale-section {
+  .scale-pending {
+    margin-bottom: 4px;
+  }
+
+  .scale-unavailable {
+    color: var(--el-text-color-secondary);
+    font-size: 13px;
+    cursor: help;
+  }
+
+  .scale-mode-tag {
+    margin-right: 6px;
   }
 }
 </style>

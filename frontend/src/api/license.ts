@@ -67,6 +67,9 @@ export interface LicenseQueryRequest {
   expiry_start_date?: string; // 到期时间开始
   expiry_end_date?: string; // 到期时间结束
   code?: string; // 授权码搜索
+  hardware_fingerprint?: string;
+  license_status?: 'active' | 'inactive' | 'revoked';
+  device_online?: boolean;
 }
 
 // 创建授权请求参数
@@ -245,6 +248,20 @@ export interface LicenseDevice {
     cpu_id?: string          // CPU ID
     [key: string]: any
   }
+  /// 心跳上报的集群规模；1.0.3 之前的客户端没有该字段。
+  usage_data?: LicenseUsageData
+}
+
+// 客户端随心跳上报的集群规模（对应 stellar 侧 cluster_scale::ClusterScale）。
+// 节点数可能为 null：客户端还没有监控快照时不会上报 0，而是标注 node_source=unavailable。
+export interface LicenseUsageData {
+  cluster_count?: number
+  active_cluster_count?: number
+  deployment_modes?: Array<{ mode: string; count: number }>
+  compute_nodes?: number | null
+  frontend_nodes?: number | null
+  sampled_at?: string | null
+  node_source?: 'metrics_snapshot' | 'unavailable' | string
 }
 
 // 许可证详情类型（与后端 LicenseDetailResponse 对应）
@@ -271,7 +288,7 @@ export interface LicenseDetail {
   last_heartbeat?: string
   last_online_ip?: string
   config_updated_at?: string
-  usage_data?: any
+  usage_data?: LicenseUsageData
   created_at: string
   updated_at: string
 }
@@ -279,9 +296,13 @@ export interface LicenseDetail {
 // 许可证列表查询请求
 export interface LicenseListQueryRequest {
   authorization_code_id?: string
+  customer_id?: string
   page?: number
   page_size?: number
-  status?: 'active' | 'inactive' | 'expired'
+  status?: 'active' | 'inactive' | 'revoked'
+  is_online?: 'true' | 'false'
+  sort?: 'created_at' | 'updated_at' | 'activated_at' | 'last_heartbeat'
+  order?: 'asc' | 'desc'
 }
 
 // 许可证列表响应
