@@ -25,6 +25,13 @@
             clearable
             @keyup.enter="queryLicenses"
           />
+          <el-input
+            v-model="filters.hardwareFingerprint"
+            class="filter-control"
+            :placeholder="t('pages.licenses.list.filter.hardwarePlaceholder')"
+            clearable
+            @keyup.enter="queryLicenses"
+          />
           <el-select
             v-model="filters.customerId"
             class="filter-control customer-filter"
@@ -52,6 +59,25 @@
               :label="option.display"
               :value="option.key"
             />
+          </el-select>
+          <el-select
+            v-model="filters.licenseStatus"
+            class="filter-control"
+            :placeholder="t('pages.licenses.list.filter.deviceStatusPlaceholder')"
+            clearable
+          >
+            <el-option value="active" :label="t('pages.licenses.list.filter.deviceStatus.active')" />
+            <el-option value="inactive" :label="t('pages.licenses.list.filter.deviceStatus.inactive')" />
+            <el-option value="revoked" :label="t('pages.licenses.list.filter.deviceStatus.revoked')" />
+          </el-select>
+          <el-select
+            v-model="filters.deviceOnline"
+            class="filter-control"
+            :placeholder="t('pages.licenses.list.filter.deviceOnlinePlaceholder')"
+            clearable
+          >
+            <el-option value="true" :label="t('pages.licenses.list.filter.deviceOnline.online')" />
+            <el-option value="false" :label="t('pages.licenses.list.filter.deviceOnline.offline')" />
           </el-select>
           <div class="filter-actions data-list-filter__actions">
             <el-button plain type="primary" :loading="isUpdating" @click="queryLicenses">
@@ -204,7 +230,14 @@ const { t } = useI18n()
 const routeCustomerId = String(route.query.customerId || '')
 const routeCustomerName = String(route.query.customerName || '')
 const hasCustomerContext = Boolean(routeCustomerId)
-const filters = reactive({ customerId: routeCustomerId, code: '', status: '' })
+const filters = reactive({
+  customerId: routeCustomerId,
+  code: '',
+  hardwareFingerprint: '',
+  status: '',
+  licenseStatus: '',
+  deviceOnline: ''
+})
 const pagination = reactive({ page: 1, pageSize: 10, total: 0 })
 const licenses = ref<AuthorizationCode[]>([])
 const customerOptions = ref<CustomerOption[]>([])
@@ -283,7 +316,10 @@ const queryLicenses = async () => {
 const resetFilters = async () => {
   filters.customerId = ''
   filters.code = ''
+  filters.hardwareFingerprint = ''
   filters.status = ''
+  filters.licenseStatus = ''
+  filters.deviceOnline = ''
   await queryLicenses()
 }
 
@@ -331,7 +367,10 @@ const loadLicenses = async () => {
     }
     if (filters.customerId) params.customer_id = filters.customerId
     if (filters.code.trim()) params.code = filters.code.trim()
+    if (filters.hardwareFingerprint.trim()) params.hardware_fingerprint = filters.hardwareFingerprint.trim()
     if (filters.status) params.status = filters.status as LicenseQueryRequest['status']
+    if (filters.licenseStatus) params.license_status = filters.licenseStatus as LicenseQueryRequest['license_status']
+    if (filters.deviceOnline) params.device_online = filters.deviceOnline === 'true'
 
     const response = await getLicenses(params)
     licenses.value = response.data.list
@@ -415,7 +454,7 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.filter-grid { grid-template-columns:minmax(240px,320px) minmax(280px,380px) 160px auto; }
+.filter-grid { grid-template-columns:repeat(3,minmax(180px,1fr)); }
 
 .context-back { margin:0 0 6px; padding:0; display:inline-flex; align-items:center; gap:5px; border:0; background:transparent; color:#526a60; font:inherit; font-size:13px; cursor:pointer; }
 .context-back:hover { color:var(--el-color-primary); }
