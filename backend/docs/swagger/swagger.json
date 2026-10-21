@@ -860,6 +860,29 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "机器码(完整值或前缀匹配)",
+                        "name": "hardware_fingerprint",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "active",
+                            "inactive",
+                            "revoked"
+                        ],
+                        "type": "string",
+                        "description": "匹配设备的许可证状态",
+                        "name": "license_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "匹配设备的在线状态",
+                        "name": "device_online",
+                        "in": "query"
+                    },
+                    {
                         "enum": [
                             "normal",
                             "locked",
@@ -2533,6 +2556,64 @@
                 }
             }
         },
+        "/api/v1/stellar/trial": {
+            "post": {
+                "description": "Stellar 客户端按硬件指纹自动领取一次 30 天试用许可证",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "许可证激活"
+                ],
+                "summary": "领取 Stellar 试用许可证",
+                "parameters": [
+                    {
+                        "description": "Stellar 试用请求",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StellarTrialRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "领取成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.APIResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.ActivateResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数无效",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "系统健康状态检查",
@@ -3697,6 +3778,11 @@
                     "description": "客户端配置更新时间，可选",
                     "type": "string"
                 },
+                "device_info": {
+                    "description": "客户端元数据，可选",
+                    "type": "object",
+                    "additionalProperties": true
+                },
                 "hardware_fingerprint": {
                     "description": "硬件指纹，必填",
                     "type": "string"
@@ -4146,6 +4232,24 @@
                 "yesterday_new_licenses": {
                     "description": "licenses created yesterday (for comparison)",
                     "type": "integer"
+                }
+            }
+        },
+        "models.StellarTrialRequest": {
+            "type": "object",
+            "required": [
+                "hardware_fingerprint"
+            ],
+            "properties": {
+                "device_info": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "hardware_fingerprint": {
+                    "type": "string"
+                },
+                "software_version": {
+                    "type": "string"
                 }
             }
         },

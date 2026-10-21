@@ -470,6 +470,11 @@ func (s *licenseService) ActivateLicense(ctx context.Context, req *models.Activa
 			existingLicense.ActivatedAt = &now
 			existingLicense.LastHeartbeat = &now
 			existingLicense.LastOnlineIP = &sourceIP
+			existingLicense.DeviceInfo = mergeDeviceInfo(
+				existingLicense.DeviceInfo,
+				req.DeviceInfo,
+				req.SoftwareVersion,
+			)
 
 			if err := tx.Save(&existingLicense).Error; err != nil {
 				return err
@@ -512,14 +517,7 @@ func (s *licenseService) ActivateLicense(ctx context.Context, req *models.Activa
 			ActivatedAt:         &now,
 			LastHeartbeat:       &now,
 			LastOnlineIP:        &sourceIP,
-		}
-
-		// 设置设备信息
-		if req.DeviceInfo != nil {
-			deviceInfoBytes, err := json.Marshal(req.DeviceInfo)
-			if err == nil {
-				license.DeviceInfo = models.JSON(deviceInfoBytes)
-			}
+			DeviceInfo:          mergeDeviceInfo(nil, req.DeviceInfo, req.SoftwareVersion),
 		}
 
 		if err := tx.Create(license).Error; err != nil {
@@ -639,13 +637,7 @@ func (s *licenseService) issueStellarTrial(
 			ActivatedAt:         &now,
 			LastHeartbeat:       &now,
 			LastOnlineIP:        &sourceIP,
-		}
-		if req.DeviceInfo != nil {
-			deviceInfo, err := json.Marshal(req.DeviceInfo)
-			if err != nil {
-				return err
-			}
-			license.DeviceInfo = models.JSON(deviceInfo)
+			DeviceInfo:          mergeDeviceInfo(nil, req.DeviceInfo, req.SoftwareVersion),
 		}
 		if err := tx.Create(&license).Error; err != nil {
 			return err
@@ -753,6 +745,7 @@ func (s *licenseService) Heartbeat(ctx context.Context, req *models.HeartbeatReq
 	sourceIP := preferredDeviceSourceIP(req.DeviceInfo, clientIP)
 	license.LastHeartbeat = &now
 	license.LastOnlineIP = &sourceIP
+	license.DeviceInfo = mergeDeviceInfo(license.DeviceInfo, req.DeviceInfo, req.SoftwareVersion)
 
 	// 更新使用数据
 	if req.UsageData != nil {
@@ -792,6 +785,27 @@ func (s *licenseService) Heartbeat(ctx context.Context, req *models.HeartbeatReq
 	}
 
 	return response, nil
+}
+
+func mergeDeviceInfo(existing models.JSON, incoming map[string]interface{}, softwareVersion *string) models.JSON {
+	info := make(map[string]interface{})
+	if len(existing) > 0 {
+		_ = json.Unmarshal(existing, &info)
+	}
+	for key, value := range incoming {
+		info[key] = value
+	}
+	if softwareVersion != nil && strings.TrimSpace(*softwareVersion) != "" {
+		info["client_version"] = strings.TrimSpace(*softwareVersion)
+	}
+	if len(info) == 0 {
+		return existing
+	}
+	encoded, err := json.Marshal(info)
+	if err != nil {
+		return existing
+	}
+	return models.JSON(encoded)
 }
 
 // preferredDeviceSourceIP 心跳与激活可能经由本机回环停靠（客户端与授权服务

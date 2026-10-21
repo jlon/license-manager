@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"strings"
 	"testing"
@@ -88,6 +89,39 @@ func TestHeartbeatRejectsMismatchedFingerprint(t *testing.T) {
 		t.Fatal("heartbeat must not update a license after fingerprint mismatch")
 	}
 }
+
+func TestMergeDeviceInfoPreservesExistingFieldsAndUpdatesClientMetadata(t *testing.T) {
+	existing := models.JSON(`{"remark":"managed","client_version":"old"}`)
+	version := "1.0.1"
+	merged := mergeDeviceInfo(existing, map[string]interface{}{
+		"client_name": "Stellar",
+		"deployment":  "physical_machine",
+	}, &version)
+
+	var info map[string]string
+	if err := json.Unmarshal(merged, &info); err != nil {
+		t.Fatalf("decode merged device info: %v", err)
+	}
+	if info["remark"] != "managed" || info["client_name"] != "Stellar" || info["client_version"] != version || info["deployment"] != "physical_machine" {
+		t.Fatalf("unexpected merged device info: %#v", info)
+	}
+}
+
+func TestPreferredDeviceSourceIPPrefersReportedRealNICAddress(t *testing.T) {
+	clientIP := "127.0.0.1"
+	if got := preferredDeviceSourceIP(map[string]interface{}{"local_ip": "10.0.0.8"}, clientIP); got != "10.0.0.8" {
+		t.Fatalf("expected the reported real NIC address, got %q", got)
+	}
+	for _, untrusted := range []map[string]interface{}{
+		{"local_ip": "127.0.0.5"},
+		{"local_ip": "not-an-ip"},
+		{},
+	} {
+		if got := preferredDeviceSourceIP(untrusted, clientIP); got != clientIP {
+			t.Fatalf("expected fallback to connection ip %q, got %q", clientIP, got)
+		}
+	}
+}
 func (r *deleteLicenseRepositoryStub) GetActiveLicenseCount(context.Context, string) (int64, error) {
 	return 0, nil
 }
@@ -132,17 +166,5 @@ func TestDeleteLicenseOnlyAllowsRevokedStatus(t *testing.T) {
 				t.Fatalf("deleted = %v, want %v", repo.deleted, tt.wantDeleted)
 			}
 		})
-	}
-}
-
-func TestPreferredDeviceSourceIPPrefersReportedRealNICAddress(t *testing.T) {
-	clientIP := "127.0.0.1"
-	if got := preferredDeviceSourceIP(map[string]interface{}{"local_ip": "10.0.0.8"}, clientIP); got != "10.0.0.8" {
-		t.Fatalf("expected the reported real NIC address, got %q", got)
-	}
-	for _, untrusted := range []map[string]interface{}{{"local_ip": "127.0.0.5"}, {"local_ip": "not-an-ip"}, {}} {
-		if got := preferredDeviceSourceIP(untrusted, clientIP); got != clientIP {
-			t.Fatalf("expected fallback to connection ip %q, got %q", clientIP, got)
-		}
 	}
 }

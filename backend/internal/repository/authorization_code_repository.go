@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"license-manager/internal/config"
 	"license-manager/internal/models"
 	"math"
 	"strings"
@@ -13,6 +14,8 @@ import (
 type authorizationCodeRepository struct {
 	db *gorm.DB
 }
+
+var fingerprintPrefixEscaper = strings.NewReplacer("!", "!!", "%", "!%", "_", "!_")
 
 // NewAuthorizationCodeRepository 创建授权码仓储实例
 func NewAuthorizationCodeRepository(db *gorm.DB) AuthorizationCodeRepository {
@@ -106,6 +109,14 @@ func (r *authorizationCodeRepository) GetAuthorizationCodeList(ctx context.Conte
 		like := "%" + strings.TrimSpace(req.Code) + "%"
 		query = query.Where("ac.code LIKE ?", like)
 	}
+	if strings.TrimSpace(req.HardwareFingerprint) != "" || req.LicenseStatus != "" || req.DeviceOnline != nil {
+		heartbeatTimeout := config.GetConfig().License.HeartbeatTimeout
+		if heartbeatTimeout <= 0 {
+			heartbeatTimeout = 300
+		}
+		filter, args := authorizationDeviceFilter(req, time.Now().Add(-time.Duration(heartbeatTimeout)*time.Second))
+		query = query.Where(filter, args...)
+	}
 
 	// 获取总数
 	var total int64
@@ -168,6 +179,34 @@ func (r *authorizationCodeRepository) GetAuthorizationCodeList(ctx context.Conte
 		PageSize:   pageSize,
 		TotalPages: totalPages,
 	}, nil
+}
+
+// authorizationDeviceFilter keeps all device predicates in one EXISTS clause so they match one device.
+func authorizationDeviceFilter(req *models.AuthorizationCodeListRequest, onlineThreshold time.Time) (string, []interface{}) {
+	conditions := []string{
+		"licenses.authorization_code_id = ac.id",
+		"licenses.deleted_at IS NULL",
+	}
+	args := make([]interface{}, 0, 3)
+
+	if fingerprint := strings.TrimSpace(req.HardwareFingerprint); fingerprint != "" {
+		conditions = append(conditions, "licenses.hardware_fingerprint LIKE ? ESCAPE '!'")
+		args = append(args, fingerprintPrefixEscaper.Replace(fingerprint)+"%")
+	}
+	if req.LicenseStatus != "" {
+		conditions = append(conditions, "licenses.status = ?")
+		args = append(args, req.LicenseStatus)
+	}
+	if req.DeviceOnline != nil {
+		if *req.DeviceOnline {
+			conditions = append(conditions, "licenses.last_heartbeat >= ?")
+		} else {
+			conditions = append(conditions, "(licenses.last_heartbeat < ? OR licenses.last_heartbeat IS NULL)")
+		}
+		args = append(args, onlineThreshold)
+	}
+
+	return "EXISTS (SELECT 1 FROM licenses WHERE " + strings.Join(conditions, " AND ") + ")", args
 }
 
 // UpdateAuthorizationCode 更新授权码

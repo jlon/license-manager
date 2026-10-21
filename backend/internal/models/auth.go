@@ -123,15 +123,18 @@ type AuthorizationCodeCreateResponse struct {
 
 // AuthorizationCodeListRequest 授权码列表查询请求结构
 type AuthorizationCodeListRequest struct {
-	Page       int    `form:"page" binding:"omitempty,min=1"`                            // 页码，默认1
-	PageSize   int    `form:"page_size" binding:"omitempty,min=1,max=100"`               // 每页条数，默认20，最大100
-	CustomerID string `form:"customer_id" binding:"omitempty"`                           // 客户ID筛选
-	Code       string `form:"code" binding:"omitempty"`                                  // 授权码模糊匹配
-	Status     string `form:"status" binding:"omitempty,oneof=normal locked expired"`    // 状态筛选
-	StartDate  string `form:"start_date" binding:"omitempty"`                            // 创建开始时间
-	EndDate    string `form:"end_date" binding:"omitempty"`                              // 创建结束时间
-	Sort       string `form:"sort" binding:"omitempty,oneof=created_at updated_at code"` // 排序字段，默认created_at
-	Order      string `form:"order" binding:"omitempty,oneof=asc desc"`                  // 排序方向，默认desc
+	Page                int    `form:"page" binding:"omitempty,min=1"`                                   // 页码，默认1
+	PageSize            int    `form:"page_size" binding:"omitempty,min=1,max=100"`                      // 每页条数，默认20，最大100
+	CustomerID          string `form:"customer_id" binding:"omitempty"`                                  // 客户ID筛选
+	Code                string `form:"code" binding:"omitempty"`                                         // 授权码模糊匹配
+	HardwareFingerprint string `form:"hardware_fingerprint" binding:"omitempty,max=200"`                 // 设备机器码完整值或前缀匹配
+	LicenseStatus       string `form:"license_status" binding:"omitempty,oneof=active inactive revoked"` // 匹配设备的许可证状态
+	DeviceOnline        *bool  `form:"device_online" binding:"omitempty"`                                // 匹配设备的在线状态
+	Status              string `form:"status" binding:"omitempty,oneof=normal locked expired"`           // 状态筛选
+	StartDate           string `form:"start_date" binding:"omitempty"`                                   // 创建开始时间
+	EndDate             string `form:"end_date" binding:"omitempty"`                                     // 创建结束时间
+	Sort                string `form:"sort" binding:"omitempty,oneof=created_at updated_at code"`        // 排序字段，默认created_at
+	Order               string `form:"order" binding:"omitempty,oneof=asc desc"`                         // 排序方向，默认desc
 }
 
 // AuthorizationCodeListItem 授权码列表项结构

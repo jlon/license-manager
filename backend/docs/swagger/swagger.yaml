@@ -799,6 +799,10 @@ definitions:
       config_updated_at:
         description: 客户端配置更新时间，可选
         type: string
+      device_info:
+        additionalProperties: true
+        description: 客户端元数据，可选
+        type: object
       hardware_fingerprint:
         description: 硬件指纹，必填
         type: string
@@ -1122,6 +1126,18 @@ definitions:
       yesterday_new_licenses:
         description: licenses created yesterday (for comparison)
         type: integer
+    type: object
+  models.StellarTrialRequest:
+    properties:
+      device_info:
+        additionalProperties: true
+        type: object
+      hardware_fingerprint:
+        type: string
+      software_version:
+        type: string
+    required:
+    - hardware_fingerprint
     type: object
   models.SystemInfo:
     properties:
@@ -1712,6 +1728,22 @@ paths:
         in: query
         name: code
         type: string
+      - description: 机器码(完整值或前缀匹配)
+        in: query
+        name: hardware_fingerprint
+        type: string
+      - description: 匹配设备的许可证状态
+        enum:
+        - active
+        - inactive
+        - revoked
+        in: query
+        name: license_status
+        type: string
+      - description: 匹配设备的在线状态
+        in: query
+        name: device_online
+        type: boolean
       - description: 状态筛选
         enum:
         - normal
@@ -2760,6 +2792,41 @@ paths:
       summary: 获取授权概览统计
       tags:
       - 统计分析
+  /api/v1/stellar/trial:
+    post:
+      consumes:
+      - application/json
+      description: Stellar 客户端按硬件指纹自动领取一次 30 天试用许可证
+      parameters:
+      - description: Stellar 试用请求
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.StellarTrialRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 领取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ActivateResponse'
+              type: object
+        "400":
+          description: 请求参数无效
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: 服务器内部错误
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: 领取 Stellar 试用许可证
+      tags:
+      - 许可证激活
   /health:
     get:
       consumes:

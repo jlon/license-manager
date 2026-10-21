@@ -26,9 +26,7 @@ type ClientConfig struct {
 	ServerURL         string `json:"server_url"`         // 服务器地址
 	AuthorizationCode string `json:"authorization_code"` // 授权码
 	SoftwareVersion   string `json:"software_version"`   // 软件版本
-	HeartbeatInterval int    `json:"heartbeat_interval"` // 心跳间隔(秒)，默认300
 	LicenseKey        string `json:"license_key"`        // 许可证密钥（激活后保存）
-	ConfigUpdatedAt   string `json:"config_updated_at"`  // 配置更新时间
 	LicenseFile       string `json:"license_file"`       // 许可证文件内容
 }
 
@@ -45,30 +43,8 @@ type ActivateResponse struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
 	Data    struct {
-		LicenseKey        string `json:"license_key"`
-		LicenseFile       string `json:"license_file"`
-		HeartbeatInterval int    `json:"heartbeat_interval"`
-	} `json:"data"`
-}
-
-// HeartbeatRequest 心跳请求
-type HeartbeatRequest struct {
-	LicenseKey          string                 `json:"license_key"`
-	HardwareFingerprint string                 `json:"hardware_fingerprint"`
-	ConfigUpdatedAt     *string                `json:"config_updated_at,omitempty"`
-	UsageData           map[string]interface{} `json:"usage_data,omitempty"`
-	SoftwareVersion     *string                `json:"software_version,omitempty"`
-}
-
-// HeartbeatResponse 心跳响应
-type HeartbeatResponse struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
-	Data    struct {
-		Status            string  `json:"status"`
-		ConfigUpdated     bool    `json:"config_updated"`
-		LicenseFile       *string `json:"license_file,omitempty"`
-		HeartbeatInterval int     `json:"heartbeat_interval"`
+		LicenseKey  string `json:"license_key"`
+		LicenseFile string `json:"license_file"`
 	} `json:"data"`
 }
 
@@ -111,8 +87,6 @@ func main() {
 	var (
 		serverURL       = flag.String("server", "http://localhost:18888", "服务器地址 (例如: http://localhost:18888)")
 		softwareVersion = flag.String("version", "1.0.0", "软件版本")
-		interval        = flag.Int("interval", 300, "心跳间隔(秒)")
-		activateOnly    = flag.Bool("activate-only", false, "仅执行激活，不启动心跳")
 	)
 	flag.Parse()
 
@@ -132,12 +106,6 @@ func main() {
 	}
 	if *softwareVersion != "" {
 		config.SoftwareVersion = *softwareVersion
-	}
-	if *interval > 0 {
-		config.HeartbeatInterval = *interval
-	}
-	if config.HeartbeatInterval <= 0 {
-		config.HeartbeatInterval = 300 // 默认5分钟
 	}
 
 	// 验证必要参数
@@ -202,8 +170,6 @@ func main() {
 			log.Fatalf("激活失败: %v", err)
 		}
 		log.Println("✓ 激活成功！")
-		log.Printf("许可证密钥: %s", config.LicenseKey)
-		log.Printf("心跳间隔: %d 秒", config.HeartbeatInterval)
 
 		// 保存许可证文件到 license_code/LICENSE
 		if err := saveLicenseFile(licenseFilePath); err != nil {
@@ -231,14 +197,7 @@ func main() {
 		log.Println("✓ 激活后验证通过")
 	}
 
-	if *activateOnly {
-		log.Println("激活完成，退出程序")
-		return
-	}
-
-	// 4. 验证通过，启动心跳服务
-	log.Println("\n[心跳] 启动心跳服务...")
-	startHeartbeat(hardwareFingerprint, deviceInfo)
+	log.Println("激活完成，退出程序")
 }
 
 // collectHardwareInfo 采集硬件信息
@@ -341,7 +300,6 @@ func activateLicense(hardwareFingerprint string, deviceInfo map[string]interface
 
 	url := fmt.Sprintf("%s/api/v1/activate", config.ServerURL)
 	log.Printf("POST %s", url)
-	log.Printf("请求体: %s", string(jsonData))
 
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
@@ -374,134 +332,8 @@ func activateLicense(hardwareFingerprint string, deviceInfo map[string]interface
 	// 更新配置
 	config.LicenseKey = activateResp.Data.LicenseKey
 	config.LicenseFile = activateResp.Data.LicenseFile
-	if activateResp.Data.HeartbeatInterval > 0 {
-		config.HeartbeatInterval = activateResp.Data.HeartbeatInterval
-	}
-	config.ConfigUpdatedAt = time.Now().Format(time.RFC3339)
 
 	return nil
-}
-
-// startHeartbeat 启动心跳服务
-func startHeartbeat(hardwareFingerprint string, deviceInfo map[string]interface{}) {
-	ticker := time.NewTicker(time.Duration(config.HeartbeatInterval) * time.Second)
-	defer ticker.Stop()
-
-	// 立即发送一次心跳
-	log.Println("发送初始心跳...")
-	sendHeartbeat(hardwareFingerprint, deviceInfo)
-
-	// 定期发送心跳
-	for range ticker.C {
-		sendHeartbeat(hardwareFingerprint, deviceInfo)
-	}
-}
-
-// sendHeartbeat 发送心跳
-func sendHeartbeat(hardwareFingerprint string, deviceInfo map[string]interface{}) {
-	req := HeartbeatRequest{
-		LicenseKey:          config.LicenseKey,
-		HardwareFingerprint: hardwareFingerprint,
-	}
-
-	if config.ConfigUpdatedAt != "" {
-		req.ConfigUpdatedAt = &config.ConfigUpdatedAt
-	}
-
-	// 模拟使用数据
-	req.UsageData = map[string]interface{}{
-		"active_users":    50,
-		"api_calls_today": 5000,
-		"cpu_usage":       25.5,
-		"memory_usage":    45.2,
-	}
-
-	if config.SoftwareVersion != "" {
-		req.SoftwareVersion = &config.SoftwareVersion
-	}
-
-	jsonData, err := json.Marshal(req)
-	if err != nil {
-		log.Printf("✗ 心跳失败: 序列化请求失败: %v", err)
-		return
-	}
-
-	// 打印完整的请求信息
-	reqJSON, _ := json.MarshalIndent(req, "", "  ")
-	log.Printf("心跳请求信息:\n%s", string(reqJSON))
-
-	url := fmt.Sprintf("%s/api/v1/heartbeat", config.ServerURL)
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		log.Printf("✗ 心跳失败: 请求失败: %v", err)
-		return
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("✗ 心跳失败: 读取响应失败: %v", err)
-		return
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		var errResp ErrorResponse
-		if err := json.Unmarshal(body, &errResp); err == nil {
-			log.Printf("✗ 心跳失败 [%s]: %s", errResp.Code, errResp.Message)
-		} else {
-			log.Printf("✗ 心跳失败 [HTTP %d]: %s", resp.StatusCode, string(body))
-		}
-		return
-	}
-
-	var heartbeatResp HeartbeatResponse
-	if err := json.Unmarshal(body, &heartbeatResp); err != nil {
-		log.Printf("✗ 心跳失败: 解析响应失败: %v", err)
-		return
-	}
-
-	if heartbeatResp.Code != "000000" {
-		log.Printf("✗ 心跳失败 [%s]: %s", heartbeatResp.Code, heartbeatResp.Message)
-		return
-	}
-
-	// 打印完整的响应信息
-	respJSON, _ := json.MarshalIndent(heartbeatResp, "", "  ")
-	log.Printf("心跳返回信息:\n%s", string(respJSON))
-
-	// 更新配置更新时间
-	if heartbeatResp.Data.ConfigUpdated && heartbeatResp.Data.LicenseFile != nil {
-		log.Println("✓ 收到配置更新，正在更新许可证文件...")
-		config.LicenseFile = *heartbeatResp.Data.LicenseFile
-		config.ConfigUpdatedAt = time.Now().Format(time.RFC3339)
-
-		// 保存许可证文件到 license_code/LICENSE
-		licenseFilePath := filepath.Join(licenseDir, licenseFileName)
-		if err := saveLicenseFile(licenseFilePath); err != nil {
-			log.Printf("保存许可证文件失败: %v", err)
-		} else {
-			log.Printf("许可证文件已更新到 %s", licenseFilePath)
-		}
-
-		// 保存配置
-		if err := saveConfig(); err != nil {
-			log.Printf("保存配置失败: %v", err)
-		}
-	}
-
-	log.Printf("✓ 心跳成功 [%s] - 状态: %s, 配置更新: %v, 间隔: %d秒",
-		time.Now().Format("15:04:05"),
-		heartbeatResp.Data.Status,
-		heartbeatResp.Data.ConfigUpdated,
-		heartbeatResp.Data.HeartbeatInterval)
-
-	// 如果服务器返回了不同的心跳间隔，更新配置
-	if heartbeatResp.Data.HeartbeatInterval > 0 &&
-		heartbeatResp.Data.HeartbeatInterval != config.HeartbeatInterval {
-		log.Printf("更新心跳间隔: %d 秒 -> %d 秒",
-			config.HeartbeatInterval, heartbeatResp.Data.HeartbeatInterval)
-		config.HeartbeatInterval = heartbeatResp.Data.HeartbeatInterval
-	}
 }
 
 // loadConfig 加载配置
@@ -546,12 +378,6 @@ func checkAndParseLicenseFile(filePath string) (*LicenseFileData, error) {
 	if err := json.Unmarshal(decryptedData, &licenseData); err != nil {
 		return nil, fmt.Errorf("解析许可证文件JSON失败: %w", err)
 	}
-
-	// 打印解析后的许可证信息
-	log.Println("========== 解析后的许可证信息 ==========")
-	licenseJSON, _ := json.MarshalIndent(licenseData, "", "  ")
-	log.Printf("%s\n", string(licenseJSON))
-	log.Println("========================================")
 
 	return &licenseData, nil
 }
