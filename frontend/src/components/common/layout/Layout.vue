@@ -40,6 +40,7 @@ const appStore = useAppStore()
 const defaultNavItems = computed<NavItem[]>(() => [
   { id: 'dashboard', label: t('navigation.menu.dashboard'), href: '/dashboard', icon: 'dashboard' },
   { id: 'licenses', label: t('navigation.menu.licenses'), href: '/licenses', icon: 'licenses' },
+  { id: 'devices', label: t('navigation.menu.devices'), href: '/devices', icon: 'devices' },
   { id: 'customers', label: t('navigation.menu.customers'), href: '/customers', icon: 'customers' }
 ])
 

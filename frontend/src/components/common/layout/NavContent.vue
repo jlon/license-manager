@@ -74,8 +74,7 @@ const { breadcrumbs, navigateTo } = useBreadcrumb()
 const userInfo = computed(() => userStore.userInfo)
 const userInitial = computed(() => userInfo.value?.username?.charAt(0).toUpperCase() || '?')
 const externalLinks = [
-  { key: 'docs', url: 'https://docs.lm.cedar-v.com/' },
-  { key: 'cloud', url: 'https://cedar-v.com/products/cedar-license-cloud/index.html' }
+  { key: 'docs', url: 'https://docs.lm.cedar-v.com/' }
 ] as const
 const languageOptions: Array<{ code: SupportedLocale; label: string }> = [
   { code: 'zh', label: '中文' },

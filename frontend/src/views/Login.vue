@@ -32,9 +32,6 @@
       </div>
       <div class="brand-footer">
         <p class="brand-note">{{ t('login.brandNote') }}</p>
-        <a href="https://cedar-v.com/products/cedar-license-cloud/index.html" target="_blank" rel="noopener noreferrer">
-          {{ t('login.cloudPrompt') }} <span>{{ t('login.cloudLink') }} →</span>
-        </a>
       </div>
     </section>
 

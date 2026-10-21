@@ -68,6 +68,12 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    path: "/devices",
+    name: "devices",
+    component: () => import("@/views/Devices/index.vue"),
+    meta: { title: "设备列表", requiresAuth: true }
+  },
+  {
     path: "/:pathMatch(.*)*",
     redirect: "/dashboard"
   }
