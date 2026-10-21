@@ -2,10 +2,11 @@
 FROM node:20-alpine AS builder
 
 WORKDIR /app
-COPY frontend/package.json ./
-
-# Install dependencies (ignore package-lock.json since it's outdated)
-RUN npm install
+# 必须带上 lockfile：只复制 package.json 再 `npm install` 会重新解析整棵依赖树，
+# 遇到语义化版本变动时会以 "Cannot read properties of null (reading 'edgesOut')"
+# 失败，且每次构建可能装到不同版本，镜像不可复现。
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci --no-audit --no-fund
 
 COPY frontend/ ./
 
