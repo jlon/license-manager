@@ -26,3 +26,6 @@ frontend/test
 *.sw?
 .env
 deploy/stellar/runtime/
+
+# Agent tooling runtime artifacts (subagent state, not project source)
+.pi/
