@@ -1,3 +1,9 @@
+> ⚠️ **已废弃（2026-10-27）：本文不反映生产环境，请勿照此部署。**
+>
+> 本文假设使用 GHCR + `docker-compose` + `docker` 命令，而生产实际是
+> **Docker Hub + `podman-compose`**，且未经 CI 构建。
+> 正确流程见 [DEPLOYMENT.md](./DEPLOYMENT.md)。
+
 # GitHub 镜像快速部署指南
 
 使用预构建的 GitHub Container Registry 镜像快速部署许可证管理系统。

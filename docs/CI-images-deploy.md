@@ -1,3 +1,10 @@
+> ⚠️ **已废弃（2026-10-27）：本文不反映生产环境，请勿照此部署。**
+>
+> 本文假设镜像由 GitHub Actions 构建并推送到 GHCR；实际是
+> **本地 `docker build` + 手动 `docker push` 到 Docker Hub**，再在服务器用
+> `podman-compose` 拉取。`release_*.yml` 推的 GHCR 镜像生产根本不会拉。
+> 正确流程见 [DEPLOYMENT.md](./DEPLOYMENT.md)。
+
 ## 使用 CI 产物镜像替换本地构建的部署方案
 
 本文说明如何使用 GitHub Actions 构建并推送到 GHCR 的镜像，直接替换本地 `docker compose up -d --build` 的构建流程，以实现更一致、更快的部署。

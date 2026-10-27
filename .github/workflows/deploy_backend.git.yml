@@ -1,3 +1,7 @@
+# ⚠️ 已废弃（2026-10-27）：生产不使用此工作流。
+# 它依赖服务器 /root/license-manager 目录（不存在），且与 Docker Hub 实际流程无关。
+# 参见 docs/DEPLOYMENT.md
+
 name: Deploy Backend via Git
 
 # 触发条件

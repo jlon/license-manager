@@ -152,11 +152,15 @@ go build -o license-manager
 ## 
 ## Docker 部署
 
-### 使用预构建镜像（推荐）
+> **部署 `www.xclaw.live` 生产环境请直接看 [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)。**
+> 生产用的是 Docker Hub + `podman-compose`，与下文的通用 Docker 说明不同。
+> `docs/github-images-deploy.md`、`docs/CI-images-deploy.md` 以及
+> `.github/workflows/deploy_*.git.yml`、`release_*.yml` 均已废弃，不要照此部署。
 
-如需快速部署且无需修改源码，可直接使用预构建的 GitHub Container Registry 镜像：
+### 使用预构建镜像
 
-详细部署步骤请参考：[GitHub 镜像部署指南](docs/github-images-deploy.md)
+> ⚠️ 下述 GHCR 流程已废弃（生产实际从 Docker Hub 拉取）。
+> 新部署请使用 [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)。
 
 ### 从源码构建
 

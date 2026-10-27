@@ -1,3 +1,6 @@
+# ⚠️ 已废弃（2026-10-27）：此工作流推送 GHCR 镜像，生产从 Docker Hub 拉取，二者不相通。
+# 参见 docs/DEPLOYMENT.md
+
 name: Release Backend Image
 
 on:
