@@ -16,7 +16,12 @@ import { join, resolve } from 'node:path'
  */
 
 const SRC = resolve(__dirname, '../')
-const LOCALES = ['zh', 'en']
+// 目录里存在几种语言就校验几种。硬编码列表曾漏掉 ja，导致日语菜单项
+// 与整页文案一直缺失而测试仍通过——语言集合必须由文件系统决定。
+const LOCALES = readdirSync(join(SRC, 'i18n/locales'))
+  .filter(name => name.endsWith('.json'))
+  .map(name => name.replace(/\.json$/, ''))
+  .sort()
 
 function loadLocale(locale: string): Record<string, unknown> {
   return JSON.parse(readFileSync(join(SRC, 'i18n/locales', `${locale}.json`), 'utf8'))

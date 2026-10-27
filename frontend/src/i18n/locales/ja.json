@@ -130,7 +130,8 @@
     "menu": {
       "dashboard": "ダッシュボード",
       "customers": "顧客管理",
-      "licenses": "ライセンス管理"
+      "licenses": "ライセンス管理",
+      "devices": "デバイス一覧"
     },
     "toggleSidebar": "サイドバー切り替え",
     "mainNavigation": "メインナビゲーション",
@@ -160,7 +161,8 @@
       "settings": "設定",
       "profile": "プロフィール",
       "workspace": "ワークスペース",
-      "unknown": "未知ページ"
+      "unknown": "未知ページ",
+      "devices": "デバイス一覧"
     }
   },
   "common": {
@@ -200,6 +202,50 @@
     }
   },
   "pages": {
+    "devices": {
+      "list": {
+            "title": "デバイス一覧",
+            "description": "各顧客が報告したデバイスのライセンスとオンライン状態を確認します。",
+            "filter": {
+                "statusPlaceholder": "ライセンス状態",
+                "onlinePlaceholder": "オンライン状態",
+                "query": "検索",
+                "reset": "リセット"
+            },
+            "online": {
+                "online": "オンライン",
+                "offline": "オフライン"
+            },
+            "status": {
+                "active": "有効",
+                "inactive": "未有効",
+                "revoked": "取消済み"
+            },
+            "table": {
+                "licenseKey": "ライセンスキー",
+                "fingerprint": "ハードウェア指紋",
+                "customer": "顧客",
+                "authorizationCode": "ライセンスコード",
+                "status": "ライセンス状態",
+                "online": "オンライン状態",
+                "activatedAt": "有効化日時",
+                "lastHeartbeat": "最終ハートビート",
+                "lastOnlineIp": "最終オンライン IP",
+                "action": "操作"
+            },
+            "actions": {
+                "refresh": "更新",
+                "retry": "再試行",
+                "copy": "コピー",
+                "viewDetail": "詳細"
+            },
+            "message": {
+                "loadError": "デバイス一覧の読み込みに失敗しました",
+                "copySuccess": "コピーしました",
+                "copyFailure": "コピーに失敗しました"
+            }
+      }
+    },
     "licenses": {
       "title": "ライセンス管理",
       "welcome": "ライセンス管理ページへようこそ",
