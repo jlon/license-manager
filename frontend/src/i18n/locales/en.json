@@ -130,7 +130,8 @@
     "menu": {
       "dashboard": "Dashboard",
       "customers": "Customer Management",
-      "licenses": "License Management"
+      "licenses": "License Management",
+      "devices": "Device Management"
     },
     "toggleSidebar": "Toggle Sidebar",
     "mainNavigation": "Main navigation",
@@ -160,7 +161,8 @@
       "settings": "Settings",
       "profile": "Profile",
       "workspace": "Workspace",
-      "unknown": "Unknown Page"
+      "unknown": "Unknown Page",
+      "devices": "Device Management"
     }
   },
   "common": {
@@ -200,6 +202,50 @@
     }
   },
   "pages": {
+    "devices": {
+      "list": {
+            "title": "Device Management",
+            "description": "Review the licensed devices each customer has reported and whether they are online.",
+            "filter": {
+                "statusPlaceholder": "License status",
+                "onlinePlaceholder": "Online status",
+                "query": "Search",
+                "reset": "Reset"
+            },
+            "online": {
+                "online": "Online",
+                "offline": "Offline"
+            },
+            "status": {
+                "active": "Active",
+                "inactive": "Inactive",
+                "revoked": "Revoked"
+            },
+            "table": {
+                "licenseKey": "License Key",
+                "fingerprint": "Hardware Fingerprint",
+                "customer": "Customer",
+                "authorizationCode": "Authorization Code",
+                "status": "License Status",
+                "online": "Online",
+                "activatedAt": "Activated At",
+                "lastHeartbeat": "Last Heartbeat",
+                "lastOnlineIp": "Last Online IP",
+                "action": "Actions"
+            },
+            "actions": {
+                "refresh": "Refresh",
+                "retry": "Retry",
+                "copy": "Copy",
+                "viewDetail": "Details"
+            },
+            "message": {
+                "loadError": "Failed to load devices",
+                "copySuccess": "Copied",
+                "copyFailure": "Copy failed"
+            }
+      }
+    },
     "licenses": {
       "title": "License Management",
       "welcome": "Welcome to the License Management page",

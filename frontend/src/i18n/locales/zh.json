@@ -130,7 +130,8 @@
     "menu": {
       "dashboard": "仪表盘",
       "customers": "客户管理",
-      "licenses": "授权管理"
+      "licenses": "授权管理",
+      "devices": "设备管理"
     },
     "toggleSidebar": "切换侧边栏",
     "mainNavigation": "主导航",
@@ -160,7 +161,8 @@
       "settings": "设置",
       "profile": "个人资料",
       "workspace": "工作台",
-      "unknown": "未知页面"
+      "unknown": "未知页面",
+      "devices": "设备管理"
     }
   },
   "common": {
@@ -200,6 +202,50 @@
     }
   },
   "pages": {
+    "devices": {
+      "list": {
+            "title": "设备管理",
+            "description": "查看各客户上报的设备授权与在线情况。",
+            "filter": {
+                "statusPlaceholder": "授权状态",
+                "onlinePlaceholder": "在线状态",
+                "query": "查询",
+                "reset": "重置"
+            },
+            "online": {
+                "online": "在线",
+                "offline": "离线"
+            },
+            "status": {
+                "active": "已激活",
+                "inactive": "未激活",
+                "revoked": "已撤销"
+            },
+            "table": {
+                "licenseKey": "许可证密钥",
+                "fingerprint": "硬件指纹",
+                "customer": "客户",
+                "authorizationCode": "授权码",
+                "status": "授权状态",
+                "online": "在线状态",
+                "activatedAt": "激活时间",
+                "lastHeartbeat": "最后心跳",
+                "lastOnlineIp": "最后在线 IP",
+                "action": "操作"
+            },
+            "actions": {
+                "refresh": "刷新",
+                "retry": "重试",
+                "copy": "复制",
+                "viewDetail": "详情"
+            },
+            "message": {
+                "loadError": "加载设备列表失败",
+                "copySuccess": "已复制",
+                "copyFailure": "复制失败"
+            }
+      }
+    },
     "licenses": {
       "title": "授权管理",
       "welcome": "欢迎你来到授权管理页面",
